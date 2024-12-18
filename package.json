@@ -1,0 +1,26 @@
+{
+  "name": "flora4fauna",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "prettier": "3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "vite": "^6.0.1"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.0.0-beta.8",
+    "eslint-config-prettier": "^9.1.0",
+    "pixi-viewport": "^6.0.3",
+    "pixi.js": "^8.6.5",
+    "tailwindcss": "^4.0.0-beta.8"
+  }
+}
