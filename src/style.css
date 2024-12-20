@@ -2,13 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-    button {
-        @apply m-4 bg-[#4EB211] px-4 py-2 rounded-md text-white;
-    }
+/* Linking directly for now, might self host these later if need to */
+/* https://github.com/stgiga/UnifontEX/blob/main/sleek.htm */
+@font-face {
+  font-family: 'UnifontExMono';
+  src:
+    /* IE6-IE8 */
+    url('https://stgiga.github.io/UnifontEX/UnifontExMono.woff') format('woff'),
+    /* Safari, Android, iOS */
+      url('http://stgiga.github.io/UnifontEX/UnifontExMono.woff2')
+      format('woff2');
 }
 
+@layer components {
+  button {
+    @apply m-4 rounded-md bg-[#4EB211] px-4 py-2 text-white;
+  }
+}
 body {
+  font-family: 'UnifontExMono', sans-serif;
   margin: 0;
   overflow: hidden;
 }
