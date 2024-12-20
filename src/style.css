@@ -2,13 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Linking directly for now, might self host these later if need to */
-/* https://github.com/stgiga/UnifontEX/blob/main/sleek.htm */
 @font-face {
   font-family: 'UnifontExMono';
-  src:
-    url('https://stgiga.github.io/UnifontEX/UnifontExMono.woff') format('woff'),
-    url('http://stgiga.github.io/UnifontEX/UnifontExMono.woff2') format('woff2');
+  src: url('UnifontExMono.woff2') format('woff2');
 }
 
 @layer components {
