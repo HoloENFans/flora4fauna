@@ -6,12 +6,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Flora4Fauna</title>
 	</head>
-	<body>
-		<div id="background"></div>
-		<div id="world-tree"></div>
-		<div id="midground"></div>
-		<div id="foreground"></div>
-		<div id="ui">
+	<body class="relative h-screen w-screen">
+		<div id="app"></div>
+		<div
+			class="fixed bottom-0 z-10 h-24 px-8 w-screen bg-[#E0E5DC] flex items-center gap-6"
+		>
 			<button>Test Button for UI layer</button>
 		</div>
 		<script type="module" src="/src/main.ts"></script>

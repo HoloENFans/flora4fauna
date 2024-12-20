@@ -1,34 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    button {
+        @apply m-4 bg-[#4EB211] px-4 py-2 rounded-md text-white;
+    }
+}
+
 body {
   margin: 0;
   overflow: hidden;
-}
-
-body div {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-#background {
-  z-index: 0;
-}
-
-#world-tree {
-  z-index: 1;
-}
-
-#midground {
-  z-index: 2;
-}
-
-#foreground {
-  z-index: 3;
-}
-
-#ui {
-  z-index: 4;
-}
-
-button {
-  margin: 1rem;
 }

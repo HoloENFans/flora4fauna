@@ -1,0 +1,17 @@
+{
+  "bundles": [
+    {
+      "name": "assets",
+      "assets": [
+        {
+          "alias": "fauna",
+          "src": "/assets/Ceres-Fauna_pr-img_01.png"
+        },
+        {
+          "alias": "smol-fauna",
+          "src": "/assets/smol_fauna.png"
+        }
+      ]
+    }
+  ]
+}
