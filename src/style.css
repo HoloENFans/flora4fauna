@@ -7,11 +7,8 @@
 @font-face {
   font-family: 'UnifontExMono';
   src:
-    /* IE6-IE8 */
     url('https://stgiga.github.io/UnifontEX/UnifontExMono.woff') format('woff'),
-    /* Safari, Android, iOS */
-      url('http://stgiga.github.io/UnifontEX/UnifontExMono.woff2')
-      format('woff2');
+    url('http://stgiga.github.io/UnifontEX/UnifontExMono.woff2') format('woff2');
 }
 
 @layer components {
