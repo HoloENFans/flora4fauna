@@ -61,10 +61,17 @@
 		<div
 			class="fixed bottom-0 z-10 hidden h-24 w-screen items-center gap-6 bg-[#E0E5DC] px-8 md:flex"
 		>
-			<button class="btn" id="donate-btn">Donate</button>
-			<button class="btn">Japanese characters support あいうえお</button>
-			<button class="btn" id="amount-raised"></button>
+			<button>Japanese characters support あいうえお</button>
+			<button
+				id="open-modal-btn"
+				class="rounded-lg bg-blue-500 px-4 py-2 text-white shadow-lg hover:bg-blue-600"
+			>
+				Open About Modal
+			</button>
+
+			<dialog class="modal" is="modal-about"></dialog>
 		</div>
 		<script type="module" src="/src/main.ts"></script>
+		<script src="/src/components/modal-about/modal-about.ts"></script>
 	</body>
 </html>
