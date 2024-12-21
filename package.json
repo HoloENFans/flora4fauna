@@ -24,6 +24,7 @@
     "@pixi/devtools": "^2.0.1",
     "@pixi/ui": "^2.2.0",
     "eslint-config-prettier": "^9.1.0",
+    "lit": "^3.2.1",
     "pixi-viewport": "^6.0.3",
     "pixi.js": "^8.6.6",
     "rxdb": "^15.39.0",
