@@ -86,4 +86,13 @@ void (async () => {
 	app.ticker.add(() => {
 		kirin.rotation += 0.001;
 	});
+
+	// Navbar logic
+	const donateDialog = document.getElementById(
+		'donate-dialog',
+	)! as HTMLDialogElement;
+	const donateBtn = document.getElementById('donate-btn')!;
+	donateBtn.addEventListener('click', () => {
+		donateDialog.showModal();
+	});
 })();
