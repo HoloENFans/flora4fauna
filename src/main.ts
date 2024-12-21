@@ -4,6 +4,18 @@ import { Application, Assets, Sprite } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH } from './PixiConfig.ts';
+import {
+	addRxPlugin,
+	createRxDatabase,
+	RxReplicationPullStreamItem,
+} from 'rxdb';
+import { Subject } from 'rxjs';
+import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
+import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import { replicateRxCollection } from 'rxdb/plugins/replication';
+import PocketBase, { RecordListOptions } from 'pocketbase';
+
+const pb = new PocketBase(`https://base.flora4fauna.net`);
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -70,7 +82,7 @@ async function setupTextures() {
 	});
 }
 
-void (async () => {
+async function pixiMain() {
 	const [app, viewport] = await setup();
 	await setupTextures();
 
@@ -89,6 +101,104 @@ void (async () => {
 	app.ticker.add(() => {
 		kirin.rotation += 0.001;
 	});
+}
+
+interface Donation {
+	username: string;
+	message: string;
+	amount: number;
+	created: string;
+	updated: string;
+}
+
+async function dataMain() {
+	addRxPlugin(RxDBDevModePlugin);
+
+	const db = await createRxDatabase({
+		name: 'flora4fauna',
+		storage: getRxStorageDexie(),
+	});
+
+	if (!db.donations) {
+		await db.addCollections({
+			donations: {
+				schema: {
+					version: 0,
+					primaryKey: 'id',
+					type: 'object',
+					properties: {
+						id: { type: 'string', maxLength: 15 },
+						username: { type: 'string' },
+						message: { type: 'string' },
+						amount: { type: 'number' },
+						created: { type: 'string' },
+						updated: { type: 'string' },
+					},
+					required: [
+						'id',
+						'username',
+						'message',
+						'amount',
+						'created',
+						'updated',
+					],
+				},
+			},
+		});
+	}
+
+	const pullStream$ = new Subject<
+		RxReplicationPullStreamItem<Donation, { updated: string }>
+	>();
+
+	const unsubscribe = await pb
+		.collection('donations')
+		.subscribe<Donation>('*', (e) => {
+			pullStream$.next({
+				documents: [{ ...e.record, _deleted: false }],
+				checkpoint: { updated: e.record.updated },
+			});
+		});
+
+	addEventListener('beforeunload', () => {
+		void unsubscribe();
+	});
+
+	replicateRxCollection<Donation, { updated: string } | undefined>({
+		collection: db.donations,
+		replicationIdentifier: 'cms-donations-replication',
+		pull: {
+			async handler(checkpoint, batchSize) {
+				const options: RecordListOptions = {
+					sort: '-updated',
+				};
+
+				if (checkpoint) {
+					options.filter = `(updated>'${checkpoint.updated}')`;
+				}
+
+				const result = await pb
+					.collection('donations')
+					.getList<Donation>(1, batchSize, options);
+
+				return {
+					documents: result.items.map((donation) => ({
+						...donation,
+						_deleted: false,
+					})),
+					checkpoint:
+						result.items.length > 0 ?
+							{ updated: result.items[0].updated }
+						:	checkpoint,
+				};
+			},
+			stream$: pullStream$,
+		},
+	});
+}
+
+void (async () => {
+	await Promise.all([pixiMain(), dataMain()]);
 
 	// Navbar logic
 	const donateDialog = document.getElementById(

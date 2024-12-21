@@ -9,7 +9,7 @@
 
 @layer components {
     .btn {
-        @apply m-4 rounded-md bg-[#4EB211] px-4 py-2 text-white;
+        @apply m-4 rounded-md bg-[#32730B] px-4 py-2 text-white;
     }
 }
 
