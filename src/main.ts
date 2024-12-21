@@ -59,9 +59,12 @@ async function setup(): Promise<[Application, Viewport]> {
 }
 
 async function setupTextures() {
-	await Assets.init({ manifest: '/assets/manifest.json' });
+	await Assets.init({
+		basePath: '/assets',
+		manifest: '/assets/manifest.json',
+	});
 
-	await Assets.loadBundle('assets', (progress) => {
+	await Assets.loadBundle('default', (progress) => {
 		// TODO: Loading screen
 		console.log(progress);
 	});
@@ -77,7 +80,7 @@ void (async () => {
 	viewport.addChild(kirin);
 	viewport.moveCenter(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
 
-	const smolKirin = Sprite.from('smol-fauna');
+	const smolKirin = Sprite.from('smol_fauna');
 	smolKirin.anchor.set(0.5, 0.5);
 	smolKirin.position.set(WORLD_WIDTH * 0.6, WORLD_HEIGHT * 0.6);
 	smolKirin.scale.set(0.25);

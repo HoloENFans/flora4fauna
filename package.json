@@ -20,11 +20,14 @@
     "vite": "^6.0.4"
   },
   "dependencies": {
+    "@assetpack/core": "^1.2.3",
     "@pixi/devtools": "^2.0.1",
     "@pixi/ui": "^2.2.0",
     "eslint-config-prettier": "^9.1.0",
     "pixi-viewport": "^6.0.3",
     "pixi.js": "^8.6.6",
+    "rxdb": "^15.39.0",
+    "swr": "^2.2.5",
     "tailwindcss": "^3.4.17"
   }
 }
