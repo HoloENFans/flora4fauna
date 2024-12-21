@@ -153,7 +153,7 @@ void (async () => {
 	});
 })();
 
-// Select the modal element
+// Remove later, placeholder to test modal
 const modal: HTMLDialogElement | null = document.querySelector(
 	'dialog[is="modal-about"]',
 );
@@ -174,4 +174,3 @@ if (modal) {
 		console.log('Modal closed');
 	});
 }
-// Add footer button functionality
