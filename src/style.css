@@ -5,11 +5,13 @@
 @font-face {
   font-family: 'UnifontExMono';
   src: url('/UnifontExMono.woff2') format('woff2');
+  font-family: 'UnifontExMono';
+  src: url('/UnifontExMono.woff2') format('woff2');
 }
 
 @layer components {
   .btn {
-    @apply rounded-md bg-[#32730B] px-4 py-2 text-white;
+    @apply m-4 rounded-md bg-[#32730B] px-4 py-2 text-white;
   }
 }
 
@@ -17,8 +19,11 @@ body {
   font-family: 'UnifontExMono', sans-serif;
   margin: 0;
   overflow: hidden;
+  font-family: 'UnifontExMono', sans-serif;
+  margin: 0;
+  overflow: hidden;
 }
 
 .modal {
-  @apply rounded-lg bg-white shadow-lg;
+  @apply rounded-lg p-4;
 }
