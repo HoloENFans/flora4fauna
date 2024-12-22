@@ -1,9 +1,10 @@
 import './style.css';
 
-import { Application, Assets, Sprite } from 'pixi.js';
+import { Application, Assets } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH } from './PixiConfig.ts';
+import { buildTreeSpriteGraph } from './tree.ts';
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -51,7 +52,7 @@ async function setup(): Promise<[Application, Viewport]> {
 			bottom: viewport.worldHeight * 1.5,
 			underflow: 'none',
 		})
-		.clampZoom({ minScale: 0.2, maxScale: 10 });
+		.clampZoom({ minScale: 0.1, maxScale: 10 });
 
 	app.stage.addChild(viewport);
 
@@ -70,25 +71,20 @@ async function setupTextures() {
 	});
 }
 
+function setupTree(viewport: Viewport) {
+	const bottomMiddleX = WORLD_WIDTH / 2;
+	const bottomMiddleY = WORLD_HEIGHT * 0.9;
+
+	const treeContainer = buildTreeSpriteGraph(bottomMiddleX, bottomMiddleY);
+
+	viewport.addChild(treeContainer);
+	viewport.moveCenter(WORLD_WIDTH / 2, WORLD_HEIGHT * 0.9);
+}
+
 void (async () => {
 	const [app, viewport] = await setup();
 	await setupTextures();
-
-	const kirin = Sprite.from('fauna');
-	kirin.anchor.set(0.5, 0.5);
-	kirin.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
-	viewport.addChild(kirin);
-	viewport.moveCenter(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
-
-	const smolKirin = Sprite.from('smol_fauna');
-	smolKirin.anchor.set(0.5, 0.5);
-	smolKirin.position.set(WORLD_WIDTH * 0.6, WORLD_HEIGHT * 0.6);
-	smolKirin.scale.set(0.25);
-	viewport.addChild(smolKirin);
-
-	app.ticker.add(() => {
-		kirin.rotation += 0.001;
-	});
+	setupTree(viewport);
 
 	// Navbar logic
 	const donateDialog = document.getElementById(
