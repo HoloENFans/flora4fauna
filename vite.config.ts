@@ -7,6 +7,7 @@ function assetpackPlugin(): Plugin {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const apConfig: any = {
 		entry: './assets',
+		output: './public/assets',
 		pipes: [
 			...pixiPipes({
 				cacheBust: true,
@@ -26,13 +27,6 @@ function assetpackPlugin(): Plugin {
 		name: 'vite-plugin-assetpack',
 		configResolved(resolvedConfig) {
 			mode = resolvedConfig.command;
-			if (!resolvedConfig.publicDir) return;
-			if (apConfig.output) return;
-			const publicDir = resolvedConfig.publicDir.replace(
-				process.cwd(),
-				'',
-			);
-			apConfig.output = `${publicDir}/assets/`;
 		},
 		buildStart: async () => {
 			if (mode === 'serve') {
