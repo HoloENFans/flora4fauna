@@ -11,7 +11,10 @@
 
 @layer components {
   .btn {
-    @apply m-4 rounded-md bg-[#32730B] px-4 py-2 text-white;
+    @apply border-primary bg-primary/50 text-primary-foreground relative border-4 px-6 py-2 font-bold uppercase tracking-wide;
+  }
+  .btn:hover {
+    @apply bg-primary/70;
   }
 }
 
@@ -24,7 +27,44 @@ body {
   overflow: hidden;
 }
 
+/* Modal animation, can make it more fancy if needs to */
+@keyframes modal-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* General UI */
 .modal {
   font-family: 'UnifontExMono', sans-serif;
-  @apply rounded-lg p-6;
+  animation: modal-in 0.3s ease-out;
+  @apply max-h-[80%] max-w-[60%] overflow-y-auto rounded-lg p-6;
+}
+
+h1 {
+  @apply text-3xl font-bold;
+}
+
+h2 {
+  @apply text-2xl font-bold;
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-200;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-gray-400;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
 }
