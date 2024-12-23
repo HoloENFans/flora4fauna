@@ -21,7 +21,11 @@ export class DonateModal extends LitElement {
 				.isOpen=${this.isOpen}
 				@modal-closed=${() => this.handleModalClosed()}
 			>
-				<form class="relative rounded-xl bg-white p-8" method="dialog">
+				<form
+					class="relative rounded-xl bg-white p-8"
+					method="dialog"
+					slot="content"
+				>
 					<div
 						id="mmd_widget_iframe_div"
 						data-dedication-value="Anonymous Sapling"

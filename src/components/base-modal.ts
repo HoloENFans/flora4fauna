@@ -11,10 +11,13 @@ export class BaseModal extends LitElement {
 	updated(changedProperties: Map<string | number | symbol, unknown>) {
 		if (changedProperties.has('isOpen')) {
 			const dialog = this.shadowRoot?.querySelector('dialog');
+			const backdrop = this.shadowRoot?.querySelector('.backdrop');
 			if (this.isOpen) {
 				dialog?.showModal();
+				backdrop?.classList.add('open');
 			} else {
 				dialog?.close();
+				backdrop?.classList.remove('open');
 			}
 		}
 	}
@@ -33,20 +36,38 @@ export class BaseModal extends LitElement {
 					}),
 				);
 			});
+
+			// Close the modal when clicking outside of it
+			dialog.addEventListener('click', (event) => {
+				const rect = dialog.getBoundingClientRect();
+				const isInDialog =
+					rect.top <= event.clientY &&
+					event.clientY <= rect.top + rect.height &&
+					rect.left <= event.clientX &&
+					event.clientX <= rect.left + rect.width;
+				if (!isInDialog) {
+					this.isOpen = false;
+				}
+			});
 		}
 	}
 
 	render() {
 		return html`
+			<div class="backdrop"></div>
 			<dialog class="modal">
 				<button
-					class="absolute right-4 top-2 z-10 p-1"
+					class="absolute right-4 top-2 z-10 p-1 text-lg"
 					value="cancel"
 					@click=${() => (this.isOpen = false)}
 				>
 					&times
 				</button>
-				<slot></slot>
+				<slot name="header"></slot>
+				<slot name="separator"></slot>
+				<div class="modal-content">
+					<slot name="content"></slot>
+				</div>
 			</dialog>
 		`;
 	}

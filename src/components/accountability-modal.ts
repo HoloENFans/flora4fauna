@@ -21,8 +21,10 @@ export class AccountabilityModal extends LitElement {
 				.isOpen=${this.isOpen}
 				@modal-closed=${() => this.handleModalClosed()}
 			>
-				<h2>Accountability Modal</h2>
-				<p>This is the content for the Accountability Modal.</p>
+				<h1 slot="header">Accountability Modal</h1>
+				<p slot="content">
+					This is the content for the Accountability Modal.
+				</p>
 			</base-modal>
 		`;
 	}
