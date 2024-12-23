@@ -20,5 +20,6 @@ body {
 }
 
 .modal {
+  font-family: 'UnifontExMono', sans-serif;
   @apply rounded-lg p-6;
 }
