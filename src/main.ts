@@ -1,6 +1,6 @@
 import './style.css';
 
-import { Application, Assets } from 'pixi.js';
+import { Application, Assets, Container, Rectangle, Sprite } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH } from './PixiConfig.ts';
@@ -17,6 +17,8 @@ import PocketBase, { RecordListOptions } from 'pocketbase';
 import { buildTreeSpriteGraph } from './tree.ts';
 
 const pb = new PocketBase(`https://base.flora4fauna.net`);
+
+const CULL_MARGIN = 1800;
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -66,6 +68,54 @@ async function setup(): Promise<[Application, Viewport]> {
 		})
 		.clampZoom({ minScale: 0.1, maxScale: 10 });
 
+	function cull(
+		container: Container,
+		view: Rectangle,
+		skipUpdateTransform = true,
+	) {
+		if (
+			container.cullable &&
+			container.measurable &&
+			container.includeInBuild
+		) {
+			const pos = viewport.toWorld(
+				container.getGlobalPosition(undefined, skipUpdateTransform),
+			);
+			// TODO: Bounds don't seem to properly scale? Workaround using a margin for now
+			const bounds =
+				container.cullArea ?? container.getBounds(skipUpdateTransform);
+
+			container.culled =
+				pos.x >= view.x + view.width + CULL_MARGIN ||
+				pos.y >= view.y + view.height + CULL_MARGIN ||
+				pos.x + bounds.width + CULL_MARGIN <= view.x ||
+				pos.y + bounds.height + CULL_MARGIN <= view.y;
+		} else {
+			container.culled = false;
+		}
+
+		if (
+			!container.cullableChildren ||
+			container.culled ||
+			!container.renderable ||
+			!container.measurable ||
+			!container.includeInBuild
+		)
+			return;
+
+		container.children.forEach((child) =>
+			cull(child, view, skipUpdateTransform),
+		);
+	}
+
+	app.ticker.add(() => {
+		if (viewport.dirty) {
+			const view = viewport.getVisibleBounds();
+			viewport.children?.forEach((child) => cull(child, view));
+			viewport.dirty = false;
+		}
+	});
+
 	app.stage.addChild(viewport);
 
 	return [app, viewport];
@@ -79,7 +129,7 @@ async function setupTextures() {
 
 	await Assets.loadBundle('default', (progress) => {
 		// TODO: Loading screen
-		console.log(progress);
+		console.log('Load progress', progress);
 	});
 }
 
@@ -88,6 +138,7 @@ function setupTree(viewport: Viewport) {
 	const bottomMiddleY = WORLD_HEIGHT * 0.9;
 
 	const treeContainer = buildTreeSpriteGraph(bottomMiddleX, bottomMiddleY);
+	treeContainer.cullableChildren = true;
 
 	viewport.addChild(treeContainer);
 	viewport.moveCenter(WORLD_WIDTH / 2, WORLD_HEIGHT * 0.9);
