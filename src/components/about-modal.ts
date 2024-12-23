@@ -21,9 +21,11 @@ export class AboutModal extends LitElement {
 				.isOpen=${this.isOpen}
 				@modal-closed=${() => this.handleModalClosed()}
 			>
-				<h1>About Modal</h1>
+				<h1 slot="header">About Modal</h1>
 
-				<div class="mt-6 flex flex-col gap-4">
+				<div class="separator" slot="separator"></div>
+
+				<div class="mt-6 flex flex-col gap-4" slot="content">
 					<div>
 						<h2>Overview</h2>
 						<p>

@@ -41,7 +41,29 @@ body {
 .modal {
   font-family: 'UnifontExMono', sans-serif;
   animation: modal-in 0.3s ease-out;
-  @apply max-h-[80%] max-w-[60%] overflow-y-auto rounded-lg p-6;
+  @apply relative z-50 rounded-lg p-6 shadow-md;
+}
+
+.modal-content {
+  @apply max-h-[80vh] max-w-[60vw] overflow-y-auto;
+}
+
+/* Overwriting default dialog backdrop to allow transition  */
+.backdrop {
+  @apply invisible fixed inset-0 z-20 bg-black bg-opacity-50 opacity-0 transition-all duration-300 ease-out;
+}
+
+.backdrop.open {
+  @apply visible opacity-100;
+}
+
+/* Disabling default dialog backdrop styles */
+dialog::backdrop {
+  @apply bg-transparent;
+}
+
+.separator {
+  @apply mt-2 h-[1px] bg-gray-300;
 }
 
 h1 {
