@@ -17,11 +17,9 @@ export class DonateModal extends LitElement {
 
 	render() {
 		return html`
-			<!-- Widget -->
 			<base-modal
 				.isOpen=${this.isOpen}
 				@modal-closed=${() => this.handleModalClosed()}
-				id="donate-dialog"
 			>
 				<form class="relative rounded-xl bg-white p-8" method="dialog">
 					<div

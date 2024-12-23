@@ -17,11 +17,6 @@ export class AboutModal extends LitElement {
 
 	render() {
 		return html`
-			<!-- Widget -->
-			<script
-				src="https://files.makemydonation.org/v-1/donation-widget.js"
-				type="text/javascript"
-			></script>
 			<base-modal
 				.isOpen=${this.isOpen}
 				@modal-closed=${() => this.handleModalClosed()}
