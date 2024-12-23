@@ -23,6 +23,7 @@ export class BaseModal extends LitElement {
 		const dialog = this.shadowRoot?.querySelector('dialog');
 		if (dialog) {
 			// Listen for the `close` event and emit a custom event
+			// Doing this to sync isOpen from derived components
 			dialog.addEventListener('close', () => {
 				this.isOpen = false;
 				this.dispatchEvent(
