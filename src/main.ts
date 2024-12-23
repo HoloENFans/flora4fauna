@@ -205,25 +205,3 @@ void (async () => {
 		mobileNavDrawer.classList.remove('translate-y-0', 'hidden');
 	});
 })();
-
-// Remove later, placeholder to test modal
-const modal: HTMLDialogElement | null = document.querySelector(
-	'dialog[is="modal-about"]',
-);
-
-if (modal) {
-	document
-		.querySelector('#open-about-modal-btn')
-		?.addEventListener('click', () => {
-			modal.showModal();
-		});
-
-	// Add event listeners
-	document.querySelector('#open-modal-btn')?.addEventListener('click', () => {
-		modal.showModal();
-	});
-
-	modal.addEventListener('close', () => {
-		console.log('Modal closed');
-	});
-}

@@ -1,24 +1,15 @@
-import { AboutModal } from './components/about-modal.js';
-import { AccountabilityModal } from './components/accountability-modal.js';
+import { BaseModal } from './components';
 
-const openAboutModalButton = document.getElementById('open-about-modal');
-const aboutModal: AboutModal | null = document.querySelector('about-modal');
+const addClickListener = (query: string) => {
+	const modalButton = document.querySelector(`#open-${query}`);
+	const modal: BaseModal | null = document.querySelector(query);
+	modalButton?.addEventListener('click', () => {
+		if (modal) {
+			modal.isOpen = true;
+		}
+	});
+};
 
-openAboutModalButton?.addEventListener('click', () => {
-	if (aboutModal) {
-		aboutModal.openModal();
-	}
-});
-
-const openAccountabilityModalButton = document.getElementById(
-	'open-accountability-modal',
-);
-const accountabilityModal: AccountabilityModal | null = document.querySelector(
-	'accountability-modal',
-);
-
-openAccountabilityModalButton?.addEventListener('click', () => {
-	if (accountabilityModal) {
-		accountabilityModal.openModal();
-	}
-});
+addClickListener('accountability-modal');
+addClickListener('about-modal');
+addClickListener('donate-modal');

@@ -13,11 +13,7 @@
 		></script>
 
 		<!-- Components -->
-		<script type="module" src="/src/components/about-modal.ts"></script>
-		<script
-			type="module"
-			src="/src/components/accountability-modal.ts"
-		></script>
+		<script type="module" src="/src/components/index.ts"></script>
 
 		<!-- Scripts -->
 		<script defer type="module" src="/src/main.ts"></script>
@@ -41,48 +37,6 @@
 			</form>
 		</dialog>
 		<div id="app"></div>
-		<div
-			class="fixed bottom-0 z-10 flex h-12 w-screen items-center justify-center bg-[#E0E5DC] px-8 md:hidden"
-			id="mobile-nav-open-bar"
-		>
-			<button class="flex-col items-center justify-center text-center">
-				<p class="h-4 text-lg">▲</p>
-				<p>Info & donate</p>
-			</button>
-		</div>
-		<div
-			class="absolute left-0 top-0 z-20 hidden h-screen w-screen translate-y-full bg-[#E0E5DC] transition-transform duration-300"
-			id="mobile-nav-drawer"
-		>
-			<div
-				class="flex h-12 w-screen items-center justify-center bg-[#E0E5DC] px-8 md:hidden"
-			>
-				<button
-					class="-mt-1 flex-col items-center justify-center text-center"
-					id="mobile-nav-close-bar"
-				>
-					<p class="pt-2">Close</p>
-					<p class="-mt-2 h-2 text-lg">▼</p>
-				</button>
-			</div>
-
-			<div class="mt-4 flex flex-col justify-center gap-2 px-8 py-4">
-				<button class="btn">Donate</button>
-				<button class="btn">About</button>
-			</div>
-		</div>
-		<div
-			class="fixed bottom-0 z-10 hidden h-24 w-screen items-center gap-6 bg-[#E0E5DC] px-8 md:flex"
-		>
-			<button class="btn" id="donate-btn">Donate</button>
-			<button class="btn">Japanese characters support あいうえお</button>
-			<button id="open-about-modal" class="btn">Open About Modal</button>
-			<button id="open-accountability-modal" class="btn">
-				Open Accountability Modal
-			</button>
-
-			<about-modal></about-modal>
-			<accountability-modal></accountability-modal>
-		</div>
+		<front-ui></front-ui>
 	</body>
 </html>

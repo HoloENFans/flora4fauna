@@ -2,8 +2,8 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import './base-modal.ts';
 
-@customElement('about-modal')
-export class AboutModal extends LitElement {
+@customElement('donate-modal')
+export class DonateModal extends LitElement {
 	@property({ type: Boolean, reflect: true })
 	isOpen = false;
 
@@ -18,16 +18,18 @@ export class AboutModal extends LitElement {
 	render() {
 		return html`
 			<!-- Widget -->
-			<script
-				src="https://files.makemydonation.org/v-1/donation-widget.js"
-				type="text/javascript"
-			></script>
 			<base-modal
 				.isOpen=${this.isOpen}
 				@modal-closed=${() => this.handleModalClosed()}
+				id="donate-dialog"
 			>
-				<h2>About Modal</h2>
-				<p>This is the content for the About Modal.</p>
+				<form class="relative rounded-xl bg-white p-8" method="dialog">
+					<div
+						id="mmd_widget_iframe_div"
+						data-dedication-value="Anonymous Sapling"
+						data-topic="tree_planting"
+					></div>
+				</form>
 			</base-modal>
 		`;
 	}
@@ -35,6 +37,6 @@ export class AboutModal extends LitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'about-modal': AboutModal;
+		'donate-modal': DonateModal;
 	}
 }
