@@ -1,9 +1,17 @@
 import './style.css';
 
-import { Application, Assets, Container, Rectangle, Sprite } from 'pixi.js';
+import {
+	Application,
+	Assets,
+	Container,
+	Graphics,
+	Rectangle,
+	Sprite,
+	Text,
+} from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
-import { WORLD_HEIGHT, WORLD_WIDTH } from './PixiConfig.ts';
+import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
 import {
 	addRxPlugin,
 	createRxDatabase,
@@ -17,8 +25,6 @@ import PocketBase, { RecordListOptions } from 'pocketbase';
 import { buildTreeSpriteGraph } from './tree.ts';
 
 const pb = new PocketBase(`https://base.flora4fauna.net`);
-
-const CULL_MARGIN = 1800;
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -53,20 +59,20 @@ async function setup(): Promise<[Application, Viewport]> {
 		.bounce({
 			// @ts-expect-error this is enough for the bounce box
 			bounceBox: {
-				x: -viewport.worldWidth,
-				width: viewport.worldWidth * 2,
+				x: 0,
+				width: viewport.worldWidth,
 				y: -viewport.worldHeight,
 				height: viewport.worldHeight * 2,
 			},
 		})
 		.clamp({
-			left: -(viewport.worldWidth / 2),
-			right: viewport.worldWidth * 1.5,
+			left: 0,
+			right: viewport.worldWidth,
 			top: -(viewport.worldHeight / 2),
 			bottom: viewport.worldHeight * 1.5,
 			underflow: 'none',
 		})
-		.clampZoom({ minScale: 0.1, maxScale: 10 });
+		.clampZoom({ minScale: 0.25, maxScale: 4 });
 
 	function cull(
 		container: Container,
@@ -141,13 +147,110 @@ function setupTree(viewport: Viewport) {
 	treeContainer.cullableChildren = true;
 
 	viewport.addChild(treeContainer);
-	viewport.moveCenter(WORLD_WIDTH / 2, WORLD_HEIGHT * 0.9);
+	// TODO: Update this to properly center Fauna into frame
+	viewport.ensureVisible(bottomMiddleX + 700, bottomMiddleY - 400, 800, 800);
 }
 
-async function pixiMain() {
+async function setupPixi() {
+	const db = await setupDatabase();
+
 	const [app, viewport] = await setup();
 	await setupTextures();
 	setupTree(viewport);
+
+	const donation = (await db.collections.donations
+		.findOne()
+		.exec()) as Donation;
+
+	viewport.plugins.pause('wheel');
+	viewport.plugins.pause('drag');
+
+	const superchatContainer = new Container();
+	superchatContainer.eventMode = 'static';
+	superchatContainer.on('wheel', (e) => {
+		e.stopImmediatePropagation();
+	});
+	superchatContainer.on('click', () => {
+		superchatContainer.visible = false;
+		viewport.plugins.resume('wheel');
+		viewport.plugins.resume('drag');
+	});
+
+	const superchatContainerBackground = new Graphics()
+		.rect(0, 0, app.renderer.width, app.renderer.height)
+		.fill({ color: '#00000095' });
+	superchatContainer.addChild(superchatContainerBackground);
+	const superchatInnerContainer = new Container({
+		x: app.renderer.width / 2 - 400,
+		y: app.renderer.height / 2 - 150,
+		width: 800,
+		height: 300,
+	});
+	superchatInnerContainer.eventMode = 'static';
+	superchatInnerContainer.on('click', (e) => {
+		e.stopPropagation();
+	});
+	superchatContainer.addChild(superchatInnerContainer);
+
+	const superchatLeaf = Sprite.from('Leaf_01');
+	superchatLeaf.rotation = 0.5 * Math.PI;
+	superchatLeaf.scale = 4;
+	superchatLeaf.tint = '#ee6191';
+	superchatLeaf.anchor.set(0.5);
+	superchatLeaf.position.set(440, 150);
+	superchatInnerContainer.addChild(superchatLeaf);
+
+	const username = new Text({
+		text: donation.username,
+		style: {
+			fontFamily: 'UnifontEXMono',
+			fontSize: 36,
+			fontWeight: 'bold',
+			fill: 'white',
+		},
+	});
+	username.position.set(32, 18);
+	superchatInnerContainer.addChild(username);
+
+	const amount = new Text({
+		text: `$${donation.amount}`,
+		style: {
+			fontFamily: 'UnifontEXMono',
+			fontSize: 36,
+			fontWeight: 'bold',
+			fill: 'white',
+			align: 'right',
+		},
+	});
+	amount.position.set(768, 18);
+	amount.anchor.set(1, 0);
+	superchatInnerContainer.addChild(amount);
+
+	const message = new Text({
+		text: donation.message,
+		style: {
+			fontFamily: 'UnifontEXMono',
+			fontSize: 24,
+			fill: 'white',
+			wordWrap: true,
+			wordWrapWidth: 736,
+		},
+	});
+	message.position.set(32, 72);
+	superchatInnerContainer.addChild(message);
+
+	window.addEventListener('resize', () => {
+		superchatContainerBackground
+			.clear()
+			.rect(0, 0, window.innerWidth, window.innerHeight)
+			.fill({ color: '#00000095' });
+		superchatInnerContainer.position.set(
+			window.innerWidth / 2 - 400,
+			window.innerHeight / 2 - 150,
+		);
+	});
+
+	app.stage.addChild(superchatContainer);
 }
 
 interface Donation {
@@ -158,7 +261,7 @@ interface Donation {
 	updated: string;
 }
 
-async function dataMain() {
+async function setupDatabase() {
 	addRxPlugin(RxDBDevModePlugin);
 
 	const db = await createRxDatabase({
@@ -242,10 +345,12 @@ async function dataMain() {
 			stream$: pullStream$,
 		},
 	});
+
+	return db;
 }
 
 void (async () => {
-	await Promise.all([pixiMain(), dataMain()]);
+	await setupPixi();
 
 	// Navbar logic
 	const donateDialog = document.getElementById(
