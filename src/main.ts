@@ -1,6 +1,6 @@
 import './style.css';
 
-import { Application, Assets, Container, Rectangle } from 'pixi.js';
+import { Application, Assets, Container, Rectangle, Sprite } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
@@ -129,7 +129,14 @@ function setupTree(viewport: Viewport) {
 
 	viewport.addChild(treeContainer);
 	// TODO: Update this to properly center Fauna into frame
-	viewport.ensureVisible(bottomMiddleX + 700, bottomMiddleY - 400, 800, 800);
+	viewport.setZoom(0.4);
+	const faunaNemu = Sprite.from('Fauna_Nemu');
+	viewport.snap(bottomMiddleX, bottomMiddleY - faunaNemu.height / 2, {
+		friction: 0,
+		time: 100,
+		removeOnComplete: true,
+	});
+	faunaNemu.destroy();
 }
 
 async function setupPixi() {
@@ -155,15 +162,14 @@ void (async () => {
 	const mobileNavOpenBtn = document.getElementById('mobile-nav-open-bar')!;
 	const mobileNavCloseBtn = document.getElementById('mobile-nav-close-bar')!;
 	const mobileNavDrawer = document.getElementById('mobile-nav-drawer')!;
-	mobileNavDrawer.classList.add('transition-transform', 'duration-300');
 
 	mobileNavOpenBtn.addEventListener('click', () => {
-		mobileNavDrawer.classList.remove('translate-y-full');
+		mobileNavDrawer.classList.remove('hidden', 'translate-y-full');
 		mobileNavDrawer.classList.add('translate-y-0');
 	});
 
 	mobileNavCloseBtn.addEventListener('click', () => {
 		mobileNavDrawer.classList.add('translate-y-full');
-		mobileNavDrawer.classList.remove('translate-y-0');
+		mobileNavDrawer.classList.remove('translate-y-0', 'hidden');
 	});
 })();
