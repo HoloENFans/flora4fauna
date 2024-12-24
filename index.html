@@ -29,7 +29,37 @@
 		</dialog>
 		<div id="app"></div>
 		<div
-			class="fixed bottom-0 z-10 flex h-24 w-screen items-center gap-6 bg-[#E0E5DC] px-8"
+			class="fixed bottom-0 z-10 flex h-12 w-screen items-center justify-center bg-[#E0E5DC] px-8 md:hidden"
+			id="mobile-nav-open-bar"
+		>
+			<button class="flex-col items-center justify-center text-center">
+				<p class="h-4 text-lg">▲</p>
+				<p>Info & donate</p>
+			</button>
+		</div>
+		<div
+			class="absolute left-0 top-0 z-20 h-screen w-screen translate-y-full bg-[#E0E5DC]"
+			id="mobile-nav-drawer"
+		>
+			<div
+				class="flex h-12 w-screen items-center justify-center bg-[#E0E5DC] px-8 md:hidden"
+			>
+				<button
+					class="-mt-1 flex-col items-center justify-center text-center"
+					id="mobile-nav-close-bar"
+				>
+					<p class="pt-2">Close</p>
+					<p class="-mt-2 h-2 text-lg">▼</p>
+				</button>
+			</div>
+
+			<div class="mt-4 flex flex-col justify-center gap-2 px-8 py-4">
+				<button class="btn">Donate</button>
+				<button class="btn">About</button>
+			</div>
+		</div>
+		<div
+			class="fixed bottom-0 z-10 hidden h-24 w-screen items-center gap-6 bg-[#E0E5DC] px-8 md:flex"
 		>
 			<button class="btn" id="donate-btn">Donate</button>
 			<button class="btn">Japanese characters support あいうえお</button>

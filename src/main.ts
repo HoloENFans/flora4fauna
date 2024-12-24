@@ -185,4 +185,19 @@ void (async () => {
 	donateBtn.addEventListener('click', () => {
 		donateDialog.showModal();
 	});
+
+	const mobileNavOpenBtn = document.getElementById('mobile-nav-open-bar')!;
+	const mobileNavCloseBtn = document.getElementById('mobile-nav-close-bar')!;
+	const mobileNavDrawer = document.getElementById('mobile-nav-drawer')!;
+	mobileNavDrawer.classList.add('transition-transform', 'duration-300');
+
+	mobileNavOpenBtn.addEventListener('click', () => {
+		mobileNavDrawer.classList.remove('translate-y-full');
+		mobileNavDrawer.classList.add('translate-y-0');
+	});
+
+	mobileNavCloseBtn.addEventListener('click', () => {
+		mobileNavDrawer.classList.add('translate-y-full');
+		mobileNavDrawer.classList.remove('translate-y-0');
+	});
 })();
