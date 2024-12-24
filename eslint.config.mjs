@@ -18,6 +18,9 @@ export default tseslint.config(
     },
   },
   {
+    ignores: ['dist/'],
+  },
+  {
     files: ['**/*.js', '**/*.mjs', 'vite.config.ts'],
     extends: [tseslint.configs.disableTypeChecked],
   },

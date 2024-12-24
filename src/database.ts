@@ -15,7 +15,7 @@ class Database {
 	static #instance: RxDatabase;
 
 	public static get instance() {
-		return (async () => {
+		return async () => {
 			if (!this.#instance) {
 				this.#instance = await createRxDatabase({
 					name: 'flora4fauna',
@@ -104,7 +104,7 @@ class Database {
 			}
 
 			return this.#instance;
-		})();
+		};
 	}
 }
 
