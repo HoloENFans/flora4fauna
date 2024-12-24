@@ -1,5 +1,6 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import { BaseModal } from './base-modal';
 
 @customElement('front-ui')
 export class FrontUi extends LitElement {
@@ -32,6 +33,20 @@ export class FrontUi extends LitElement {
 				<donate-modal></donate-modal>
 			</div>
 		`;
+	}
+	updated() {
+		const addClickListener = (query: string) => {
+			const modalButton = document.querySelector('#open-' + query);
+			const modal: BaseModal | null = document.querySelector(query);
+			modalButton?.addEventListener('click', () => {
+				if (modal) {
+					modal.isOpen = true;
+				}
+			});
+		};
+		addClickListener('accountability-modal');
+		addClickListener('about-modal');
+		addClickListener('donate-modal');
 	}
 }
 
