@@ -1,24 +1,11 @@
 import './style.css';
 
-import { Application, Assets, Container, Rectangle, Sprite } from 'pixi.js';
+import { Application, Assets, Container, Rectangle } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
-import { WORLD_HEIGHT, WORLD_WIDTH } from './PixiConfig.ts';
-import {
-	addRxPlugin,
-	createRxDatabase,
-	RxReplicationPullStreamItem,
-} from 'rxdb';
-import { Subject } from 'rxjs';
-import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
-import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
-import { replicateRxCollection } from 'rxdb/plugins/replication';
-import PocketBase, { RecordListOptions } from 'pocketbase';
+import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
 import { buildTreeSpriteGraph } from './tree.ts';
-
-const pb = new PocketBase(`https://base.flora4fauna.net`);
-
-const CULL_MARGIN = 1800;
+import DonationPopup from './donationPopup.ts';
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -53,20 +40,20 @@ async function setup(): Promise<[Application, Viewport]> {
 		.bounce({
 			// @ts-expect-error this is enough for the bounce box
 			bounceBox: {
-				x: -viewport.worldWidth,
-				width: viewport.worldWidth * 2,
+				x: 0,
+				width: viewport.worldWidth,
 				y: -viewport.worldHeight,
 				height: viewport.worldHeight * 2,
 			},
 		})
 		.clamp({
-			left: -(viewport.worldWidth / 2),
-			right: viewport.worldWidth * 1.5,
+			left: 0,
+			right: viewport.worldWidth,
 			top: -(viewport.worldHeight / 2),
 			bottom: viewport.worldHeight * 1.5,
 			underflow: 'none',
 		})
-		.clampZoom({ minScale: 0.1, maxScale: 10 });
+		.clampZoom({ minScale: 0.25, maxScale: 4 });
 
 	function cull(
 		container: Container,
@@ -141,111 +128,20 @@ function setupTree(viewport: Viewport) {
 	treeContainer.cullableChildren = true;
 
 	viewport.addChild(treeContainer);
-	viewport.moveCenter(WORLD_WIDTH / 2, WORLD_HEIGHT * 0.9);
+	// TODO: Update this to properly center Fauna into frame
+	viewport.ensureVisible(bottomMiddleX + 700, bottomMiddleY - 400, 800, 800);
 }
 
-async function pixiMain() {
+async function setupPixi() {
 	const [app, viewport] = await setup();
 	await setupTextures();
 	setupTree(viewport);
-}
 
-interface Donation {
-	username: string;
-	message: string;
-	amount: number;
-	created: string;
-	updated: string;
-}
-
-async function dataMain() {
-	addRxPlugin(RxDBDevModePlugin);
-
-	const db = await createRxDatabase({
-		name: 'flora4fauna',
-		storage: getRxStorageDexie(),
-	});
-
-	if (!db.donations) {
-		await db.addCollections({
-			donations: {
-				schema: {
-					version: 0,
-					primaryKey: 'id',
-					type: 'object',
-					properties: {
-						id: { type: 'string', maxLength: 15 },
-						username: { type: 'string' },
-						message: { type: 'string' },
-						amount: { type: 'number' },
-						created: { type: 'string' },
-						updated: { type: 'string' },
-					},
-					required: [
-						'id',
-						'username',
-						'message',
-						'amount',
-						'created',
-						'updated',
-					],
-				},
-			},
-		});
-	}
-
-	const pullStream$ = new Subject<
-		RxReplicationPullStreamItem<Donation, { updated: string }>
-	>();
-
-	const unsubscribe = await pb
-		.collection('donations')
-		.subscribe<Donation>('*', (e) => {
-			pullStream$.next({
-				documents: [{ ...e.record, _deleted: false }],
-				checkpoint: { updated: e.record.updated },
-			});
-		});
-
-	addEventListener('beforeunload', () => {
-		void unsubscribe();
-	});
-
-	replicateRxCollection<Donation, { updated: string } | undefined>({
-		collection: db.donations,
-		replicationIdentifier: 'cms-donations-replication',
-		pull: {
-			async handler(checkpoint, batchSize) {
-				const options: RecordListOptions = {
-					sort: '-updated',
-				};
-
-				if (checkpoint) {
-					options.filter = `(updated>'${checkpoint.updated}')`;
-				}
-
-				const result = await pb
-					.collection('donations')
-					.getList<Donation>(1, batchSize, options);
-
-				return {
-					documents: result.items.map((donation) => ({
-						...donation,
-						_deleted: false,
-					})),
-					checkpoint:
-						result.items.length > 0 ?
-							{ updated: result.items[0].updated }
-						:	checkpoint,
-				};
-			},
-			stream$: pullStream$,
-		},
-	});
+	DonationPopup.init(app, viewport);
 }
 
 void (async () => {
-	await Promise.all([pixiMain(), dataMain()]);
+	await setupPixi();
 
 	// Navbar logic
 	const donateDialog = document.getElementById(
