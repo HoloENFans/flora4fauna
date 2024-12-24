@@ -47,6 +47,17 @@ export class FrontUi extends LitElement {
 		addClickListener('accountability-modal');
 		addClickListener('about-modal');
 		addClickListener('donate-modal');
+
+		// Check if user has entered page for first time
+		// If so, open the about modal
+		const hasVisited = localStorage.getItem('hasVisited');
+		if (hasVisited !== 'true') {
+			const aboutModal = document.querySelector('about-modal');
+			if (aboutModal) {
+				aboutModal.isOpen = true;
+			}
+			localStorage.setItem('hasVisited', 'true');
+		}
 	}
 }
 
