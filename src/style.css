@@ -5,23 +5,6 @@
 @font-face {
   font-family: 'UnifontExMono';
   src: url('/UnifontExMono.woff2') format('woff2');
-  font-family: 'UnifontExMono';
-  src: url('/UnifontExMono.woff2') format('woff2');
-}
-
-@layer components {
-  .btn {
-    @apply relative border-4 border-border bg-primary py-2 font-bold uppercase tracking-wide text-primary-foreground transition-all md:px-6;
-  }
-
-  .btn:hover {
-    @apply opacity-90;
-  }
-
-  /* click bounce */
-  .btn:active {
-    @apply scale-[99%];
-  }
 }
 
 body {
@@ -41,6 +24,19 @@ body {
 }
 
 /* General UI */
+.btn {
+    @apply relative border-4 border-border bg-primary py-2 font-bold uppercase tracking-wide text-primary-foreground transition-all md:px-6;
+}
+
+.btn:hover {
+    @apply opacity-90;
+}
+
+/* click bounce */
+.btn:active {
+    @apply scale-[99%];
+}
+
 .modal {
   font-family: 'UnifontExMono', sans-serif;
   animation: modal-in 0.3s ease-out;
@@ -70,7 +66,7 @@ dialog::backdrop {
 }
 
 .bordered-text {
-  @apply text-primary-foreground;
+  @apply text-primary-foreground tracking-wider;
   text-shadow:
     1px 1px 0 #000,
     -1px 1px 0 #000,
