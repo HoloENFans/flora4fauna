@@ -13,7 +13,7 @@ export class FrontUi extends LitElement {
 				<!-- Navbar -->
 				<div>
 					<div
-						class="fixed bottom-0 z-10 flex w-screen items-center justify-evenly gap-6 bg-[#E0E5DC] px-8"
+						class="fixed bottom-0 z-10 flex w-screen items-center justify-evenly bg-[#E0E5DC]"
 					>
 						<button id="open-about-modal" class="front-button">
 							About
