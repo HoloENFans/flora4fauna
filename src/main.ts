@@ -128,14 +128,12 @@ function setupTree(viewport: Viewport) {
 	treeContainer.cullableChildren = true;
 
 	viewport.addChild(treeContainer);
-	// TODO: Update this to properly center Fauna into frame
 	viewport.setZoom(0.4);
 	const faunaNemu = Sprite.from('Fauna_Nemu');
-	viewport.snap(bottomMiddleX, bottomMiddleY - faunaNemu.height / 2, {
-		friction: 0,
-		time: 100,
-		removeOnComplete: true,
-	});
+	viewport.moveCenter(
+		bottomMiddleX + 80,
+		bottomMiddleY - faunaNemu.height / 2,
+	);
 	faunaNemu.destroy();
 }
 
