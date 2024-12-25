@@ -114,10 +114,7 @@ async function setupTextures() {
 		manifest: '/assets/manifest.json',
 	});
 
-	await Assets.loadBundle('default', (progress) => {
-		// TODO: Loading screen
-		console.log('Load progress', progress);
-	});
+	await Assets.loadBundle('default');
 }
 
 function setupTree(viewport: Viewport) {
@@ -138,6 +135,8 @@ async function setupPixi() {
 	setupTree(viewport);
 
 	DonationPopup.init(app, viewport);
+
+	document.getElementById('loading-screen')!.remove();
 }
 
 void (async () => {
