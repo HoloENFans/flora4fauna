@@ -11,7 +11,7 @@
 
 @layer components {
   .btn {
-    @apply border-primary bg-primary/50 text-primary-foreground relative border-4 px-6 py-2 font-bold uppercase tracking-wide;
+    @apply relative border-4 border-primary bg-primary/50 px-6 py-2 font-bold uppercase tracking-wide text-primary-foreground;
   }
   .btn:hover {
     @apply bg-primary/70;
@@ -64,6 +64,27 @@ dialog::backdrop {
 
 .separator {
   @apply mt-2 h-[1px] bg-gray-300;
+}
+
+.front-label {
+  @apply text-3xl font-bold text-primary-foreground transition-all duration-[100ms];
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 1px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000;
+}
+
+.front-button {
+  @apply front-label cursor-pointer p-4;
+}
+
+.donate-label {
+  @apply text-6xl;
+}
+
+.front-button:hover {
+  @apply text-green-200;
 }
 
 h1 {
