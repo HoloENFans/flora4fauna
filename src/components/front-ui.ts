@@ -35,7 +35,7 @@ export class FrontUi extends LitElement {
 							class="front-label flex flex-col items-center"
 						>
 							<span class="text-2xl">Total Raised</span>
-							<span>$50000000</span>
+							<span id="total-donation-value"></span>
 						</div>
 						<button
 							id="open-find-donation-modal"
@@ -78,6 +78,24 @@ export class FrontUi extends LitElement {
 				aboutModal.isOpen = true;
 			}
 			localStorage.setItem('hasVisited', 'true');
+		}
+
+		// Set total donation value, formatted as currency
+		// Ex: 1000000 -> $1,000,000
+		const totalDonationValue = document.querySelector(
+			'#total-donation-value',
+		);
+		if (totalDonationValue) {
+			// Temporary placeholder value
+			const totalDonation = 1000000;
+			totalDonationValue.textContent = totalDonation.toLocaleString(
+				'en-US',
+				{
+					style: 'currency',
+					currency: 'USD',
+					minimumFractionDigits: 0,
+				},
+			);
 		}
 	}
 }
