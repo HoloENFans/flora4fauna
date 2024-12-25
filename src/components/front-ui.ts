@@ -1,9 +1,15 @@
 import { html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { BaseModal } from './base-modal';
 
 @customElement('front-ui')
 export class FrontUi extends LitElement {
+	@property({ type: Number, reflect: true })
+	donations = 0;
+
+	@property({ type: Number, reflect: true })
+	totalAmount = 0;
+
 	protected createRenderRoot(): HTMLElement | DocumentFragment {
 		return this;
 	}
@@ -31,11 +37,17 @@ export class FrontUi extends LitElement {
 							Donate
 						</button>
 						<div
-							id="total-donation"
-							class="front-label flex flex-col items-center"
+							id="open-stats-modal"
+							class="front-button flex flex-col items-center"
 						>
 							<span class="text-2xl">Total Raised</span>
-							<span id="total-donation-value"></span>
+							<span id="total-donation-value">
+								${this.totalAmount.toLocaleString('en-US', {
+									style: 'currency',
+									currency: 'USD',
+									minimumFractionDigits: 0,
+								})}
+							</span>
 						</div>
 						<button
 							id="open-find-donation-modal"
@@ -51,6 +63,10 @@ export class FrontUi extends LitElement {
 				<about-modal></about-modal>
 				<donate-modal></donate-modal>
 				<find-donation-modal></find-donation-modal>
+				<stats-modal
+					.donations=${this.donations}
+					.totalAmount=${this.totalAmount}
+				></stats-modal>
 			</div>
 		`;
 	}
@@ -68,6 +84,7 @@ export class FrontUi extends LitElement {
 		addClickListener('about-modal');
 		addClickListener('donate-modal');
 		addClickListener('find-donation-modal');
+		addClickListener('stats-modal');
 
 		// Check if user has entered page for first time
 		// If so, open the about modal
@@ -80,23 +97,9 @@ export class FrontUi extends LitElement {
 			localStorage.setItem('hasVisited', 'true');
 		}
 
-		// Set total donation value, formatted as currency
-		// Ex: 1000000 -> $1,000,000
-		const totalDonationValue = document.querySelector(
-			'#total-donation-value',
-		);
-		if (totalDonationValue) {
-			// Temporary placeholder value
-			const totalDonation = 1000000;
-			totalDonationValue.textContent = totalDonation.toLocaleString(
-				'en-US',
-				{
-					style: 'currency',
-					currency: 'USD',
-					minimumFractionDigits: 0,
-				},
-			);
-		}
+		// Temp values
+		this.totalAmount = 1000000;
+		this.donations = 10000;
 	}
 }
 

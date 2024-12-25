@@ -49,7 +49,7 @@ body {
 }
 
 .modal-content {
-  @apply max-h-[80vh] max-w-[60vw] overflow-y-auto;
+  @apply max-h-[80vh] max-w-[90vw] overflow-y-auto lg:max-w-[60vw];
 }
 
 /* Overwriting default dialog backdrop to allow transition  */
@@ -70,13 +70,17 @@ dialog::backdrop {
   @apply m-2 h-[1px] bg-gray-300;
 }
 
-.front-label {
-  @apply text-2xl font-bold text-primary-foreground transition-all duration-[100ms] lg:text-3xl;
+.bordered-text {
+  @apply text-primary-foreground;
   text-shadow:
     1px 1px 0 #000,
     -1px 1px 0 #000,
     -1px -1px 0 #000,
     1px -1px 0 #000;
+}
+
+.front-label {
+  @apply bordered-text text-2xl font-bold transition-all duration-[100ms] lg:text-3xl;
 }
 
 .front-button {
