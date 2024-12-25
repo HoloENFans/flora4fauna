@@ -179,29 +179,5 @@ async function setupOverview() {
 
 void (async () => {
 	await setupPixi();
-
 	await setupOverview();
-
-	// Navbar logic
-	const donateDialog = document.getElementById(
-		'donate-dialog',
-	)! as HTMLDialogElement;
-	const donateBtn = document.getElementById('donate-btn')!;
-	donateBtn.addEventListener('click', () => {
-		donateDialog.showModal();
-	});
-
-	const mobileNavOpenBtn = document.getElementById('mobile-nav-open-bar')!;
-	const mobileNavCloseBtn = document.getElementById('mobile-nav-close-bar')!;
-	const mobileNavDrawer = document.getElementById('mobile-nav-drawer')!;
-
-	mobileNavOpenBtn.addEventListener('click', () => {
-		mobileNavDrawer.classList.remove('hidden', 'translate-y-full');
-		mobileNavDrawer.classList.add('translate-y-0');
-	});
-
-	mobileNavCloseBtn.addEventListener('click', () => {
-		mobileNavDrawer.classList.add('translate-y-full');
-		mobileNavDrawer.classList.remove('translate-y-0', 'hidden');
-	});
 })();

@@ -17,46 +17,41 @@ export class FrontUi extends LitElement {
 		return html`
 			<div>
 				<!-- Navbar -->
-				<div>
-					<div
-						class="fixed bottom-0 z-10 flex w-screen items-center justify-evenly bg-[#E0E5DC]"
+				<div
+					class="fixed bottom-0 z-10 hidden w-screen items-center justify-evenly bg-black/60 md:flex"
+				>
+					<button id="open-about-modal" class="front-button">
+						About
+					</button>
+					<button id="open-accountability-modal" class="front-button">
+						Accountability
+					</button>
+					<button
+						class="front-button donate-label"
+						id="open-donate-modal"
 					>
-						<button id="open-about-modal" class="front-button">
-							About
-						</button>
-						<button
-							id="open-accountability-modal"
-							class="front-button"
-						>
-							Accountability
-						</button>
-						<button
-							class="front-button donate-label"
-							id="open-donate-modal"
-						>
-							Donate
-						</button>
-						<div
-							id="open-stats-modal"
-							class="front-button flex flex-col items-center"
-						>
-							<span class="text-2xl">Total Raised</span>
-							<span id="total-donation-value">
-								${this.totalAmount.toLocaleString('en-US', {
-									style: 'currency',
-									currency: 'USD',
-									minimumFractionDigits: 0,
-								})}
-							</span>
-						</div>
-						<button
-							id="open-find-donation-modal"
-							class="front-button"
-						>
-							Find Donation
-						</button>
+						Donate
+					</button>
+					<div
+						id="open-stats-modal"
+						class="front-button flex flex-col items-center"
+					>
+						<span class="text-2xl">Total Raised</span>
+						<span id="total-donation-value">
+							${this.totalAmount.toLocaleString('en-US', {
+								style: 'currency',
+								currency: 'USD',
+								minimumFractionDigits: 0,
+							})}
+						</span>
 					</div>
+					<button id="open-find-donation-modal" class="front-button">
+						Find Donation
+					</button>
 				</div>
+
+				<!-- Mobile Nav -->
+				<mobile-nav .totalAmount=${this.totalAmount}></mobile-nav>
 
 				<!-- Modals -->
 				<accountability-modal></accountability-modal>
@@ -73,6 +68,7 @@ export class FrontUi extends LitElement {
 	firstUpdated() {
 		const addClickListener = (query: string) => {
 			const modalButton = document.querySelector('#open-' + query);
+			console.log(modalButton);
 			const modal: BaseModal | null = document.querySelector(query);
 			modalButton?.addEventListener('click', () => {
 				if (modal) {

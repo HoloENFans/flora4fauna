@@ -34,8 +34,8 @@ export class StatsModal extends LitElement {
 					slot="content"
 					class="flex flex-col gap-4 md:min-w-[500px]"
 				>
-					<h2
-						class="flex items-center justify-between gap-10 md:gap-0"
+					<p
+						class="flex items-center justify-between gap-20 text-xl font-bold md:gap-0"
 					>
 						<span class="underline underline-offset-4"
 							>Number of donations:</span
@@ -43,20 +43,22 @@ export class StatsModal extends LitElement {
 						<span class="bordered-text"
 							>${this.donations.toLocaleString('en-US')}</span
 						>
-					</h2>
+					</p>
 
-					<h2 class="flex items-center justify-between">
+					<p
+						class="flex items-center justify-between text-xl font-bold"
+					>
 						<span class="underline underline-offset-4"
 							>Total amount raised:</span
 						>
-						<span class="bordered-text"
-							>${this.totalAmount.toLocaleString('en-US', {
+						<span class="bordered-text">
+							${this.totalAmount.toLocaleString('en-US', {
 								style: 'currency',
 								currency: 'USD',
 								minimumFractionDigits: 0,
 							})}
 						</span>
-					</h2>
+					</p>
 				</div>
 			</base-modal>
 		`;

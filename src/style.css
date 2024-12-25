@@ -11,7 +11,7 @@
 
 @layer components {
   .btn {
-    @apply relative border-4 border-primary bg-primary/70 px-6 py-2 font-bold uppercase tracking-wide text-primary-foreground transition-all;
+    @apply border-border relative border-4 bg-primary px-6 py-2 font-bold uppercase tracking-wide text-primary-foreground transition-all;
   }
   .btn:hover {
     @apply opacity-90;
@@ -122,4 +122,19 @@ h2 {
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-500;
+}
+
+/* For the mobile nav open arrow */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.open-arrow {
+  animation: float 1.5s ease-in-out infinite;
 }
