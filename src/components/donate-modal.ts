@@ -24,8 +24,12 @@ export class DonateModal extends LitElement {
 				<div
 					slot="content"
 					id="mmd_widget_iframe_div"
+					data-dedication-label="Your username"
 					data-dedication-value="Anonymous Sapling"
 					data-topic="tree_planting"
+					data-dedication-max-length="24"
+					data-message-max-length="321"
+					data-disable-configuration="true"
 				></div>
 			</base-modal>
 		`;
