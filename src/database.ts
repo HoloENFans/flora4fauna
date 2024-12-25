@@ -6,16 +6,15 @@ import {
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import { Subject } from 'rxjs';
 import { replicateRxCollection } from 'rxdb/plugins/replication';
-import PocketBase, { RecordListOptions } from 'pocketbase';
+import type { RecordListOptions } from 'pocketbase';
 import type { Donation } from './donationPopup.ts';
-
-const pb = new PocketBase(`https://base.flora4fauna.net`);
+import pb from './pocketbase.ts';
 
 class Database {
 	static #instance: RxDatabase;
 
 	public static get instance() {
-		return (async () => {
+		return async () => {
 			if (!this.#instance) {
 				this.#instance = await createRxDatabase({
 					name: 'flora4fauna',
@@ -104,7 +103,7 @@ class Database {
 			}
 
 			return this.#instance;
-		})();
+		};
 	}
 }
 

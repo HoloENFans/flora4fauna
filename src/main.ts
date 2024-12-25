@@ -1,6 +1,6 @@
 import './style.css';
 
-import { Application, Assets, Container, Rectangle } from 'pixi.js';
+import { Application, Assets, Container, Rectangle, Sprite } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
@@ -125,8 +125,13 @@ function setupTree(viewport: Viewport) {
 	treeContainer.cullableChildren = true;
 
 	viewport.addChild(treeContainer);
-	// TODO: Update this to properly center Fauna into frame
-	viewport.ensureVisible(bottomMiddleX + 700, bottomMiddleY - 400, 800, 800);
+	viewport.setZoom(0.4);
+	const faunaNemu = Sprite.from('Fauna_Nemu');
+	viewport.moveCenter(
+		bottomMiddleX + 80,
+		bottomMiddleY - faunaNemu.height / 2,
+	);
+	faunaNemu.destroy();
 }
 
 async function setupPixi() {
@@ -141,13 +146,4 @@ async function setupPixi() {
 
 void (async () => {
 	await setupPixi();
-
-	// Navbar logic
-	const donateDialog = document.getElementById(
-		'donate-dialog',
-	)! as HTMLDialogElement;
-	const donateBtn = document.getElementById('donate-btn')!;
-	donateBtn.addEventListener('click', () => {
-		donateDialog.showModal();
-	});
 })();

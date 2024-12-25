@@ -4,42 +4,28 @@
 		<meta charset="UTF-8" />
 		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Flora4Fauna</title>
+
+		<!-- Widget -->
 		<script
 			src="https://files.makemydonation.org/v-1/donation-widget.js"
 			type="text/javascript"
 		></script>
-		<title>Flora4Fauna</title>
+
+		<!-- Components -->
+		<script type="module" src="/src/components/index.ts"></script>
+
+		<!-- Scripts -->
+		<script defer type="module" src="/src/main.ts"></script>
 	</head>
-	<body class="relative h-screen w-screen">
-		<dialog id="donate-dialog">
-			<form class="relative rounded-xl bg-white p-8" method="dialog">
-				<div
-					id="mmd_widget_iframe_div"
-					data-dedication-label="Your username"
-					data-dedication-value="Anonymous Sapling"
-					data-topic="tree_planting"
-					data-dedication-max-length="24"
-					data-message-max-length="321"
-					data-disable-configuration="true"
-				></div>
-				<button class="absolute right-4 top-4 p-1" value="cancel">
-					Close X
-				</button>
-			</form>
-		</dialog>
+	<body class="relative">
 		<div id="app"></div>
-		<div
-			class="fixed bottom-0 z-10 flex h-24 w-screen items-center gap-6 bg-[#E0E5DC] px-8"
-		>
-			<button class="btn" id="donate-btn">Donate</button>
-			<button class="btn">Japanese characters support あいうえお</button>
-		</div>
 		<div
 			class="absolute left-0 top-0 z-50 grid h-screen w-screen place-items-center bg-[#E0E5DC]"
 			id="loading-screen"
 		>
 			<h1 class="text-xl font-bold">Loading...</h1>
 		</div>
-		<script type="module" src="/src/main.ts"></script>
+		<front-ui></front-ui>
 	</body>
 </html>

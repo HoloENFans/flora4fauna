@@ -8,6 +8,7 @@ function positionAndInsertSprite(
 	x: number,
 	y: number,
 ): void {
+	sprite.cullable = true;
 	sprite.anchor.set(anchorX, anchorY);
 	sprite.position.set(x, y);
 	container.addChild(sprite);
