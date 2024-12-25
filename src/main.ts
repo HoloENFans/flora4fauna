@@ -20,6 +20,33 @@ async function setup(): Promise<[Application, Viewport]> {
 	// ! Should be removed in prod
 	void initDevtools({ app });
 
+	const background = Sprite.from('Background');
+	background.setSize(window.innerWidth, window.innerHeight);
+	const bgViewport = new Viewport({
+		screenWidth: window.innerWidth,
+		screenHeight: window.innerHeight,
+		worldWidth: window.innerWidth,
+		worldHeight: window.innerHeight,
+		events: app.renderer.events,
+	});
+
+	bgViewport
+		.drag()
+		.pinch()
+		.decelerate()
+		.wheel()
+		.clamp({
+			left: 0,
+			right: bgViewport.worldWidth,
+			top: 0,
+			bottom: bgViewport.worldHeight,
+			underflow: 'none',
+		})
+		.clampZoom({ minScale: 1, maxScale: 4 });
+	bgViewport.addChild(background);
+
+	app.stage.addChild(bgViewport);
+
 	const viewport = new Viewport({
 		screenWidth: window.innerWidth,
 		screenHeight: window.innerHeight,
@@ -30,6 +57,13 @@ async function setup(): Promise<[Application, Viewport]> {
 
 	window.addEventListener('resize', () => {
 		viewport.resize(window.innerWidth, window.innerHeight);
+		background.setSize(window.innerWidth, window.innerHeight);
+		bgViewport.resize(
+			window.innerWidth,
+			window.innerHeight,
+			window.innerWidth,
+			window.innerHeight,
+		);
 	});
 
 	viewport
@@ -43,14 +77,14 @@ async function setup(): Promise<[Application, Viewport]> {
 				x: 0,
 				width: viewport.worldWidth,
 				y: -viewport.worldHeight,
-				height: viewport.worldHeight * 2,
+				height: viewport.worldHeight,
 			},
 		})
 		.clamp({
 			left: 0,
 			right: viewport.worldWidth,
 			top: -(viewport.worldHeight / 2),
-			bottom: viewport.worldHeight * 1.5,
+			bottom: viewport.worldHeight,
 			underflow: 'none',
 		})
 		.clampZoom({ minScale: 0.25, maxScale: 4 });
@@ -135,8 +169,8 @@ function setupTree(viewport: Viewport) {
 }
 
 async function setupPixi() {
-	const [app, viewport] = await setup();
 	await setupTextures();
+	const [app, viewport] = await setup();
 	setupTree(viewport);
 
 	DonationPopup.init(app, viewport);

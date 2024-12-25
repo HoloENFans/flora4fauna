@@ -1,5 +1,5 @@
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import { BaseModal } from './base-modal';
 import { CountUp } from 'countup.js';
 import Stats from '../stats.ts';
