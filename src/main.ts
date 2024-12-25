@@ -157,12 +157,19 @@ async function setupOverview() {
 	countUp.start();
 
 	const db = await Database();
+
+	async function updateRaised() {
+		const newRaised = await overviewCollection.getOne('overview');
+		countUp.update(newRaised.amount);
+	}
+
 	db.donations.$.subscribe(() => {
-		void (async () => {
-			const newRaised = await overviewCollection.getOne('overview');
-			countUp.update(newRaised.amount);
-		})();
+		void updateRaised();
 	});
+
+	setInterval(() => {
+		void updateRaised();
+	}, 30 * 1000);
 }
 
 void (async () => {
