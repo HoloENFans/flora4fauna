@@ -1,12 +1,11 @@
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import { BaseModal } from './base-modal';
+import { CountUp } from 'countup.js';
+import Stats from '../stats.ts';
 
 @customElement('mobile-nav')
 export class MobileNav extends LitElement {
-	@property({ type: Number, reflect: true })
-	totalAmount = 0;
-
 	protected createRenderRoot(): HTMLElement | DocumentFragment {
 		return this;
 	}
@@ -32,7 +31,7 @@ export class MobileNav extends LitElement {
 					class="bordered-text absolute right-4 top-2 font-bold"
 					id="mobile-nav-close-bar"
 				>
-					<p class="text-xl">▼</p>
+					<p class="text-xl">×</p>
 				</button>
 
 				<button
@@ -40,13 +39,7 @@ export class MobileNav extends LitElement {
 					class="bordered-text mx-auto mt-4 flex flex-col items-center justify-center font-bold"
 				>
 					<span>Total Raised</span>
-					<span class="text-4xl">
-						${this.totalAmount.toLocaleString('en-US', {
-							style: 'currency',
-							currency: 'USD',
-							minimumFractionDigits: 0,
-						})}</span
-					>
+					<span class="text-4xl" id="mobile-total-raised"></span>
 				</button>
 
 				<div class="grid grid-cols-2 justify-center gap-2 px-8 py-4">
@@ -99,6 +92,15 @@ export class MobileNav extends LitElement {
 		mobileNavCloseBtn.addEventListener('click', () => {
 			mobileNavDrawer.classList.add('translate-y-full');
 			mobileNavOpenBtn.classList.remove('hidden');
+		});
+
+		const countUp = new CountUp('mobile-total-raised', Stats.totalRaised, {
+			prefix: '$',
+		});
+		countUp.start();
+
+		Stats.on('totalRaised', (e) => {
+			countUp.update((e as CustomEvent<number>).detail);
 		});
 	}
 }

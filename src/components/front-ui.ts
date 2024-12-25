@@ -1,6 +1,8 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { BaseModal } from './base-modal';
+import { CountUp } from 'countup.js';
+import Stats from '../stats.ts';
 
 @customElement('front-ui')
 export class FrontUi extends LitElement {
@@ -18,7 +20,7 @@ export class FrontUi extends LitElement {
 			<div>
 				<!-- Navbar -->
 				<div
-					class="fixed bottom-0 z-10 hidden w-screen items-center justify-evenly bg-black/60 md:flex"
+					class="fixed bottom-0 z-10 hidden w-screen items-center justify-evenly bg-black/65 md:flex"
 				>
 					<button id="open-about-modal" class="front-button">
 						About
@@ -37,13 +39,7 @@ export class FrontUi extends LitElement {
 						class="front-button flex flex-col items-center"
 					>
 						<span class="text-2xl">Total Raised</span>
-						<span id="total-donation-value">
-							${this.totalAmount.toLocaleString('en-US', {
-								style: 'currency',
-								currency: 'USD',
-								minimumFractionDigits: 0,
-							})}
-						</span>
+						<span id="navbar-total-raised"></span>
 					</div>
 					<button id="open-find-donation-modal" class="front-button">
 						Find Donation
@@ -51,24 +47,20 @@ export class FrontUi extends LitElement {
 				</div>
 
 				<!-- Mobile Nav -->
-				<mobile-nav .totalAmount=${this.totalAmount}></mobile-nav>
+				<mobile-nav></mobile-nav>
 
 				<!-- Modals -->
 				<accountability-modal></accountability-modal>
 				<about-modal></about-modal>
 				<donate-modal></donate-modal>
 				<find-donation-modal></find-donation-modal>
-				<stats-modal
-					.donations=${this.donations}
-					.totalAmount=${this.totalAmount}
-				></stats-modal>
+				<stats-modal></stats-modal>
 			</div>
 		`;
 	}
 	firstUpdated() {
 		const addClickListener = (query: string) => {
 			const modalButton = document.querySelector('#open-' + query);
-			console.log(modalButton);
 			const modal: BaseModal | null = document.querySelector(query);
 			modalButton?.addEventListener('click', () => {
 				if (modal) {
@@ -93,9 +85,22 @@ export class FrontUi extends LitElement {
 			localStorage.setItem('hasVisited', 'true');
 		}
 
-		// Temp values
-		this.totalAmount = 1000000;
-		this.donations = 10000;
+		const countUp = new CountUp('navbar-total-raised', Stats.totalRaised, {
+			prefix: '$',
+		});
+		countUp.start();
+		this.totalAmount = Stats.totalRaised;
+		this.donations = Stats.donationCount;
+
+		Stats.on('totalRaised', (e) => {
+			const value = (e as CustomEvent<number>).detail;
+			countUp.update(value);
+			this.totalAmount = value;
+		});
+
+		Stats.on('donationCount', (e) => {
+			this.donations = (e as CustomEvent<number>).detail;
+		});
 	}
 }
 

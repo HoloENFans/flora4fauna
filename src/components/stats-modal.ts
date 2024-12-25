@@ -1,20 +1,41 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import './base-modal.ts';
+import { CountUp } from 'countup.js';
+import Stats from '../stats.ts';
 
 @customElement('stats-modal')
 export class StatsModal extends LitElement {
 	@property({ type: Boolean, reflect: true })
 	isOpen = false;
 
-	@property({ type: Number })
-	donations = 0;
-
-	@property({ type: Number })
-	totalAmount = 0;
-
 	protected createRenderRoot(): HTMLElement | DocumentFragment {
 		return this;
+	}
+
+	protected firstUpdated() {
+		const donationCounter = new CountUp(
+			'stats-modal-donation-count',
+			Stats.donationCount,
+		);
+		const totalRaisedCounter = new CountUp(
+			'stats-modal-total-raised',
+			Stats.totalRaised,
+			{
+				prefix: '$',
+			},
+		);
+
+		donationCounter.start();
+		totalRaisedCounter.start();
+
+		Stats.on('totalRaised', (e) => {
+			totalRaisedCounter.update((e as CustomEvent<number>).detail);
+		});
+
+		Stats.on('donationCount', (e) => {
+			donationCounter.update((e as CustomEvent<number>).detail);
+		});
 	}
 
 	handleModalClosed() {
@@ -40,9 +61,10 @@ export class StatsModal extends LitElement {
 						<span class="underline underline-offset-4"
 							>Number of donations:</span
 						>
-						<span class="bordered-text"
-							>${this.donations.toLocaleString('en-US')}</span
-						>
+						<span
+							class="bordered-text"
+							id="stats-modal-donation-count"
+						></span>
 					</p>
 
 					<p
@@ -51,12 +73,10 @@ export class StatsModal extends LitElement {
 						<span class="underline underline-offset-4"
 							>Total amount raised:</span
 						>
-						<span class="bordered-text">
-							${this.totalAmount.toLocaleString('en-US', {
-								style: 'currency',
-								currency: 'USD',
-								minimumFractionDigits: 0,
-							})}
+						<span
+							class="bordered-text"
+							id="stats-modal-total-raised"
+						>
 						</span>
 					</p>
 				</div>

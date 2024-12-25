@@ -6,9 +6,6 @@ import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
 import { buildTreeSpriteGraph } from './tree.ts';
 import DonationPopup from './donationPopup.ts';
-import { CountUp } from 'countup.js';
-import pb from './pocketbase.ts';
-import Database from './database.ts';
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -148,36 +145,6 @@ async function setupPixi() {
 	DonationPopup.init(app, viewport);
 }
 
-async function setupOverview() {
-	const overviewCollection = pb.collection<{ amount: number; count: number }>(
-		'overview',
-	);
-
-	const raised = await overviewCollection.getOne('overview');
-
-	const countUp = new CountUp('amount-raised', raised.amount, {
-		prefix: '$',
-		suffix: ' raised',
-	});
-	countUp.start();
-
-	const db = await Database();
-
-	async function updateRaised() {
-		const newRaised = await overviewCollection.getOne('overview');
-		countUp.update(newRaised.amount);
-	}
-
-	db.donations.$.subscribe(() => {
-		void updateRaised();
-	});
-
-	setInterval(() => {
-		void updateRaised();
-	}, 30 * 1000);
-}
-
 void (async () => {
 	await setupPixi();
-	await setupOverview();
 })();
