@@ -11,10 +11,10 @@
 
 @layer components {
   .btn {
-    @apply relative border-4 border-primary bg-primary/50 px-6 py-2 font-bold uppercase tracking-wide text-primary-foreground;
+    @apply relative border-4 border-primary bg-primary/70 px-6 py-2 font-bold uppercase tracking-wide text-primary-foreground transition-all;
   }
   .btn:hover {
-    @apply bg-primary/70;
+    @apply opacity-90;
   }
 }
 
