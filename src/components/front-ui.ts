@@ -34,7 +34,7 @@ export class FrontUi extends LitElement {
 							id="total-donation"
 							class="front-label flex flex-col items-center"
 						>
-							<span>Total Raised</span>
+							<span class="text-2xl">Total Raised</span>
 							<span>$50000000</span>
 						</div>
 						<button

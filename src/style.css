@@ -67,7 +67,7 @@ dialog::backdrop {
 }
 
 .front-label {
-  @apply text-3xl font-bold text-primary-foreground transition-all duration-[100ms];
+  @apply text-2xl font-bold text-primary-foreground transition-all duration-[100ms] lg:text-3xl;
   text-shadow:
     1px 1px 0 #000,
     -1px 1px 0 #000,
@@ -80,7 +80,7 @@ dialog::backdrop {
 }
 
 .donate-label {
-  @apply text-6xl;
+  @apply text-4xl min-[850px]:text-6xl;
 }
 
 .front-button:hover {
