@@ -16,6 +16,10 @@
   .btn:hover {
     @apply opacity-90;
   }
+  /* click bounce */
+  .btn:active {
+    @apply scale-[99%];
+  }
 }
 
 body {
