@@ -63,7 +63,7 @@ dialog::backdrop {
 }
 
 .separator {
-  @apply mt-2 h-[1px] bg-gray-300;
+  @apply m-2 h-[1px] bg-gray-300;
 }
 
 .front-label {
@@ -85,6 +85,10 @@ dialog::backdrop {
 
 .front-button:hover {
   @apply text-green-200;
+}
+
+.text-input {
+  @apply w-full rounded-md border-2 border-gray-300 p-2;
 }
 
 h1 {

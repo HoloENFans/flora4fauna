@@ -34,10 +34,15 @@ export class FrontUi extends LitElement {
 							id="total-donation"
 							class="front-label flex flex-col items-center"
 						>
-							<span>Total</span>
+							<span>Total Raised</span>
 							<span>$50000000</span>
 						</div>
-						<button class="front-button">Find Donation</button>
+						<button
+							id="open-find-donation-modal"
+							class="front-button"
+						>
+							Find Donation
+						</button>
 					</div>
 				</div>
 
@@ -45,6 +50,7 @@ export class FrontUi extends LitElement {
 				<accountability-modal></accountability-modal>
 				<about-modal></about-modal>
 				<donate-modal></donate-modal>
+				<find-donation-modal></find-donation-modal>
 			</div>
 		`;
 	}
@@ -61,6 +67,7 @@ export class FrontUi extends LitElement {
 		addClickListener('accountability-modal');
 		addClickListener('about-modal');
 		addClickListener('donate-modal');
+		addClickListener('find-donation-modal');
 
 		// Check if user has entered page for first time
 		// If so, open the about modal
