@@ -6,15 +6,10 @@ import Stats from '../stats.ts';
 
 @customElement('front-ui')
 export class FrontUi extends LitElement {
-	@property({ type: Number, reflect: true })
-	donations = 0;
-
-	@property({ type: Number, reflect: true })
-	totalAmount = 0;
-
 	protected createRenderRoot(): HTMLElement | DocumentFragment {
 		return this;
 	}
+
 	render() {
 		return html`
 			<div>
@@ -89,17 +84,10 @@ export class FrontUi extends LitElement {
 			prefix: '$',
 		});
 		countUp.start();
-		this.totalAmount = Stats.totalRaised;
-		this.donations = Stats.donationCount;
 
 		Stats.on('totalRaised', (e) => {
 			const value = (e as CustomEvent<number>).detail;
 			countUp.update(value);
-			this.totalAmount = value;
-		});
-
-		Stats.on('donationCount', (e) => {
-			this.donations = (e as CustomEvent<number>).detail;
 		});
 	}
 }
