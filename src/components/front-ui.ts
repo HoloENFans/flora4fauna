@@ -34,7 +34,7 @@ export class FrontUi extends LitElement {
 			</div>
 		`;
 	}
-	updated() {
+	firstUpdated() {
 		const addClickListener = (query: string) => {
 			const modalButton = document.querySelector('#open-' + query);
 			const modal: BaseModal | null = document.querySelector(query);
