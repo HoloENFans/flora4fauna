@@ -64,7 +64,7 @@ async function setup(): Promise<[Application, Viewport]> {
 	const background = Sprite.from('Background');
 	background.position.set(
 		viewport.worldWidth / 2 - 7000,
-		viewport.worldHeight - 6800,
+		viewport.worldHeight - 6700,
 	);
 	viewport.addChild(background);
 
