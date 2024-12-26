@@ -10,6 +10,7 @@ import {
 	Sprite,
 	TexturePool,
 	Text,
+	ColorMatrixFilter,
 } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
@@ -181,6 +182,9 @@ function setupSigns(viewport: Viewport) {
 	const arborDaySign = Sprite.from('Wooden_Sign');
 	arborDaySign.anchor.set(0.5);
 	arborDaySign.angle = 4;
+	const brightnessFilter = new ColorMatrixFilter();
+	brightnessFilter.brightness(1.5, true);
+	arborDaySign.filters = brightnessFilter;
 
 	const arborDayLogo = Sprite.from('ArborDayFoundation');
 	arborDayLogo.anchor.set(0.5, 0.93);
