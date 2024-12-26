@@ -17,6 +17,7 @@ import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
 import { buildTreeSpriteGraph } from './tree.ts';
 import DonationPopup from './donationPopup.ts';
+import { Sound } from '@pixi/sound';
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -240,15 +241,15 @@ async function setupPixi() {
 					loadingScreen.remove();
 				}, 2000);
 
-				// TODO: Don't think this is the right way to do this, replace with correct method later
-				const backgroundMusic: HTMLAudioElement | null = new Audio(
-					'/assets/bgm.mp3',
-				);
-				if (backgroundMusic) {
-					backgroundMusic.loop = true;
-					backgroundMusic.volume = 0.3;
-					backgroundMusic.play();
-				}
+				void Assets.loadBundle('default').then((resources) => {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
+					const backgroundMusic = Sound.from(resources.bgm);
+					void backgroundMusic.play({
+						loop: true,
+						singleInstance: true,
+						volume: 0.3,
+					});
+				});
 
 				// Check if user has entered page for first time
 				// If so, open the about modal
