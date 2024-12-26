@@ -21,10 +21,17 @@
 	<body class="relative">
 		<div id="app"></div>
 		<div
-			class="absolute left-0 top-0 z-50 grid h-screen w-screen place-items-center bg-[#E0E5DC]"
+			class="absolute left-0 top-0 z-50 h-screen w-screen flex flex-col items-center justify-center gap-5 bg-[#E0E5DC]"
 			id="loading-screen"
 		>
-			<h1 class="text-xl font-bold">Loading...</h1>
+			<img src="ui-assets/loading/sapling.gif" class="w-[200px] h-auto" alt="sapling"></img>
+			<div class="flex flex-col items-center gap-1 font-bold bordered-text text-2xl">
+				<div>
+					<span>Chotto matte ne</span>
+					<img src="ui-assets/loading/loading.gif" class="inline h-[15px] w-auto mb-[5px]" alt="loading"></img>
+				</div>
+				 <span id="progress" class="block text-center">0%</span>
+			</div>
 		</div>
 		<front-ui></front-ui>
 	</body>

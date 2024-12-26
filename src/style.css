@@ -44,7 +44,7 @@ body {
 }
 
 .modal-content {
-  @apply max-h-[80vh] max-w-[90vw] overflow-y-auto lg:max-w-[60vw];
+  @apply max-h-[70vh] max-w-[70vw] overflow-y-auto lg:max-w-[60vw];
 }
 
 /* Overwriting default dialog backdrop to allow transition  */
@@ -132,4 +132,10 @@ h2 {
 
 .open-arrow {
   animation: float 1.5s ease-in-out infinite;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+  pointer-events: none;
 }

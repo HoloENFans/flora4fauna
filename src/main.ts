@@ -226,7 +226,14 @@ async function setupPixi() {
 
 	DonationPopup.init(app, viewport);
 
-	document.getElementById('loading-screen')!.remove();
+	// Add fade-out effect to the loading screen
+	const loadingScreen = document.getElementById('loading-screen');
+	if (loadingScreen) {
+		loadingScreen.classList.add('fade-out');
+		setTimeout(() => {
+			loadingScreen.remove();
+		}, 2000);
+	}
 }
 
 void (async () => {
