@@ -21,17 +21,28 @@
 	<body class="relative">
 		<div id="app"></div>
 		<div
-			class="absolute left-0 top-0 z-50 h-screen w-screen flex flex-col items-center justify-center gap-5 bg-[#E0E5DC]"
+			class="absolute left-0 top-0 z-50 flex h-screen w-screen flex-col items-center justify-center gap-5 bg-[#E0E5DC]"
 			id="loading-screen"
 		>
-			<!-- Loading gifs directly, correct this if there's a proper way -->
-			<img src="ui-assets/loading/sapling.gif" class="w-[200px] h-auto" alt="sapling"></img>
-			<div class="flex flex-col items-center gap-1 font-bold bordered-text text-2xl" id="loading-container">
+			<img
+				src="/loading/sapling.gif"
+				class="h-auto w-[200px]"
+				alt=""
+				loading="lazy"
+			/>
+			<div
+				class="bordered-text flex flex-col items-center gap-1 text-2xl font-bold"
+				id="loading-container"
+			>
 				<div>
 					<span>Chotto matte ne</span>
-					<img src="ui-assets/loading/loading.gif" class="inline h-[15px] w-auto mb-[5px]" alt="loading"></img>
+					<img
+						src="/loading/loading.gif"
+						class="mb-[5px] inline h-[15px] w-auto"
+						alt=""
+						loading="lazy"
+					/>
 				</div>
-				 <span id="progress" class="block text-center">0%</span>
 			</div>
 		</div>
 		<front-ui></front-ui>
