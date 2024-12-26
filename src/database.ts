@@ -1,8 +1,10 @@
 import {
+	addRxPlugin,
 	createRxDatabase,
 	RxDatabase,
 	RxReplicationPullStreamItem,
 } from 'rxdb';
+import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import { Subject } from 'rxjs';
 import { replicateRxCollection } from 'rxdb/plugins/replication';
@@ -16,6 +18,10 @@ class Database {
 	public static get instance() {
 		return async () => {
 			if (!this.#instance) {
+				if (import.meta.env.DEV) {
+					addRxPlugin(RxDBDevModePlugin);
+				}
+
 				this.#instance = await createRxDatabase({
 					name: 'flora4fauna',
 					storage: getRxStorageDexie(),

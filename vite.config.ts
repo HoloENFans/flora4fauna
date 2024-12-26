@@ -13,7 +13,11 @@ function assetpackPlugin(): Plugin {
 				cacheBust: true,
 				resolutions: { default: 1, low: 0.5 },
 				compression: { jpg: true, png: true, webp: true },
-				texturePacker: {},
+				texturePacker: {
+					texturePacker: {
+						removeFileExtension: true,
+					},
+				},
 				audio: {},
 				manifest: { createShortcuts: true, trimExtensions: true },
 			}),
