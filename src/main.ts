@@ -9,6 +9,8 @@ import {
 	Rectangle,
 	Sprite,
 	TexturePool,
+	Text,
+	ColorMatrixFilter,
 } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
@@ -142,6 +144,63 @@ async function setupTextures() {
 	await Assets.backgroundLoad('bgm');
 }
 
+function setupSigns(viewport: Viewport) {
+	const bottomMiddleX = WORLD_WIDTH / 2;
+	const bottomMiddleY = WORLD_HEIGHT * 0.95;
+
+	const fanProjectSignContainer = new Container();
+	const fanProjectSign = Sprite.from('Wooden_Sign_Plain');
+	fanProjectSign.anchor.set(0.5);
+	fanProjectSign.scale.x = -1;
+	fanProjectSign.angle = -7;
+	fanProjectSignContainer.addChild(fanProjectSign);
+
+	const fanProjectSignText = new Text({
+		text: 'This is a non-profit fan project, not affiliated with COVER Corp. or affiliates',
+		style: {
+			fontFamily: 'UnifontEXMono',
+			fontSize: 48,
+			fontWeight: 'bold',
+			fill: 'white',
+			wordWrap: true,
+			wordWrapWidth: 550,
+			align: 'center',
+		},
+		x: -280,
+		y: -230,
+		angle: -8,
+	});
+	fanProjectSignContainer.addChild(fanProjectSignText);
+	fanProjectSignContainer.position.set(
+		bottomMiddleX - 800,
+		bottomMiddleY - 800,
+	);
+
+	viewport.addChild(fanProjectSignContainer);
+
+	const arborDaySignContainer = new Container();
+	const arborDaySign = Sprite.from('Wooden_Sign');
+	arborDaySign.anchor.set(0.5);
+	arborDaySign.angle = 4;
+	const brightnessFilter = new ColorMatrixFilter();
+	brightnessFilter.brightness(1.5, true);
+	arborDaySign.filters = brightnessFilter;
+
+	const arborDayLogo = Sprite.from('ArborDayFoundation');
+	arborDayLogo.anchor.set(0.5, 0.93);
+	arborDayLogo.scale.set(0.35);
+	arborDayLogo.angle = 4;
+
+	arborDaySignContainer.addChild(arborDaySign);
+	arborDaySignContainer.addChild(arborDayLogo);
+
+	arborDaySignContainer.position.set(
+		bottomMiddleX + 900,
+		bottomMiddleY - 780,
+	);
+	viewport.addChild(arborDaySignContainer);
+}
+
 function setupTree(viewport: Viewport) {
 	const bottomMiddleX = WORLD_WIDTH / 2;
 	const bottomMiddleY = WORLD_HEIGHT * 0.95;
@@ -162,6 +221,7 @@ function setupTree(viewport: Viewport) {
 async function setupPixi() {
 	await setupTextures();
 	const [app, viewport] = await setup();
+	setupSigns(viewport);
 	setupTree(viewport);
 
 	DonationPopup.init(app, viewport);

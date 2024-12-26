@@ -62,7 +62,7 @@ class DonationPopup {
 		this.container.addChild(superchatContainer);
 
 		const leaf = Sprite.from('Leaf_01');
-		leaf.rotation = 0.5 * Math.PI;
+		leaf.angle = 90;
 		leaf.scale = 4;
 		leaf.tint = '#ee6191';
 		leaf.anchor.set(0.5);
