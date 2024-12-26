@@ -25,72 +25,9 @@ export class AboutModal extends LitElement {
 
 				<div class="separator" slot="separator"></div>
 
+				<!-- Audio volume controller -->
+
 				<div class="mt-6 flex flex-col gap-4" slot="content">
-					<div>
-						<h2>Overview</h2>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit. Sed ullamcorper, sapien nec tincidunt
-							tincidunt, nunc nulla ultricies purus, ut fermentum
-							nunc libero in purus. Integer ac odio scelerisque,
-							fermentum ipsum nec, tincidunt odio. Donec
-							consectetur, nunc nec vehicula ultricies, nunc nunc
-							ultricies
-						</p>
-					</div>
-
-					<div>
-						<h2>Overview</h2>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit. Sed ullamcorper, sapien nec tincidunt
-							tincidunt, nunc nulla ultricies purus, ut fermentum
-							nunc libero in purus. Integer ac odio scelerisque,
-							fermentum ipsum nec, tincidunt odio. Donec
-							consectetur, nunc nec vehicula ultricies, nunc nunc
-							ultricies
-						</p>
-					</div>
-
-					<div>
-						<h2>Overview</h2>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit. Sed ullamcorper, sapien nec tincidunt
-							tincidunt, nunc nulla ultricies purus, ut fermentum
-							nunc libero in purus. Integer ac odio scelerisque,
-							fermentum ipsum nec, tincidunt odio. Donec
-							consectetur, nunc nec vehicula ultricies, nunc nunc
-							ultricies
-						</p>
-					</div>
-
-					<div>
-						<h2>Overview</h2>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit. Sed ullamcorper, sapien nec tincidunt
-							tincidunt, nunc nulla ultricies purus, ut fermentum
-							nunc libero in purus. Integer ac odio scelerisque,
-							fermentum ipsum nec, tincidunt odio. Donec
-							consectetur, nunc nec vehicula ultricies, nunc nunc
-							ultricies
-						</p>
-					</div>
-
-					<div>
-						<h2>Overview</h2>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit. Sed ullamcorper, sapien nec tincidunt
-							tincidunt, nunc nulla ultricies purus, ut fermentum
-							nunc libero in purus. Integer ac odio scelerisque,
-							fermentum ipsum nec, tincidunt odio. Donec
-							consectetur, nunc nec vehicula ultricies, nunc nunc
-							ultricies
-						</p>
-					</div>
-
 					<div>
 						<h2>Overview</h2>
 						<p>

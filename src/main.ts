@@ -226,13 +226,44 @@ async function setupPixi() {
 
 	DonationPopup.init(app, viewport);
 
-	// Add fade-out effect to the loading screen
-	const loadingScreen = document.getElementById('loading-screen');
-	if (loadingScreen) {
-		loadingScreen.classList.add('fade-out');
-		setTimeout(() => {
-			loadingScreen.remove();
-		}, 2000);
+	// Replaces the #loading-container with a text that says "Click to start"
+	const loadingContainer = document.getElementById('loading-container');
+	if (loadingContainer) {
+		loadingContainer.innerHTML = 'Tap anywhere to start!';
+		const loadingScreen = document.getElementById('loading-screen');
+		if (loadingScreen) {
+			loadingScreen.classList.add('cursor-pointer');
+			loadingScreen.addEventListener('click', () => {
+				// Add fade-out effect to the loading screen
+				loadingScreen.classList.add('fade-out');
+				setTimeout(() => {
+					loadingScreen.remove();
+				}, 2000);
+
+				// TODO: Don't think this is the right way to do this, replace with correct method later
+				const backgroundMusic: HTMLAudioElement | null = new Audio(
+					'/assets/bgm.mp3',
+				);
+				if (backgroundMusic) {
+					backgroundMusic.loop = true;
+					backgroundMusic.volume = 0.3;
+					backgroundMusic.play();
+				}
+
+				// Check if user has entered page for first time
+				// If so, open the about modal
+				const hasVisited = localStorage.getItem('hasVisited');
+				if (hasVisited !== 'true') {
+					const aboutModal = document.querySelector('about-modal');
+					if (aboutModal) {
+						setTimeout(() => {
+							aboutModal.isOpen = true;
+						}, 2300);
+					}
+					localStorage.setItem('hasVisited', 'true');
+				}
+			});
+		}
 	}
 }
 
