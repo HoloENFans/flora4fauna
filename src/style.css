@@ -139,3 +139,9 @@ h2 {
   transition: opacity 2s ease-in-out;
   pointer-events: none;
 }
+
+.grass {
+  background-image: url('/ui/grass.png');
+  background-size: 500px 100%;
+  background-repeat: repeat-x;
+}
