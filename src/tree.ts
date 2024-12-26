@@ -9,6 +9,7 @@ function positionAndInsertSprite(
 	y: number,
 ): void {
 	sprite.cullable = true;
+	sprite.texture.source.scaleMode = 'linear';
 	sprite.anchor.set(anchorX, anchorY);
 	sprite.position.set(x, y);
 	container.addChild(sprite);
@@ -22,7 +23,6 @@ export function buildTreeSpriteGraph(
 
 	// Build the base of the tree
 	const treeBase = Sprite.from('Trunk_Base');
-	treeBase.cullable = true;
 	positionAndInsertSprite(
 		treeContainer,
 		treeBase,
