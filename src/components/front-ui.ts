@@ -1,8 +1,8 @@
+import { CountUp } from 'countup.js';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { BaseModal } from './base-modal';
-import { CountUp } from 'countup.js';
 import Stats from '../stats.ts';
+import { BaseModal } from './base-modal';
 
 @customElement('front-ui')
 export class FrontUi extends LitElement {
@@ -33,7 +33,7 @@ export class FrontUi extends LitElement {
 						id="open-stats-modal"
 						class="front-button flex flex-col items-center"
 					>
-						<span class="text-2xl">Total Raised</span>
+						<span class="text-xl">Raised</span>
 						<span id="navbar-total-raised"></span>
 					</div>
 					<button id="open-find-donation-modal" class="front-button">
