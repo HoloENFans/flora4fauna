@@ -6,3 +6,4 @@ export * from './donate-modal';
 export * from './find-donation-modal';
 export * from './stats-modal';
 export * from './mobile-nav';
+export * from './volume-control';

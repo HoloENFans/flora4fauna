@@ -227,7 +227,7 @@ async function setupPixi() {
 
 	DonationPopup.init(app, viewport);
 
-	// Replaces the #loading-container with a text that says "Click to start"
+	// Replace the #loading-container with a text that says "Click to start"
 	const loadingContainer = document.getElementById('loading-container');
 	if (loadingContainer) {
 		loadingContainer.innerHTML = 'Tap anywhere to start!';
@@ -242,6 +242,7 @@ async function setupPixi() {
 				}, 2000);
 
 				void Assets.loadBundle('default').then((resources) => {
+					// Initialize background music
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
 					const backgroundMusic = Sound.from(resources.bgm);
 					void backgroundMusic.play({
@@ -249,6 +250,15 @@ async function setupPixi() {
 						singleInstance: true,
 						volume: 0.3,
 					});
+
+					// Connect the background music to the volume-control component
+					const volumeControl = document.querySelector(
+						'volume-control',
+					) as HTMLElement & { backgroundMusic: Sound | null };
+
+					if (volumeControl) {
+						volumeControl.backgroundMusic = backgroundMusic;
+					}
 				});
 
 				// Check if user has entered page for first time

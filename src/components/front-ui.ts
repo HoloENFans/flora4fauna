@@ -14,6 +14,9 @@ export class FrontUi extends LitElement {
 	render() {
 		return html`
 			<div>
+				<div class="absolute left-6 top-4">
+					<volume-control></volume-control>
+				</div>
 				<div
 					class="fixed bottom-0 hidden w-screen items-center justify-center transition-opacity hover:opacity-70 md:flex"
 				>
