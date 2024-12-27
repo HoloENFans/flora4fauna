@@ -12,6 +12,8 @@ import {
 	Text,
 	ColorMatrixFilter,
 	Texture,
+	getGlobalBounds,
+	Bounds,
 } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
@@ -49,7 +51,15 @@ async function setup(): Promise<[Application, Viewport]> {
 		.decelerate()
 		.wheel()
 		.clamp({
-			direction: 'all',
+			left: 0,
+			right: viewport.worldWidth,
+			top: 0,
+			// Increase clamp size for mobile
+			// TODO: Still doesn't work perfectly, but "good enough"
+			bottom:
+				typeof screen.orientation !== 'undefined' ?
+					viewport.worldHeight * 1.15
+				:	viewport.worldHeight,
 			underflow: 'center',
 		})
 		.clampZoom({
@@ -83,9 +93,11 @@ async function setup(): Promise<[Application, Viewport]> {
 	);
 	viewport.addChild(background);
 
+	const tempBounds = new Bounds();
+
 	function cull(
 		container: Container,
-		view: Rectangle,
+		view: Rectangle | Bounds,
 		skipUpdateTransform = true,
 	) {
 		if (
@@ -93,18 +105,24 @@ async function setup(): Promise<[Application, Viewport]> {
 			container.measurable &&
 			container.includeInBuild
 		) {
-			const pos = viewport.toWorld(
-				container.getGlobalPosition(undefined, skipUpdateTransform),
+			const pos = container.getGlobalPosition(
+				undefined,
+				skipUpdateTransform,
 			);
 			// TODO: Bounds don't seem to properly scale? Workaround using a margin for now
 			const bounds =
-				container.cullArea ?? container.getBounds(skipUpdateTransform);
+				container.cullArea ??
+				getGlobalBounds(container, skipUpdateTransform, tempBounds);
 
 			container.culled =
 				pos.x >= view.x + view.width + CULL_MARGIN ||
 				pos.y >= view.y + view.height + CULL_MARGIN ||
 				pos.x + bounds.width + CULL_MARGIN <= view.x ||
 				pos.y + bounds.height + CULL_MARGIN <= view.y;
+
+			if (container.culled) {
+				console.log('Culled', container);
+			}
 		} else {
 			container.culled = false;
 		}
@@ -125,18 +143,22 @@ async function setup(): Promise<[Application, Viewport]> {
 
 	viewport.on('moved', () => {
 		const visibleBounds = viewport.getVisibleBounds();
+
 		sky.y = visibleBounds.top;
+
+		background.visible = visibleBounds.top >= viewport.worldHeight - 6700;
 	});
 
 	window.addEventListener('resize', () => {
-		viewport.resize(window.innerWidth, window.innerHeight);
+		viewport.resize();
 		if (window.innerHeight > 3000) sky.height = window.innerHeight + 3000;
 	});
 
 	app.ticker.add(() => {
 		if (viewport.dirty) {
-			const view = viewport.getVisibleBounds();
-			viewport.children?.forEach((child) => cull(child, view));
+			viewport.children?.forEach((child) =>
+				cull(child, app.stage.getBounds(true)),
+			);
 			viewport.dirty = false;
 		}
 	});
@@ -154,7 +176,6 @@ async function setupTextures() {
 	});
 
 	await Assets.loadBundle('default');
-	await Assets.backgroundLoad('bgm');
 }
 
 function setupSigns(viewport: Viewport) {
@@ -214,8 +235,8 @@ function setupSigns(viewport: Viewport) {
 }
 
 function setupTree(viewport: Viewport) {
-	const bottomMiddleX = WORLD_WIDTH / 2;
-	const bottomMiddleY = WORLD_HEIGHT * 0.95;
+	const bottomMiddleX = viewport.worldWidth / 2;
+	const bottomMiddleY = viewport.worldHeight * 0.95;
 
 	const treeContainer = buildTreeSpriteGraph(bottomMiddleX, bottomMiddleY);
 	treeContainer.cullableChildren = true;
