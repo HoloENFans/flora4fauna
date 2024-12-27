@@ -19,7 +19,8 @@ import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
 import { buildTreeSpriteGraph } from './tree.ts';
-import DonationPopup from './donationPopup.ts';
+import DonationPopup, { Donation } from './donationPopup.ts';
+import { update } from 'rxdb/plugins/update';
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -238,7 +239,7 @@ function setupTree(viewport: Viewport) {
 	const bottomMiddleX = viewport.worldWidth / 2;
 	const bottomMiddleY = viewport.worldHeight * 0.95;
 
-	const treeContainer = buildTreeSpriteGraph(bottomMiddleX, bottomMiddleY);
+	const treeContainer = buildTreeSpriteGraph(bottomMiddleX, bottomMiddleY, donations);
 	treeContainer.cullableChildren = true;
 
 	viewport.addChild(treeContainer);
@@ -254,12 +255,22 @@ function setupTree(viewport: Viewport) {
 async function setupPixi() {
 	await setupTextures();
 	const [app, viewport] = await setup();
-	setupSigns(viewport);
-	setupTree(viewport);
+	await setupTextures();
+	
+	const donoDummyList: Donation[] = new Array<Donation>();
+	for (let i = 0; i < 20; i++) {
+		const dummyDono: Donation = {
+			username: "test" + i,
+			message: "message" + i,
+			amount: 321.0,
+			created: "2024-12-26T22:46:33Z",
+			updated: "2024-12-26T22:46:33Z"
+		} 
+		donoDummyList.push(dummyDono);
+	}
+	setupTree(viewport, donoDummyList);
 
 	DonationPopup.init(app, viewport);
-
-	document.getElementById('loading-screen')!.remove();
 }
 
 void (async () => {
