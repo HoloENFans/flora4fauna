@@ -1,4 +1,18 @@
 import { Container, Sprite } from 'pixi.js';
+import { Donation } from './donationPopup';
+import Branch01 from './branches/Branch01.ts';
+import Branch from './branches/Branch.ts';
+import Database from './database.ts';
+import { RxChangeEventInsert } from 'rxdb';
+import { Viewport } from 'pixi-viewport';
+
+const TRUNK_ACTUAL_CENTERLINE = 1160;
+
+// https://stackoverflow.com/a/7228322
+function randomNumberFromInterval(min: number, max: number): number {
+	// min and max included
+	return Math.random() * (max - min + 1) + min;
+}
 
 function positionAndInsertSprite(
 	container: Container,
@@ -7,28 +21,31 @@ function positionAndInsertSprite(
 	anchorY: number,
 	x: number,
 	y: number,
-): void {
-	sprite.cullable = true;
-	sprite.texture.source.scaleMode = 'linear';
+): Sprite {
 	sprite.anchor.set(anchorX, anchorY);
 	sprite.position.set(x, y);
+	sprite.cullable = true;
 	container.addChild(sprite);
+	return sprite;
 }
 
-export function buildTreeSpriteGraph(
+const BRANCH_OPTIONS: (new () => Branch)[] = [Branch01];
+
+export async function buildTreeSpriteGraph(
 	treeBottomX: number,
 	treeBottomY: number,
-): Container {
+	viewport: Viewport,
+) {
 	const treeContainer = new Container();
 
 	// Build the base of the tree
-	const treeBase = Sprite.from('Trunk_Base');
+	const treeBase = Sprite.from('Trunk_Flat_Base');
 	positionAndInsertSprite(
 		treeContainer,
 		treeBase,
 		0.5,
 		1.0,
-		treeBottomX,
+		treeBottomX - 75,
 		treeBottomY,
 	);
 	positionAndInsertSprite(
@@ -39,7 +56,7 @@ export function buildTreeSpriteGraph(
 		treeBottomX,
 		treeBottomY,
 	);
-	positionAndInsertSprite(
+	const faunaNemu = positionAndInsertSprite(
 		treeContainer,
 		Sprite.from('Fauna_Nemu'),
 		0.5,
@@ -47,41 +64,123 @@ export function buildTreeSpriteGraph(
 		treeBottomX,
 		treeBottomY,
 	);
+	faunaNemu.zIndex = 2;
 
-	// Build trunks
-	let nextY = treeBase.position.y - treeBase.height;
-	const trunkMid1 = Sprite.from('Trunk_Mid_01_CroppedY');
-	trunkMid1.cullable = true;
+	const trunkTextureFunc = (currentTrunkCount: number) =>
+		currentTrunkCount % 2 == 0 ? 'Trunk_Flat_Mid_01' : 'Trunk_Flat_Mid_02';
+	const trunkSprites: Sprite[] = new Array<Sprite>();
+	let trunkTopY = treeBottomY - treeBase.height;
+	for (let trunkNum = 0; trunkNum < 2; trunkNum++) {
+		const trunkSprite = Sprite.from(trunkTextureFunc(trunkNum));
+		positionAndInsertSprite(
+			treeContainer,
+			trunkSprite,
+			0.5,
+			1.0,
+			treeBottomX,
+			trunkTopY,
+		);
+		trunkTopY -= trunkSprite.height;
+		trunkSprites.push(trunkSprite);
+	}
 
-	const trunkMid2 = Sprite.from('Trunk_Mid_02_CroppedY');
-	trunkMid2.cullable = true;
-
-	positionAndInsertSprite(
+	const treeTop = positionAndInsertSprite(
 		treeContainer,
-		trunkMid1,
+		Sprite.from('Trunk_Flat_Top_01'),
 		0.5,
 		1.0,
 		treeBottomX,
-		nextY,
+		trunkTopY,
 	);
-	nextY = trunkMid1.position.y - trunkMid1.height;
-	positionAndInsertSprite(
-		treeContainer,
-		trunkMid2,
-		0.5,
-		1.0,
-		treeBottomX,
-		nextY,
-	);
-	nextY = trunkMid2.position.y - trunkMid2.height;
-	positionAndInsertSprite(
-		treeContainer,
-		Sprite.from('Trunk_Top_01_CroppedY'),
-		0.5,
-		1.0,
-		treeBottomX,
-		nextY,
-	);
+
+	const db = await Database();
+
+	const donations = (await db.donations.find().exec()) as Donation[];
+
+	// Build branches
+	let isLeftBranch = true;
+	let currentBranch: Branch | undefined;
+	let leftBranchY =
+		trunkSprites[1].position.y -
+		trunkSprites[1].height / 2 -
+		Math.floor(Math.random() * 200);
+	let rightBranchY =
+		trunkSprites[1].position.y -
+		trunkSprites[1].height / 2 -
+		Math.floor(Math.random() * 200);
+	const trunkIndex = 1;
+	let currentClampTopLimit = 0;
+	// The tree in the texture is not in the actual center of the texture, so we need to calculate the actual center of the tree trunk.
+	const actualTrunkCenter =
+		treeBottomX +
+		treeBase.width * (TRUNK_ACTUAL_CENTERLINE / treeBase.width - 0.5);
+
+	function addDonation(donation: Donation) {
+		if (!currentBranch || currentBranch.full) {
+			currentBranch = new BRANCH_OPTIONS[
+				Math.floor(Math.random() * BRANCH_OPTIONS.length)
+			]();
+			const bounds = currentBranch.getBounds(true);
+
+			if (Math.min(leftBranchY - 200, rightBranchY - 200) < trunkTopY) {
+				const trunkSprite = Sprite.from(trunkTextureFunc(trunkIndex));
+				positionAndInsertSprite(
+					treeContainer,
+					trunkSprite,
+					0.5,
+					1.0,
+					treeBottomX,
+					trunkTopY,
+				);
+				trunkTopY -= trunkSprite.height;
+				trunkSprites.push(trunkSprite);
+				treeTop.y = trunkTopY;
+
+				if (trunkTopY < currentClampTopLimit) {
+					currentClampTopLimit = trunkTopY - 2000;
+
+					viewport.plugins.remove('clamp');
+					viewport.clamp({
+						left: 0,
+						right: viewport.worldWidth,
+						top: currentClampTopLimit,
+						// Increase clamp size for mobile
+						// TODO: Still doesn't work perfectly, but "good enough"
+						bottom:
+							screen.orientation?.type.startsWith('portrait') ?
+								viewport.worldHeight * 1.15
+							:	viewport.worldHeight,
+						underflow: 'center',
+					});
+				}
+			}
+
+			if (isLeftBranch) {
+				currentBranch.position.set(actualTrunkCenter, leftBranchY);
+				currentBranch.angle = 280 + randomNumberFromInterval(-5, 5);
+				isLeftBranch = false;
+				leftBranchY -=
+					bounds.width + 600 + Math.floor(Math.random() * 1000);
+			} else {
+				currentBranch.position.set(actualTrunkCenter, rightBranchY);
+				currentBranch.angle = 80 + randomNumberFromInterval(-5, 5);
+				isLeftBranch = true;
+				rightBranchY -=
+					bounds.width + 600 + Math.floor(Math.random() * 1000);
+			}
+			treeContainer.addChild(currentBranch);
+		}
+
+		currentBranch.addDonation(donation);
+	}
+
+	for (const donation of donations) {
+		addDonation(donation);
+	}
+
+	db.donations.insert$.subscribe((event: RxChangeEventInsert<Donation>) => {
+		addDonation(event.documentData);
+	});
 
 	return treeContainer;
 }

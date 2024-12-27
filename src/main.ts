@@ -11,6 +11,9 @@ import {
 	TexturePool,
 	Text,
 	ColorMatrixFilter,
+	Texture,
+	getGlobalBounds,
+	Bounds,
 } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
@@ -27,6 +30,9 @@ async function setup(): Promise<[Application, Viewport]> {
 		resizeTo: window,
 		backgroundAlpha: 0,
 		antialias: false,
+		roundPixels: true,
+		autoDensity: false,
+		resolution: window.devicePixelRatio,
 	});
 	document.getElementById('app')?.appendChild(app.canvas);
 
@@ -46,17 +52,33 @@ async function setup(): Promise<[Application, Viewport]> {
 		.decelerate()
 		.wheel()
 		.clamp({
-			direction: 'all',
+			left: 0,
+			right: viewport.worldWidth,
+			top: 0,
+			// Increase clamp size for mobile
+			// TODO: Still doesn't work perfectly, but "good enough"
+			bottom:
+				screen.orientation?.type.startsWith('portrait') ?
+					viewport.worldHeight * 1.15
+				:	viewport.worldHeight,
 			underflow: 'center',
 		})
 		.clampZoom({
 			minWidth: 1500,
 			maxWidth: viewport.worldWidth,
+			maxHeight: viewport.worldHeight,
 			minScale: 0.25,
 			maxScale: 1,
 		});
 
-	const sky = Sprite.from('Background');
+	const backgroundTexture: Texture = await Assets.load('Background');
+
+	// Needed or else the background gets scaled up using linear which
+	// looks awful for pixel art.
+	backgroundTexture.source.scaleMode = 'nearest';
+
+	const sky = Sprite.from(backgroundTexture);
+	sky.scale.set(25);
 	sky.filters = new BlurFilter();
 	sky.mask = new Graphics().rect(0, 0, 12000, 3000).fill(0xffffff);
 	if (window.innerHeight > 3000) sky.height = window.innerHeight + 3000;
@@ -64,16 +86,19 @@ async function setup(): Promise<[Application, Viewport]> {
 	sky.x = -2000;
 	viewport.addChild(sky);
 
-	const background = Sprite.from('Background');
+	const background = Sprite.from(backgroundTexture);
+	background.scale.set(25);
 	background.position.set(
 		viewport.worldWidth / 2 - 7000,
 		viewport.worldHeight - 6700,
 	);
 	viewport.addChild(background);
 
+	const tempBounds = new Bounds();
+
 	function cull(
 		container: Container,
-		view: Rectangle,
+		view: Rectangle | Bounds,
 		skipUpdateTransform = true,
 	) {
 		if (
@@ -81,12 +106,14 @@ async function setup(): Promise<[Application, Viewport]> {
 			container.measurable &&
 			container.includeInBuild
 		) {
-			const pos = viewport.toWorld(
-				container.getGlobalPosition(undefined, skipUpdateTransform),
+			const pos = container.getGlobalPosition(
+				undefined,
+				skipUpdateTransform,
 			);
 			// TODO: Bounds don't seem to properly scale? Workaround using a margin for now
 			const bounds =
-				container.cullArea ?? container.getBounds(skipUpdateTransform);
+				container.cullArea ??
+				getGlobalBounds(container, skipUpdateTransform, tempBounds);
 
 			container.culled =
 				pos.x >= view.x + view.width + CULL_MARGIN ||
@@ -113,18 +140,22 @@ async function setup(): Promise<[Application, Viewport]> {
 
 	viewport.on('moved', () => {
 		const visibleBounds = viewport.getVisibleBounds();
+
 		sky.y = visibleBounds.top;
+
+		background.visible = visibleBounds.top >= viewport.worldHeight - 6700;
 	});
 
 	window.addEventListener('resize', () => {
-		viewport.resize(window.innerWidth, window.innerHeight);
+		viewport.resize();
 		if (window.innerHeight > 3000) sky.height = window.innerHeight + 3000;
 	});
 
 	app.ticker.add(() => {
 		if (viewport.dirty) {
-			const view = viewport.getVisibleBounds();
-			viewport.children?.forEach((child) => cull(child, view));
+			viewport.children?.forEach((child) =>
+				cull(child, app.stage.getBounds(true)),
+			);
 			viewport.dirty = false;
 		}
 	});
@@ -142,7 +173,6 @@ async function setupTextures() {
 	});
 
 	await Assets.loadBundle('default');
-	await Assets.backgroundLoad('bgm');
 }
 
 function setupSigns(viewport: Viewport) {
@@ -157,7 +187,7 @@ function setupSigns(viewport: Viewport) {
 	fanProjectSignContainer.addChild(fanProjectSign);
 
 	const fanProjectSignText = new Text({
-		text: 'This is a non-profit fan project, not affiliated with COVER Corp. or affiliates',
+		text: 'This is a non-profit fan project, not affiliated with COVER Corp. or affiliates.',
 		style: {
 			fontFamily: 'UnifontEXMono',
 			fontSize: 48,
@@ -167,10 +197,9 @@ function setupSigns(viewport: Viewport) {
 			wordWrapWidth: 550,
 			align: 'center',
 		},
-		x: -280,
-		y: -230,
 		angle: -8,
 	});
+	fanProjectSignText.anchor.set(0.5, 1.25);
 	fanProjectSignContainer.addChild(fanProjectSignText);
 	fanProjectSignContainer.position.set(
 		bottomMiddleX - 800,
@@ -202,11 +231,15 @@ function setupSigns(viewport: Viewport) {
 	viewport.addChild(arborDaySignContainer);
 }
 
-function setupTree(viewport: Viewport) {
-	const bottomMiddleX = WORLD_WIDTH / 2;
-	const bottomMiddleY = WORLD_HEIGHT * 0.95;
+async function setupTree(viewport: Viewport) {
+	const bottomMiddleX = viewport.worldWidth / 2;
+	const bottomMiddleY = viewport.worldHeight * 0.95;
 
-	const treeContainer = buildTreeSpriteGraph(bottomMiddleX, bottomMiddleY);
+	const treeContainer = await buildTreeSpriteGraph(
+		bottomMiddleX,
+		bottomMiddleY,
+		viewport,
+	);
 	treeContainer.cullableChildren = true;
 
 	viewport.addChild(treeContainer);
@@ -223,9 +256,12 @@ async function setupPixi() {
 	await setupTextures();
 	const [app, viewport] = await setup();
 	setupSigns(viewport);
-	setupTree(viewport);
-
 	DonationPopup.init(app, viewport);
+	await setupTree(viewport);
+}
+
+void (async () => {
+	await setupPixi();
 
 	// Replace the #loading-container with a text that says "Click to start"
 	const loadingContainer = document.getElementById('loading-container');
@@ -276,8 +312,4 @@ async function setupPixi() {
 			});
 		}
 	}
-}
-
-void (async () => {
-	await setupPixi();
 })();
