@@ -237,6 +237,7 @@ async function setupTree(viewport: Viewport) {
 	const treeContainer = await buildTreeSpriteGraph(
 		bottomMiddleX,
 		bottomMiddleY,
+		viewport,
 	);
 	treeContainer.cullableChildren = true;
 

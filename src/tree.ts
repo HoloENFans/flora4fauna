@@ -4,49 +4,9 @@ import Branch01 from './branches/Branch01.ts';
 import Branch from './branches/Branch.ts';
 import Database from './database.ts';
 import { RxChangeEventInsert } from 'rxdb';
+import { Viewport } from 'pixi-viewport';
 
-const NUM_LEAVES_PER_BRANCH = 15;
-const NUM_LEAVES_PER_BUNCH = 5;
 const TRUNK_ACTUAL_CENTERLINE = 1160;
-
-interface PointAngle {
-	x: number;
-	y: number;
-	angle: number;
-}
-
-// X and Y are defined from the BOTTOM MIDDLE OF THE BRANCH
-// IE: anchor is equal to x=0.5 and y=1.0
-const SMALL_LEFT_SUBBRANCH_LEAF_POS: PointAngle[] = [
-	{ x: 47.5, y: -660, angle: 325 },
-	{ x: 47.5, y: -660, angle: 35 },
-	{ x: 47.5, y: 0, angle: 350 },
-];
-const SMALL_RIGHT_SUBBRANCH_LEAF_POS: PointAngle[] = [
-	{ x: -44.5, y: -900, angle: 325 },
-	{ x: -44.5, y: -900, angle: 35 },
-	{ x: -44.5, y: 0, angle: 350 },
-];
-const LARGE_LEFT_SUBBRANCH_LEAF_POS: PointAngle[] = [
-	{ x: 7.5, y: -1840, angle: 325 },
-	{ x: 7.5, y: -1562, angle: 35 },
-	{ x: 7.5, y: -1000, angle: 325 },
-	{ x: 7.5, y: -482, angle: 35 },
-	{ x: 7.5, y: -754, angle: 325 },
-	{ x: 7.5, y: -1297, angle: 35 },
-	{ x: 7.5, y: -1384, angle: 325 },
-	{ x: 7.5, y: -212, angle: 350 },
-];
-const LARGE_RIGHT_SUBBRANCH_LEAF_POS: PointAngle[] = [
-	{ x: -9.5, y: -870, angle: 35 },
-	{ x: -9.5, y: -1787, angle: 325 },
-	{ x: -9.5, y: -1235, angle: 35 },
-	{ x: -9.5, y: -1140, angle: 325 },
-	{ x: -9.5, y: -2222, angle: 35 },
-	{ x: -9.5, y: -1540, angle: 325 },
-	{ x: -9.5, y: -570, angle: 35 },
-	{ x: -9.5, y: -2525, angle: 350 },
-];
 
 // https://stackoverflow.com/a/7228322
 function randomNumberFromInterval(min: number, max: number): number {
@@ -74,6 +34,7 @@ const BRANCH_OPTIONS: (new () => Branch)[] = [Branch01];
 export async function buildTreeSpriteGraph(
 	treeBottomX: number,
 	treeBottomY: number,
+	viewport: Viewport,
 ) {
 	const treeContainer = new Container();
 
@@ -136,22 +97,19 @@ export async function buildTreeSpriteGraph(
 
 	const donations = (await db.donations.find().exec()) as Donation[];
 
-	const donoDummyList: Donation[] = [];
-	for (let i = 0; i < 80; i++) {
-		const dummyDono: Donation = {
-			username: 'test' + i,
-			message: 'message' + i,
-			amount: 321.0,
-			created: '2024-12-26T22:46:33Z',
-			updated: '2024-12-26T22:46:33Z',
-		};
-		donoDummyList.push(dummyDono);
-	}
-
 	// Build branches
 	let isLeftBranch = true;
 	let currentBranch: Branch | undefined;
-	let trunkIndex = 1;
+	let leftBranchY =
+		trunkSprites[1].position.y -
+		trunkSprites[1].height / 2 -
+		Math.floor(Math.random() * 200);
+	let rightBranchY =
+		trunkSprites[1].position.y -
+		trunkSprites[1].height / 2 -
+		Math.floor(Math.random() * 200);
+	const trunkIndex = 1;
+	let currentClampTopLimit = 0;
 	// The tree in the texture is not in the actual center of the texture, so we need to calculate the actual center of the tree trunk.
 	const actualTrunkCenter =
 		treeBottomX +
@@ -162,8 +120,9 @@ export async function buildTreeSpriteGraph(
 			currentBranch = new BRANCH_OPTIONS[
 				Math.floor(Math.random() * BRANCH_OPTIONS.length)
 			]();
+			const bounds = currentBranch.getBounds(true);
 
-			if (trunkIndex >= trunkSprites.length) {
+			if (Math.min(leftBranchY - 200, rightBranchY - 200) < trunkTopY) {
 				const trunkSprite = Sprite.from(trunkTextureFunc(trunkIndex));
 				positionAndInsertSprite(
 					treeContainer,
@@ -176,22 +135,38 @@ export async function buildTreeSpriteGraph(
 				trunkTopY -= trunkSprite.height;
 				trunkSprites.push(trunkSprite);
 				treeTop.y = trunkTopY;
+
+				if (trunkTopY < currentClampTopLimit) {
+					currentClampTopLimit = trunkTopY - 2000;
+
+					viewport.plugins.remove('clamp');
+					viewport.clamp({
+						left: 0,
+						right: viewport.worldWidth,
+						top: currentClampTopLimit,
+						// Increase clamp size for mobile
+						// TODO: Still doesn't work perfectly, but "good enough"
+						bottom:
+							screen.orientation?.type.startsWith('portrait') ?
+								viewport.worldHeight * 1.15
+							:	viewport.worldHeight,
+						underflow: 'center',
+					});
+				}
 			}
 
-			currentBranch.position.set(
-				actualTrunkCenter,
-				trunkSprites[trunkIndex].position.y -
-					trunkSprites[trunkIndex].height / 2 +
-					randomNumberFromInterval(-100, 100),
-			);
-
 			if (isLeftBranch) {
+				currentBranch.position.set(actualTrunkCenter, leftBranchY);
 				currentBranch.angle = 280 + randomNumberFromInterval(-5, 5);
 				isLeftBranch = false;
+				leftBranchY -=
+					bounds.width + 600 + Math.floor(Math.random() * 1000);
 			} else {
+				currentBranch.position.set(actualTrunkCenter, rightBranchY);
 				currentBranch.angle = 80 + randomNumberFromInterval(-5, 5);
 				isLeftBranch = true;
-				trunkIndex++;
+				rightBranchY -=
+					bounds.width + 600 + Math.floor(Math.random() * 1000);
 			}
 			treeContainer.addChild(currentBranch);
 		}
@@ -199,7 +174,7 @@ export async function buildTreeSpriteGraph(
 		currentBranch.addDonation(donation);
 	}
 
-	for (const donation of donoDummyList) {
+	for (const donation of donations) {
 		addDonation(donation);
 	}
 
