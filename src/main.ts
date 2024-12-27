@@ -55,11 +55,15 @@ async function setup(): Promise<[Application, Viewport]> {
 		.clampZoom({
 			minWidth: 1500,
 			maxWidth: viewport.worldWidth,
+			maxHeight: viewport.worldHeight,
 			minScale: 0.25,
 			maxScale: 1,
 		});
 
 	const backgroundTexture: Texture = await Assets.load('Background');
+
+	// Needed or else the background gets scaled up using linear which
+	// looks awful for pixel art.
 	backgroundTexture.source.scaleMode = 'nearest';
 
 	const sky = Sprite.from(backgroundTexture);
