@@ -11,6 +11,7 @@ import {
 	TexturePool,
 	Text,
 	ColorMatrixFilter,
+	Texture,
 } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
@@ -26,6 +27,9 @@ async function setup(): Promise<[Application, Viewport]> {
 		resizeTo: window,
 		backgroundAlpha: 0,
 		antialias: false,
+		roundPixels: true,
+		autoDensity: false,
+		resolution: window.devicePixelRatio,
 	});
 	document.getElementById('app')?.appendChild(app.canvas);
 
@@ -55,7 +59,11 @@ async function setup(): Promise<[Application, Viewport]> {
 			maxScale: 1,
 		});
 
-	const sky = Sprite.from('Background');
+	const backgroundTexture: Texture = await Assets.load('Background');
+	backgroundTexture.source.scaleMode = 'nearest';
+
+	const sky = Sprite.from(backgroundTexture);
+	sky.scale.set(25);
 	sky.filters = new BlurFilter();
 	sky.mask = new Graphics().rect(0, 0, 12000, 3000).fill(0xffffff);
 	if (window.innerHeight > 3000) sky.height = window.innerHeight + 3000;
@@ -63,7 +71,8 @@ async function setup(): Promise<[Application, Viewport]> {
 	sky.x = -2000;
 	viewport.addChild(sky);
 
-	const background = Sprite.from('Background');
+	const background = Sprite.from(backgroundTexture);
+	background.scale.set(25);
 	background.position.set(
 		viewport.worldWidth / 2 - 7000,
 		viewport.worldHeight - 6700,
