@@ -19,8 +19,7 @@ import { Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
 import { buildTreeSpriteGraph } from './tree.ts';
-import DonationPopup, { Donation } from './donationPopup.ts';
-import { update } from 'rxdb/plugins/update';
+import DonationPopup from './donationPopup.ts';
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -58,7 +57,7 @@ async function setup(): Promise<[Application, Viewport]> {
 			// Increase clamp size for mobile
 			// TODO: Still doesn't work perfectly, but "good enough"
 			bottom:
-				typeof screen.orientation !== 'undefined' ?
+				screen.orientation?.type.startsWith('portrait') ?
 					viewport.worldHeight * 1.15
 				:	viewport.worldHeight,
 			underflow: 'center',
@@ -120,10 +119,6 @@ async function setup(): Promise<[Application, Viewport]> {
 				pos.y >= view.y + view.height + CULL_MARGIN ||
 				pos.x + bounds.width + CULL_MARGIN <= view.x ||
 				pos.y + bounds.height + CULL_MARGIN <= view.y;
-
-			if (container.culled) {
-				console.log('Culled', container);
-			}
 		} else {
 			container.culled = false;
 		}
@@ -235,11 +230,14 @@ function setupSigns(viewport: Viewport) {
 	viewport.addChild(arborDaySignContainer);
 }
 
-function setupTree(viewport: Viewport) {
+async function setupTree(viewport: Viewport) {
 	const bottomMiddleX = viewport.worldWidth / 2;
 	const bottomMiddleY = viewport.worldHeight * 0.95;
 
-	const treeContainer = buildTreeSpriteGraph(bottomMiddleX, bottomMiddleY, donations);
+	const treeContainer = await buildTreeSpriteGraph(
+		bottomMiddleX,
+		bottomMiddleY,
+	);
 	treeContainer.cullableChildren = true;
 
 	viewport.addChild(treeContainer);
@@ -255,22 +253,10 @@ function setupTree(viewport: Viewport) {
 async function setupPixi() {
 	await setupTextures();
 	const [app, viewport] = await setup();
-	await setupTextures();
-	
-	const donoDummyList: Donation[] = new Array<Donation>();
-	for (let i = 0; i < 20; i++) {
-		const dummyDono: Donation = {
-			username: "test" + i,
-			message: "message" + i,
-			amount: 321.0,
-			created: "2024-12-26T22:46:33Z",
-			updated: "2024-12-26T22:46:33Z"
-		} 
-		donoDummyList.push(dummyDono);
-	}
-	setupTree(viewport, donoDummyList);
-
+	setupSigns(viewport);
 	DonationPopup.init(app, viewport);
+
+	await setupTree(viewport);
 }
 
 void (async () => {

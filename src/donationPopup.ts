@@ -1,4 +1,4 @@
-import { Application, Container, Graphics, Sprite, Text } from 'pixi.js';
+import { Application, Container, Graphics, Point, Sprite, Text } from 'pixi.js';
 import type { Viewport } from 'pixi-viewport';
 
 export interface Donation {
@@ -14,6 +14,7 @@ class DonationPopup {
 
 	private viewport?: Viewport;
 	private container?: Container;
+	private leaf?: Sprite;
 	private usernameText?: Text;
 	private amountText?: Text;
 	private messageText?: Text;
@@ -48,6 +49,8 @@ class DonationPopup {
 		const background = new Graphics()
 			.rect(0, 0, app.renderer.width, app.renderer.height)
 			.fill({ color: '#00000095' });
+		background.cursor = 'pointer';
+		background.eventMode = 'static';
 		this.container.addChild(background);
 		const superchatContainer = new Container({
 			x: app.renderer.width / 2 - 400,
@@ -61,13 +64,10 @@ class DonationPopup {
 		});
 		this.container.addChild(superchatContainer);
 
-		const leaf = Sprite.from('Leaf_01');
-		leaf.angle = 90;
-		leaf.scale = 4;
-		leaf.tint = '#ee6191';
-		leaf.anchor.set(0.5);
-		leaf.position.set(440, 150);
-		superchatContainer.addChild(leaf);
+		this.leaf = Sprite.from('Big_Leaf_Greyscale');
+		this.leaf.anchor.set(0.5);
+		this.leaf.position.set(440, 150);
+		superchatContainer.addChild(this.leaf);
 
 		this.usernameText = new Text({
 			text: '',
@@ -77,8 +77,9 @@ class DonationPopup {
 				fontWeight: 'bold',
 				fill: 'white',
 			},
+			x: 32,
+			y: 42,
 		});
-		this.usernameText.position.set(32, 18);
 		superchatContainer.addChild(this.usernameText);
 
 		this.amountText = new Text({
@@ -90,9 +91,10 @@ class DonationPopup {
 				fill: 'white',
 				align: 'right',
 			},
+			x: 768,
+			y: 42,
+			anchor: new Point(1, 0),
 		});
-		this.amountText.position.set(768, 18);
-		this.amountText.anchor.set(1, 0);
 		superchatContainer.addChild(this.amountText);
 
 		this.messageText = new Text({
@@ -104,8 +106,9 @@ class DonationPopup {
 				wordWrap: true,
 				wordWrapWidth: 736,
 			},
+			x: 32,
+			y: 96,
 		});
-		this.messageText.position.set(32, 72);
 		superchatContainer.addChild(this.messageText);
 
 		window.addEventListener('resize', () => {
@@ -122,7 +125,7 @@ class DonationPopup {
 		app.stage.addChild(this.container);
 	}
 
-	public setDonation(donation: Donation | null) {
+	public setDonation(donation: Donation | null, tint: number) {
 		if (!this.container) return;
 
 		if (!donation) {
@@ -133,6 +136,7 @@ class DonationPopup {
 		this.usernameText!.text = donation.username.substring(0, 24);
 		this.amountText!.text = `$${donation.amount}`;
 		this.messageText!.text = donation.message.substring(0, 321);
+		this.leaf!.tint = tint;
 		this.container.visible = true;
 
 		this.viewport!.plugins.pause('wheel');
