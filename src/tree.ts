@@ -47,6 +47,7 @@ export function buildTreeSpriteGraph(
 	// Build branches
 	let isLeftBranch = true;
 	let trunkIndex = 1;
+	// The tree in the texture is not in the actual center of the texture, so we need to calcualte the actual center of the tree trunk.
 	const actualTrunkCenter = treeBottomX + (treeBase.width * ((TRUNK_ACTUAL_CENTERLINE / treeBase.width) - 0.5));
 	for(let donationsLeft = donations.length; donationsLeft > 0; donationsLeft -= NUM_LEAVES_PER_BRANCH) {
 		const branchContainer = new Container();
