@@ -44,16 +44,22 @@ export class MobileNav extends LitElement {
 				</button>
 
 				<div class="grid grid-cols-2 justify-center gap-2 px-8 py-4">
-					<button class="btn" id="open-mobile-donate-modal">
+					<button class="btn btn-wood" id="open-mobile-donate-modal">
 						Donate
 					</button>
-					<button class="btn" id="open-mobile-about-modal">
+					<button class="btn btn-wood" id="open-mobile-about-modal">
 						About
 					</button>
-					<button class="btn" id="open-mobile-accountability-modal">
+					<button
+						class="btn btn-wood"
+						id="open-mobile-accountability-modal"
+					>
 						Accountability
 					</button>
-					<button class="btn" id="open-mobile-find-donation-modal">
+					<button
+						class="btn btn-wood"
+						id="open-mobile-find-donation-modal"
+					>
 						Find Donation
 					</button>
 				</div>

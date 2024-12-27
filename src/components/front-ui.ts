@@ -46,8 +46,9 @@ export class FrontUi extends LitElement {
 						Accountability
 					</button>
 					<button
-						class="front-button donate-label"
+						class="donate-label btn-donate btn-wood mb-1"
 						id="open-donate-modal"
+						style="padding: 1rem 2rem;"
 					>
 						Donate
 					</button>
