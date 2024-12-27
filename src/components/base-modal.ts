@@ -58,9 +58,13 @@ export class BaseModal extends LitElement {
 	render() {
 		return html`
 			<div class="backdrop"></div>
-			<dialog class="modal ${!this.isDonateModal && 'wood'}">
+			<dialog
+				class="modal ${!this.isDonateModal && 'wood'} ${this
+					.isDonateModal && 'donate-wood'}"
+			>
 				<button
-					class="absolute right-4 top-2 z-10 p-1 text-lg"
+					class="absolute right-4 top-2 z-10 p-1 text-xl"
+					style="color: ${this.isDonateModal ? 'black' : 'white'}"
 					value="cancel"
 					@click=${() => (this.isOpen = false)}
 				>

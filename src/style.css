@@ -196,3 +196,9 @@ h2 {
   background-repeat: no-repeat;
   background-position: center;
 }
+
+.donate-wood {
+  background-color: #c7c2b5;
+  border: 10px solid transparent;
+  border-image: url('/ui/small-wood.png') 30% round;
+}
