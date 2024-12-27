@@ -9,6 +9,8 @@ export function setupDrawer(
 
 	if (drawer && openButton && closeButton) {
 		drawer.classList.add('transition-transform', 'duration-300');
+		// Hide the drawer by default
+		drawer.classList.add('translate-y-full');
 
 		openButton.addEventListener('click', () => {
 			drawer.classList.remove('translate-y-full');
