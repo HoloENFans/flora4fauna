@@ -165,7 +165,7 @@ function setupSigns(viewport: Viewport) {
 	fanProjectSignContainer.addChild(fanProjectSign);
 
 	const fanProjectSignText = new Text({
-		text: 'This is a non-profit fan project, not affiliated with COVER Corp. or affiliates',
+		text: 'This is a non-profit fan project, not affiliated with COVER Corp. or affiliates.',
 		style: {
 			fontFamily: 'UnifontEXMono',
 			fontSize: 48,
@@ -175,10 +175,9 @@ function setupSigns(viewport: Viewport) {
 			wordWrapWidth: 550,
 			align: 'center',
 		},
-		x: -280,
-		y: -230,
 		angle: -8,
 	});
+	fanProjectSignText.anchor.set(0.5, 1.25);
 	fanProjectSignContainer.addChild(fanProjectSignText);
 	fanProjectSignContainer.position.set(
 		bottomMiddleX - 800,
