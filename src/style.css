@@ -175,7 +175,7 @@ h2 {
   @apply cursor-pointer select-none text-2xl opacity-70;
 }
 .volume-slider {
-  @apply invisible h-1 w-24 rounded bg-gray-300 accent-primary opacity-0 transition-all;
+  @apply invisible h-1 w-24 rounded bg-gray-300 accent-seconday opacity-0 transition-all;
 }
 
 .volume-container:hover .volume-slider {
