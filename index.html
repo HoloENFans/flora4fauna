@@ -20,6 +20,31 @@
 	</head>
 	<body class="relative">
 		<div id="app"></div>
+		<div
+			class="absolute left-0 top-0 z-50 flex h-screen w-screen flex-col items-center justify-center gap-5 bg-[#E0E5DC]"
+			id="loading-screen"
+		>
+			<img
+				src="/loading/sapling.gif"
+				class="h-auto w-[200px]"
+				alt=""
+				loading="lazy"
+			/>
+			<div
+				class="bordered-text flex flex-col items-center gap-1 text-2xl font-bold"
+				id="loading-container"
+			>
+				<div>
+					<span>Chotto matte ne</span>
+					<img
+						src="/loading/loading.gif"
+						class="mb-[5px] inline h-[15px] w-auto"
+						alt=""
+						loading="lazy"
+					/>
+				</div>
+			</div>
+		</div>
 		<front-ui></front-ui>
 	</body>
 </html>

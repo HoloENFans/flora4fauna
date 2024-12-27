@@ -22,6 +22,7 @@
   "dependencies": {
     "@assetpack/core": "^1.2.3",
     "@pixi/devtools": "^2.0.1",
+    "@pixi/sound": "^6.0.1",
     "@pixi/ui": "^2.2.0",
     "countup.js": "^2.8.0",
     "eslint-config-prettier": "^9.1.0",

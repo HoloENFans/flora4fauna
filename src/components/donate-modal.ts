@@ -20,6 +20,7 @@ export class DonateModal extends LitElement {
 			<base-modal
 				.isOpen=${this.isOpen}
 				@modal-closed=${() => this.handleModalClosed()}
+				.isDonateModal=${true}
 			>
 				<div
 					slot="content"

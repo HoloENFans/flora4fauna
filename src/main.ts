@@ -20,6 +20,7 @@ import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
 import { buildTreeSpriteGraph } from './tree.ts';
 import DonationPopup from './donationPopup.ts';
+import { Sound } from '@pixi/sound';
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -256,10 +257,59 @@ async function setupPixi() {
 	const [app, viewport] = await setup();
 	setupSigns(viewport);
 	DonationPopup.init(app, viewport);
-
 	await setupTree(viewport);
 }
 
 void (async () => {
 	await setupPixi();
+
+	// Replace the #loading-container with a text that says "Click to start"
+	const loadingContainer = document.getElementById('loading-container');
+	if (loadingContainer) {
+		loadingContainer.innerHTML = 'Tap anywhere to start!';
+		const loadingScreen = document.getElementById('loading-screen');
+		if (loadingScreen) {
+			loadingScreen.classList.add('cursor-pointer');
+			loadingScreen.addEventListener('click', () => {
+				// Add fade-out effect to the loading screen
+				loadingScreen.classList.add('fade-out');
+				setTimeout(() => {
+					loadingScreen.remove();
+				}, 2000);
+
+				void Assets.loadBundle('default').then((resources) => {
+					// Initialize background music
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
+					const backgroundMusic = Sound.from(resources.bgm);
+					void backgroundMusic.play({
+						loop: true,
+						singleInstance: true,
+						volume: 0.3,
+					});
+
+					// Connect the background music to the volume-control component
+					const volumeControl = document.querySelector(
+						'volume-control',
+					) as HTMLElement & { backgroundMusic: Sound | null };
+
+					if (volumeControl) {
+						volumeControl.backgroundMusic = backgroundMusic;
+					}
+				});
+
+				// Check if user has entered page for first time
+				// If so, open the about modal
+				const hasVisited = localStorage.getItem('hasVisited');
+				if (hasVisited !== 'true') {
+					const aboutModal = document.querySelector('about-modal');
+					if (aboutModal) {
+						setTimeout(() => {
+							aboutModal.isOpen = true;
+						}, 2300);
+					}
+					localStorage.setItem('hasVisited', 'true');
+				}
+			});
+		}
+	}
 })();
