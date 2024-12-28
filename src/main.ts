@@ -15,12 +15,28 @@ import {
 	getGlobalBounds,
 	Bounds,
 } from 'pixi.js';
-import { Viewport } from 'pixi-viewport';
+import { IClampZoomOptions, Viewport } from 'pixi-viewport';
 import { initDevtools } from '@pixi/devtools';
 import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
 import { buildTreeSpriteGraph } from './tree.ts';
 import DonationPopup from './donationPopup.ts';
 import { Sound } from '@pixi/sound';
+
+function getClampZoom(viewport: Viewport): IClampZoomOptions {
+	const isVertical = window.innerHeight > window.innerWidth;
+
+	return {
+		minWidth: 1500,
+		maxWidth: viewport.worldWidth,
+		// Basically if it's > 6700, we get fauna floating in a white void when
+		// we hide the background; this happens if we zoom too far out on a vertical
+		// monitor. This also adds an offset so the user can still pan up
+		// a bit before getting the blur effect even if they're on a 4k monitor.
+		maxHeight: isVertical ? 5500 : viewport.worldHeight,
+		minScale: 0.25,
+		maxScale: 1,
+	};
+}
 
 async function setup(): Promise<[Application, Viewport]> {
 	const app = new Application();
@@ -31,7 +47,7 @@ async function setup(): Promise<[Application, Viewport]> {
 		backgroundAlpha: 0,
 		antialias: false,
 		roundPixels: true,
-		autoDensity: false,
+		autoDensity: true,
 		resolution: window.devicePixelRatio,
 	});
 	document.getElementById('app')?.appendChild(app.canvas);
@@ -52,24 +68,10 @@ async function setup(): Promise<[Application, Viewport]> {
 		.decelerate()
 		.wheel()
 		.clamp({
-			left: 0,
-			right: viewport.worldWidth,
-			top: 0,
-			// Increase clamp size for mobile
-			// TODO: Still doesn't work perfectly, but "good enough"
-			bottom:
-				screen.orientation?.type.startsWith('portrait') ?
-					viewport.worldHeight * 1.15
-				:	viewport.worldHeight,
+			direction: 'all',
 			underflow: 'center',
 		})
-		.clampZoom({
-			minWidth: 1500,
-			maxWidth: viewport.worldWidth,
-			maxHeight: viewport.worldHeight,
-			minScale: 0.25,
-			maxScale: 1,
-		});
+		.clampZoom(getClampZoom(viewport));
 
 	const backgroundTexture: Texture = await Assets.load('Background');
 
@@ -142,11 +144,11 @@ async function setup(): Promise<[Application, Viewport]> {
 		const visibleBounds = viewport.getVisibleBounds();
 
 		sky.y = visibleBounds.top;
-
 		background.visible = visibleBounds.top >= viewport.worldHeight - 6700;
 	});
 
 	window.addEventListener('resize', () => {
+		viewport.clampZoom(getClampZoom(viewport));
 		viewport.resize();
 		if (window.innerHeight > 3000) sky.height = window.innerHeight + 3000;
 	});
