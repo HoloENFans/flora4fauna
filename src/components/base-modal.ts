@@ -63,13 +63,14 @@ export class BaseModal extends LitElement {
 					.isDonateModal && 'donate-wood'}"
 			>
 				<button
-					class="absolute right-4 top-2 z-10 p-1 text-xl"
+					class="sticky left-full top-0 z-10 -my-4 text-xl"
 					style="color: ${this.isDonateModal ? 'black' : 'white'}"
 					value="cancel"
 					@click=${() => (this.isOpen = false)}
 				>
 					&times
 				</button>
+
 				<slot name="header"></slot>
 				<slot name="separator"></slot>
 				<div class="modal-content">
