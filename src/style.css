@@ -62,11 +62,11 @@ body {
 
 .modal {
   animation: modal-in 0.3s ease-out;
-  @apply relative z-50 rounded-lg p-6 text-white shadow-md;
+  @apply relative z-50 max-h-[70vh] max-w-[70vw] rounded-lg p-6 text-white shadow-md lg:max-h-[80vh] lg:max-w-[60vw];
 }
 
 .modal-content {
-  @apply max-h-[70vh] max-w-[70vw] overflow-y-auto lg:max-w-[60vw];
+  @apply overflow-y-auto;
 }
 
 /* Overwriting default dialog backdrop to allow transition  */
@@ -225,6 +225,10 @@ input[type='text'] {
     display: none !important;
   }
 
+  #mobile-nav-open-bar {
+    display: block !important;
+  }
+
   #mobile-nav-drawer {
     display: block !important;
   }
@@ -233,6 +237,10 @@ input[type='text'] {
 @media (orientation: landscape) and (pointer: coarse) {
   #nav-drawer {
     display: none !important;
+  }
+
+  #mobile-nav-open-bar {
+    display: block !important;
   }
 
   #mobile-nav-drawer {
