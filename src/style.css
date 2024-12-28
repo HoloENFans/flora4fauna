@@ -62,7 +62,7 @@ body {
 
 .modal {
   animation: modal-in 0.3s ease-out;
-  @apply relative z-50 max-h-[70vh] max-w-[70vw] rounded-lg p-6 text-white shadow-md lg:max-h-[80vh] lg:max-w-[60vw];
+  @apply relative z-50 max-h-[80vh] max-w-[90vw] rounded-lg p-6 text-white shadow-md lg:max-h-[80vh] lg:max-w-[60vw];
 }
 
 .modal-content {
@@ -216,42 +216,4 @@ input[type='text'] {
   background-color: #c7c2b5;
   border: 10px solid transparent;
   border-image: url('/ui/small-wood.png') 30% round;
-}
-
-/* For locking mobile to only using the mobile navbar, due to landscape mode making the site use the desktop nav */
-/* Can someone test this I can't connect my phone to the dev environment for some reason :( */
-@media (orientation: portrait) and (pointer: coarse) {
-  #nav-drawer {
-    display: none !important;
-  }
-
-  #nav-open-bar {
-    display: none !important;
-  }
-
-  #mobile-nav-open-bar {
-    display: block !important;
-  }
-
-  #mobile-nav-drawer {
-    display: block !important;
-  }
-}
-
-@media (orientation: landscape) and (pointer: coarse) {
-  #nav-drawer {
-    display: none !important;
-  }
-
-  #nav-open-bar {
-    display: none !important;
-  }
-
-  #mobile-nav-open-bar {
-    display: block !important;
-  }
-
-  #mobile-nav-drawer {
-    display: block !important;
-  }
 }
