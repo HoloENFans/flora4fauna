@@ -5,6 +5,7 @@ import Branch from './branches/Branch.ts';
 import Database from './database.ts';
 import { RxChangeEventInsert } from 'rxdb';
 import { getRandomNumber } from './random.ts';
+import Branch02 from './branches/Branch02.ts';
 
 const TRUNK_ACTUAL_CENTERLINE = 1160;
 
@@ -23,7 +24,7 @@ function positionAndInsertSprite(
 	return sprite;
 }
 
-const BRANCH_OPTIONS: (new () => Branch)[] = [Branch01];
+const BRANCH_OPTIONS: (new () => Branch)[] = [Branch01, Branch02];
 
 export async function buildTreeSpriteGraph(
 	treeBottomX: number,
