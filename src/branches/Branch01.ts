@@ -21,28 +21,29 @@ export default class Branch01 extends Branch {
 		const branch1 = this.renderSprite(
 			Sprite.from('Branch_Right_Complete_Short'),
 			30,
-			-2000,
-			90,
+			-1500,
+			36,
 			'Branch 1',
 		);
 		branch1.visible = false;
 
 		const leaf1 = new Leaf([branch1]);
-		leaf1.position.set(1500, -2010);
-		leaf1.angle = 70;
+		leaf1.position.set(865, -2685);
+		leaf1.angle = -10;
 		leaf1.label = 'Leaf 01';
 		this.addChild(leaf1);
 		this.leafs.push(leaf1);
 
 		const leaf2 = new Leaf();
-		leaf2.position.set(1650, -2050);
+		leaf2.position.set(840, -2810);
+		leaf2.angle = -100;
 		leaf2.label = 'Leaf 02';
 		this.addChild(leaf2);
 		this.leafs.push(leaf2);
 
 		const leaf3 = new Leaf();
-		leaf3.position.set(1550, -2100);
-		leaf3.angle = -60;
+		leaf3.position.set(940, -2835);
+		leaf3.angle = -55;
 		leaf3.label = 'Leaf 03';
 		this.addChild(leaf3);
 		this.leafs.push(leaf3);
@@ -94,18 +95,19 @@ export default class Branch01 extends Branch {
 			Sprite.from('Branch_Left_Complete_Short'),
 			0,
 			-3600,
-			-78,
+			-35,
 			'Branch 3',
 		);
 		branch3.visible = false;
 
 		const leaf9 = new Leaf([branch3]);
-		leaf9.position.set(20, -6000);
-		leaf9.angle = -60;
+		leaf9.position.set(-550, -4580);
+		leaf9.angle = -85;
 		leaf9.label = 'Leaf 09';
 		this.addChild(leaf9);
 		this.leafs.push(leaf9);
 
+		// Leaf on tip of main branch
 		const leaf10 = new Leaf();
 		leaf10.position.set(-200, -5500);
 		leaf10.angle = -120;
@@ -114,22 +116,22 @@ export default class Branch01 extends Branch {
 		this.leafs.push(leaf10);
 
 		const leaf11 = new Leaf();
-		leaf11.position.set(-1080, -3950);
-		leaf11.angle = -120;
+		leaf11.position.set(-630, -4580);
+		leaf11.angle = -135;
 		leaf11.label = 'Leaf 11';
 		this.addChild(leaf11);
 		this.leafs.push(leaf11);
 
 		const leaf12 = new Leaf();
-		leaf12.position.set(-1180, -3900);
-		leaf12.angle = -180;
+		leaf12.position.set(-560, -4450);
+		leaf12.angle = -175;
 		leaf12.label = 'Leaf 12';
 		this.addChild(leaf12);
 		this.leafs.push(leaf12);
 
 		const leaf13 = new Leaf();
-		leaf13.position.set(-1040, -3840);
-		leaf13.angle = 80;
+		leaf13.position.set(-530, -4410);
+		leaf13.angle = 115;
 		leaf13.label = 'Leaf 13';
 		this.addChild(leaf13);
 		this.leafs.push(leaf13);
@@ -137,21 +139,21 @@ export default class Branch01 extends Branch {
 		const branch4 = this.renderSprite(
 			Sprite.from('Branch_Left_Complete_Short'),
 			0,
-			-2800,
-			-120,
+			-2300,
+			-25,
 			'Branch 4',
 		);
 
 		const leaf14 = new Leaf([branch4]);
-		leaf14.position.set(-925, -2285);
-		leaf14.angle = 100;
+		leaf14.position.set(-430, -3250);
+		leaf14.angle = 210;
 		leaf14.label = 'Leaf 14';
 		this.addChild(leaf14);
 		this.leafs.push(leaf14);
 
 		const leaf15 = new Leaf();
-		leaf15.position.set(-1030, -2340);
-		leaf15.angle = -170;
+		leaf15.position.set(-370, -3365);
+		leaf15.angle = -95;
 		leaf15.label = 'Leaf 15';
 		this.addChild(leaf15);
 		this.leafs.push(leaf15);
