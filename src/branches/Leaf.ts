@@ -56,6 +56,19 @@ export default class Leaf extends Container {
 
 	private getTint(amount: number): [number, number | undefined] {
 		// TODO: Check date and return correct, color
+
+		// Graduation sakura colors
+		if(Date.now() > new Date(2025, 0, 3).getTime()) {
+			const sakuraColors: [number, number | undefined][] = [
+				[0xFF8BD4, undefined],
+				[0xFEB5E3, undefined],
+				[0xFCBCDF, undefined]
+			];
+
+			const randNum = Math.floor(Math.random() * sakuraColors.length);
+			return sakuraColors[randNum];
+		}
+
 		return [0x8eb332, undefined];
 	}
 
