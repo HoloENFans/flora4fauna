@@ -1,4 +1,4 @@
-import { Application, Container, Graphics, Point, Sprite, Text } from 'pixi.js';
+import { Application, ColorMatrixFilter, Container, Graphics, Point, Sprite, Text } from 'pixi.js';
 import type { Viewport } from 'pixi-viewport';
 
 export interface Donation {
@@ -125,7 +125,7 @@ class DonationPopup {
 		app.stage.addChild(this.container);
 	}
 
-	public setDonation(donation: Donation | null, tint: number) {
+	public setDonation(donation: Donation | null, tint: number, brightness: number, textColor: number | undefined) {
 		if (!this.container) return;
 
 		if (!donation) {
@@ -137,6 +137,14 @@ class DonationPopup {
 		this.amountText!.text = `$${donation.amount}`;
 		this.messageText!.text = donation.message.substring(0, 321);
 		this.leaf!.tint = tint;
+		const colorMatrix = new ColorMatrixFilter();
+		colorMatrix.brightness(brightness, true);
+		this.leaf!.filters = colorMatrix;
+		if(textColor !== undefined) {
+			this.usernameText!.style.fill = textColor;
+			this.messageText!.style.fill = textColor;
+			this.amountText!.style.fill = textColor;
+		}
 		this.container.visible = true;
 
 		this.viewport!.plugins.pause('wheel');

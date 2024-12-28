@@ -1,4 +1,4 @@
-import { Container, Sprite, Text } from 'pixi.js';
+import { ColorMatrixFilter, Container, Sprite, Text } from 'pixi.js';
 import DonationPopup, { Donation } from '../donationPopup.ts';
 import { getRandomNumber } from '../random.ts';
 
@@ -55,22 +55,22 @@ export default class Leaf extends Container {
 		this.addChild(this.amountText);
 	}
 
-	private getTint(amount: number): [number, number | undefined] {
+	private getTint(amount: number): [number, number | undefined, number] {
 		// TODO: Check date and return correct, color
 
 		// Graduation sakura colors
 		if(Date.now() > new Date(2025, 0, 3).getTime()) {
-			const sakuraColors: [number, number | undefined][] = [
-				[0xFF8BD4, undefined],
-				[0xFEB5E3, undefined],
-				[0xFCBCDF, undefined]
+			const sakuraColors: [number, number | undefined, number][] = [
+				[0xFF8BD4, undefined, 1.75],
+				[0xFEB5E3, 0x000000, 1.75],
+				[0xFCBCDF, 0x000000, 1.75]
 			];
 
 			const randNum = getRandomNumber(0, sakuraColors.length);
 			return sakuraColors[randNum];
 		}
 
-		return [0x8eb332, undefined];
+		return [0x8eb332, undefined, 1];
 	}
 
 	setDonation(donation: Donation) {
@@ -84,10 +84,13 @@ export default class Leaf extends Container {
 		this.usernameText.text = donation.username;
 		this.amountText.text = `$${donation.amount}`;
 
-		const [tint, textColor] = this.getTint(donation.amount);
-		this.leafSprite.tint = tint;
+		const [tint, textColor, brightness] = this.getTint(donation.amount);
+		this.leafSprite.tint = tint
+		const brightnessFilter = new ColorMatrixFilter();
+		brightnessFilter.brightness(brightness, true);
+		this.leafSprite.filters = brightnessFilter;
 
-		if (textColor) {
+		if (textColor !== undefined) {
 			this.usernameText.style.fill = textColor;
 			this.amountText.style.fill = textColor;
 		}
@@ -95,7 +98,7 @@ export default class Leaf extends Container {
 		this.eventMode = 'static';
 		this.cursor = 'pointer';
 		this.on('click', () => {
-			DonationPopup.setDonation(donation, tint);
+			DonationPopup.setDonation(donation, tint, brightness, textColor);
 		});
 
 		this.visible = true;
