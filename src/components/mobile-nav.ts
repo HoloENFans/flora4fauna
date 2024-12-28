@@ -25,7 +25,7 @@ export class MobileNav extends LitElement {
 				</button>
 			</div>
 			<div
-				class="grass absolute bottom-0 z-20 w-screen translate-y-full pt-10 md:hidden"
+				class="grass fixed bottom-0 z-20 w-screen translate-y-full pt-10 md:hidden"
 				id="mobile-nav-drawer"
 			>
 				<button
