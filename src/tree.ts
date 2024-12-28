@@ -5,48 +5,7 @@ import Branch from './branches/Branch.ts';
 import Database from './database.ts';
 import { RxChangeEventInsert } from 'rxdb';
 
-const NUM_LEAVES_PER_BRANCH = 15;
-const NUM_LEAVES_PER_BUNCH = 5;
 const TRUNK_ACTUAL_CENTERLINE = 1160;
-
-interface PointAngle {
-	x: number;
-	y: number;
-	angle: number;
-}
-
-// X and Y are defined from the BOTTOM MIDDLE OF THE BRANCH
-// IE: anchor is equal to x=0.5 and y=1.0
-const SMALL_LEFT_SUBBRANCH_LEAF_POS: PointAngle[] = [
-	{ x: 47.5, y: -660, angle: 325 },
-	{ x: 47.5, y: -660, angle: 35 },
-	{ x: 47.5, y: 0, angle: 350 },
-];
-const SMALL_RIGHT_SUBBRANCH_LEAF_POS: PointAngle[] = [
-	{ x: -44.5, y: -900, angle: 325 },
-	{ x: -44.5, y: -900, angle: 35 },
-	{ x: -44.5, y: 0, angle: 350 },
-];
-const LARGE_LEFT_SUBBRANCH_LEAF_POS: PointAngle[] = [
-	{ x: 7.5, y: -1840, angle: 325 },
-	{ x: 7.5, y: -1562, angle: 35 },
-	{ x: 7.5, y: -1000, angle: 325 },
-	{ x: 7.5, y: -482, angle: 35 },
-	{ x: 7.5, y: -754, angle: 325 },
-	{ x: 7.5, y: -1297, angle: 35 },
-	{ x: 7.5, y: -1384, angle: 325 },
-	{ x: 7.5, y: -212, angle: 350 },
-];
-const LARGE_RIGHT_SUBBRANCH_LEAF_POS: PointAngle[] = [
-	{ x: -9.5, y: -870, angle: 35 },
-	{ x: -9.5, y: -1787, angle: 325 },
-	{ x: -9.5, y: -1235, angle: 35 },
-	{ x: -9.5, y: -1140, angle: 325 },
-	{ x: -9.5, y: -2222, angle: 35 },
-	{ x: -9.5, y: -1540, angle: 325 },
-	{ x: -9.5, y: -570, angle: 35 },
-	{ x: -9.5, y: -2525, angle: 350 },
-];
 
 // https://stackoverflow.com/a/7228322
 function randomNumberFromInterval(min: number, max: number): number {
