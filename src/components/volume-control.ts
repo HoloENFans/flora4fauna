@@ -23,9 +23,14 @@ export class VolumeControl extends LitElement {
 			this.backgroundMusic.volume = volume;
 		}
 
+		localStorage.setItem('storedVolume', volume.toString());
+
 		// Unmute if the slider is moved while muted
 		if (this.isMuted && volume > 0) {
 			this.isMuted = false;
+		} else if (!this.isMuted && volume == 0) {
+			// Mute if the slider is moved to 0
+			this.isMuted = true;
 		}
 	}
 
@@ -36,6 +41,10 @@ export class VolumeControl extends LitElement {
 				this.backgroundMusic.volume = this.previousVolume;
 			}
 			this.isMuted = false;
+			localStorage.setItem(
+				'storedVolume',
+				this.previousVolume.toString(),
+			);
 		} else {
 			// Mute: Set volume to 0 and remember the previous volume
 			if (this.backgroundMusic) {
@@ -43,6 +52,7 @@ export class VolumeControl extends LitElement {
 				this.backgroundMusic.volume = 0;
 			}
 			this.isMuted = true;
+			localStorage.setItem('storedVolume', '0');
 		}
 	}
 
@@ -51,19 +61,26 @@ export class VolumeControl extends LitElement {
 	}
 
 	render() {
+		const value =
+			this.isMuted ? 0
+			: this.backgroundMusic ? this.backgroundMusic.volume * 100
+			: 50;
+
+		const showMuteIcon =
+			this.isMuted ||
+			(this.backgroundMusic && this.backgroundMusic.volume == 0);
+
 		return html`
 			<div class="volume-container">
 				<div class="volume-icon" @click="${() => this.toggleMute()}">
-					${this.isMuted ? '🔇' : '🔊'}
+					${showMuteIcon ? '🔇' : '🔊'}
 				</div>
 				<input
 					class="volume-slider"
 					type="range"
 					min="0"
 					max="100"
-					value="${this.isMuted ? 0
-					: this.backgroundMusic ? this.backgroundMusic.volume * 100
-					: 50}"
+					.value="${value}"
 					@input="${(event: Event) => this.handleVolumeChange(event)}"
 				/>
 			</div>

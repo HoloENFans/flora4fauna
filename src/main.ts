@@ -279,6 +279,15 @@ void (async () => {
 
 				void Assets.loadBundle('default').then((resources) => {
 					// Initialize background music
+					const storedVolume = localStorage.getItem('storedVolume');
+					let volume = 0.3;
+					if (storedVolume != null) {
+						const parsed = parseFloat(storedVolume);
+						if (!isNaN(parsed)) {
+							volume = parsed;
+						}
+					}
+
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
 					const backgroundMusic = Sound.from(resources.bgm);
 					void backgroundMusic.play({
@@ -286,11 +295,14 @@ void (async () => {
 						singleInstance: true,
 						volume: 0.3,
 					});
+					backgroundMusic.volume = volume;
 
 					// Connect the background music to the volume-control component
 					const volumeControl = document.querySelector(
 						'volume-control',
-					) as HTMLElement & { backgroundMusic: Sound | null };
+					) as HTMLElement & {
+						backgroundMusic: Sound | null;
+					};
 
 					if (volumeControl) {
 						volumeControl.backgroundMusic = backgroundMusic;
