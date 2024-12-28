@@ -47,7 +47,7 @@ async function setup(): Promise<[Application, Viewport]> {
 		backgroundAlpha: 0,
 		antialias: false,
 		roundPixels: true,
-		autoDensity: false,
+		autoDensity: true,
 		resolution: window.devicePixelRatio,
 	});
 	document.getElementById('app')?.appendChild(app.canvas);
@@ -68,15 +68,7 @@ async function setup(): Promise<[Application, Viewport]> {
 		.decelerate()
 		.wheel()
 		.clamp({
-			left: 0,
-			right: viewport.worldWidth,
-			top: 0,
-			// Increase clamp size for mobile
-			// TODO: Still doesn't work perfectly, but "good enough"
-			bottom:
-				screen.orientation?.type.startsWith('portrait') ?
-					viewport.worldHeight * 1.15
-				:	viewport.worldHeight,
+			direction: 'all',
 			underflow: 'center',
 		})
 		.clampZoom(getClampZoom(viewport));
