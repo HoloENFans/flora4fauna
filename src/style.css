@@ -121,24 +121,35 @@ h1 {
 }
 
 h2 {
-  @apply text-2xl font-bold;
+  @apply mb-2 mt-4 text-2xl font-bold underline underline-offset-4;
 }
 
-/* Custom scrollbar styles */
+h3 {
+  @apply text-xl font-bold;
+}
+
+ul {
+  @apply list-inside list-disc;
+}
+
+a {
+  @apply underline underline-offset-2;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-200;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-gray-400;
+  @apply rounded-full bg-[#c7c2b5];
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500;
+  @apply bg-[#a69f92];
 }
 
 /* For the mobile nav open arrow */
@@ -201,4 +212,26 @@ h2 {
   background-color: #c7c2b5;
   border: 10px solid transparent;
   border-image: url('/ui/small-wood.png') 30% round;
+}
+
+/* For locking mobile to only using the mobile navbar, due to landscape mode making the site use the desktop nav */
+/* Can someone test this I can't connect my phone to the dev environment for some reason :( */
+@media (orientation: portrait) and (pointer: coarse) {
+  #nav-drawer {
+    display: none !important;
+  }
+
+  #mobile-nav-drawer {
+    display: block !important;
+  }
+}
+
+@media (orientation: landscape) and (pointer: coarse) {
+  #nav-drawer {
+    display: none !important;
+  }
+
+  #mobile-nav-drawer {
+    display: block !important;
+  }
 }

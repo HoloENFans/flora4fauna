@@ -18,7 +18,7 @@ export class FrontUi extends LitElement {
 					<volume-control></volume-control>
 				</div>
 				<div
-					class="fixed bottom-0 hidden w-screen items-center justify-center transition-opacity hover:opacity-70 md:flex"
+					class="fixed bottom-0 left-1/2 hidden -translate-x-1/2 transition-opacity hover:opacity-70 md:block"
 				>
 					<button
 						class="bordered-text flex flex-col items-center justify-center text-3xl font-bold drop-shadow-lg"
