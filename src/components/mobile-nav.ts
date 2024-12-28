@@ -14,14 +14,16 @@ export class MobileNav extends LitElement {
 	render() {
 		return html`
 			<div
-				class="fixed bottom-0 flex w-screen items-center justify-center transition-opacity hover:opacity-70 md:hidden"
+				class="fixed bottom-0 left-1/2 -translate-x-1/2 transition-opacity hover:opacity-70 md:hidden"
 			>
 				<button
 					class="bordered-text flex flex-col items-center justify-center text-3xl font-bold drop-shadow-lg"
 					id="mobile-nav-open-bar"
 				>
 					<span class="open-arrow">▲</span>
-					<span class="-mt-2 mb-4">Tap for more info</span>
+					<span class="-mt-2 mb-4 whitespace-nowrap text-nowrap"
+						>Tap for more info</span
+					>
 				</button>
 			</div>
 			<div
