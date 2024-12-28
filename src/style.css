@@ -173,6 +173,10 @@ a {
   pointer-events: none;
 }
 
+input[type='text'] {
+  @apply text-black;
+}
+
 .grass {
   background-image: url('/ui/grass.png');
   background-size: 500px 100%;
