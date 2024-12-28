@@ -4,14 +4,9 @@ import Branch01 from './branches/Branch01.ts';
 import Branch from './branches/Branch.ts';
 import Database from './database.ts';
 import { RxChangeEventInsert } from 'rxdb';
+import { getRandomNumber } from './random.ts';
 
 const TRUNK_ACTUAL_CENTERLINE = 1160;
-
-// https://stackoverflow.com/a/7228322
-function randomNumberFromInterval(min: number, max: number): number {
-	// min and max included
-	return Math.random() * (max - min + 1) + min;
-}
 
 function positionAndInsertSprite(
 	container: Container,
@@ -141,14 +136,14 @@ export async function buildTreeSpriteGraph(
 				actualTrunkCenter,
 				trunkSprites[trunkIndex].position.y -
 					trunkSprites[trunkIndex].height / 2 +
-					randomNumberFromInterval(-100, 100),
+					getRandomNumber(-100, 100),
 			);
 
 			if (isLeftBranch) {
-				currentBranch.angle = 280 + randomNumberFromInterval(-5, 5);
+				currentBranch.angle = 280 + getRandomNumber(-5, 5);
 				isLeftBranch = false;
 			} else {
-				currentBranch.angle = 80 + randomNumberFromInterval(-5, 5);
+				currentBranch.angle = 80 + getRandomNumber(-5, 5);
 				isLeftBranch = true;
 				trunkIndex++;
 			}

@@ -1,5 +1,6 @@
 import { Container, Sprite, Text } from 'pixi.js';
 import DonationPopup, { Donation } from '../donationPopup.ts';
+import { getRandomNumber } from '../random.ts';
 
 export default class Leaf extends Container {
 	private readonly prerequisites?: Container[];
@@ -65,7 +66,7 @@ export default class Leaf extends Container {
 				[0xFCBCDF, undefined]
 			];
 
-			const randNum = Math.floor(Math.random() * sakuraColors.length);
+			const randNum = getRandomNumber(0, sakuraColors.length);
 			return sakuraColors[randNum];
 		}
 
