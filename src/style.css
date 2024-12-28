@@ -225,6 +225,10 @@ input[type='text'] {
     display: none !important;
   }
 
+  #nav-open-bar {
+    display: none !important;
+  }
+
   #mobile-nav-open-bar {
     display: block !important;
   }
@@ -236,6 +240,10 @@ input[type='text'] {
 
 @media (orientation: landscape) and (pointer: coarse) {
   #nav-drawer {
+    display: none !important;
+  }
+
+  #nav-open-bar {
     display: none !important;
   }
 
