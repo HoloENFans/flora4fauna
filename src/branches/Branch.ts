@@ -1,12 +1,13 @@
 import { Container, Sprite } from 'pixi.js';
 import { Donation } from '../donationPopup.ts';
 import type Leaf from './Leaf.ts';
+import { LeafCoords } from './Leaf.ts';
 
 export default abstract class Branch extends Container {
 	public readonly capacity = 15;
 
 	protected lastBranchSectionY = 0;
-	protected donations: Donation[] = [];
+	protected donationCount = 0;
 	protected leafs: Leaf[] = [];
 
 	protected constructor() {
@@ -19,18 +20,18 @@ export default abstract class Branch extends Container {
 	}
 
 	get count() {
-		return this.donations.length;
+		return this.donationCount;
 	}
 
 	get full() {
 		return this.count >= this.capacity;
 	}
 
-	addDonation(donation: Donation) {
+	addDonation(donation: Donation): LeafCoords {
 		if (this.full) throw new Error('Branch is full!');
 
-		this.donations.push(donation);
-		this.leafs[this.count - 1].setDonation(donation);
+		this.donationCount += 1;
+		return this.leafs[this.count - 1].setDonation(donation);
 	}
 
 	protected renderBranchSection(sprite: Sprite, label?: string) {

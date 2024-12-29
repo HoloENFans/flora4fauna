@@ -1,6 +1,11 @@
 import { Container, Sprite, Text } from 'pixi.js';
 import DonationPopup, { Donation } from '../donationPopup.ts';
 
+export interface LeafCoords {
+	x: number;
+	y: number;
+}
+
 export default class Leaf extends Container {
 	private readonly prerequisites?: Container[];
 	private readonly leafSprite;
@@ -59,7 +64,7 @@ export default class Leaf extends Container {
 		return [0x8eb332, undefined];
 	}
 
-	setDonation(donation: Donation) {
+	setDonation(donation: Donation): LeafCoords {
 		if (this.hasDonation) {
 			throw new Error('Cannot reassign leaf!');
 		}
@@ -86,5 +91,11 @@ export default class Leaf extends Container {
 
 		this.visible = true;
 		this.hasDonation = true;
+
+		const bounds = this.leafSprite.getBounds();
+		return {
+			x: bounds.x,
+			y: bounds.y,
+		};
 	}
 }

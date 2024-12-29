@@ -2,8 +2,8 @@ import { html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import './base-modal.ts';
 import { RxDatabase } from 'rxdb';
-import Database from '../database.ts';
-import { Donation } from '../donationPopup.ts';
+import BranchDatabase, { DonationLeafInfo } from '../branchDatabase.ts';
+import { Viewport } from 'pixi-viewport';
 
 enum ErrorType {
 	EmptySearch,
@@ -15,6 +15,9 @@ export class FindDonationModal extends LitElement {
 	@property({ type: Boolean, reflect: true })
 	isOpen = false;
 
+	@property({ type: Viewport })
+	viewport: Viewport | undefined = undefined;
+
 	@state()
 	searchText = '';
 
@@ -22,7 +25,7 @@ export class FindDonationModal extends LitElement {
 	currentError: ErrorType | null = null;
 
 	@state()
-	db: RxDatabase | undefined = undefined;
+	branchDb: RxDatabase | undefined = undefined;
 
 	protected createRenderRoot(): HTMLElement | DocumentFragment {
 		return this;
@@ -30,6 +33,10 @@ export class FindDonationModal extends LitElement {
 
 	handleModalClosed() {
 		this.isOpen = false;
+
+		// Reset some state.
+		this.searchText = '';
+		this.currentError = null;
 	}
 
 	private updateText(event: InputEvent) {
@@ -44,30 +51,50 @@ export class FindDonationModal extends LitElement {
 		this.searchText = (target as HTMLInputElement).value;
 	}
 
+	private snapAndZoom(x: number, y: number) {
+		this.handleModalClosed();
+
+		if (this.viewport !== undefined) {
+			this.viewport.zoomPercent(1, true);
+
+			this.viewport.snap(x, y, {
+				removeOnComplete: true,
+				removeOnInterrupt: true,
+			});
+
+			this.viewport.snapZoom({
+				width: 1,
+				removeOnComplete: true,
+				removeOnInterrupt: true,
+			});
+		}
+	}
+
 	private async searchName() {
 		if (this.searchText.length == 0) {
 			this.currentError = ErrorType.EmptySearch;
 		} else {
 			this.currentError = null;
 
-			if (this.db === undefined) {
-				this.db = await Database();
+			if (this.branchDb === undefined) {
+				this.branchDb = await BranchDatabase();
 			}
 
-			// TODO: How should we handle anonymous donations?
-			const donations = (await this.db.donations
+			// TODO: How should we handle anonymous donation usernames?
+			const donations = (await this.branchDb.branches
 				.find({
 					selector: {
 						username: { $eq: this.searchText },
 					},
 					sort: [{ updated: 'desc' }],
 				})
-				.exec()) as Donation[];
+				.exec()) as DonationLeafInfo[];
 
 			if (donations.length > 0) {
-				// Just do last donation (by update time) wins for now.
+				// Just do last (by update time) donation wins for now.
 				const lastDonation = donations[0];
-				console.log(`${JSON.stringify(lastDonation)}`);
+
+				this.snapAndZoom(lastDonation.x, lastDonation.y);
 			} else {
 				// TODO: Return a message saying that there was no result found.
 				this.currentError = ErrorType.NoDonationFound;
@@ -103,11 +130,13 @@ export class FindDonationModal extends LitElement {
 						name="sapling-name"
 						placeholder="Your Sapling Name..."
 						required
+						autofocus
 						class="${isError ? 'text-input-error' : (
 							'text-input'
 						)} text-lg"
 						@input="${(event: InputEvent) =>
 							this.updateText(event)}"
+						.value="${this.searchText}"
 						@keydown="${async (event: KeyboardEvent) => {
 							if (event.key == 'Enter') {
 								await this.searchName();
@@ -115,7 +144,7 @@ export class FindDonationModal extends LitElement {
 						}}"
 					/>
 					${errorText !== undefined ?
-						html`<p class="-mt-3 text-red-500">
+						html`<p class="-mt-3 font-bold text-red-500">
 							${errorText}
 						</p>`
 					:	html``}
