@@ -17,6 +17,7 @@ export interface LeafInfo {
 	x: number;
 	y: number;
 	tint: number;
+	brightness: number;
 }
 
 class Database {

@@ -54,7 +54,7 @@ export class FindDonationModal extends LitElement {
 
 	private moveToLeaf(leafInfo: LeafInfo, donation: Donation) {
 		// Close the popup if already open
-		DonationPopup.setDonation(null, 0);
+		DonationPopup.setDonation(null, 0, 0);
 
 		this.handleModalClosed();
 
@@ -75,13 +75,13 @@ export class FindDonationModal extends LitElement {
 					forceStart: true,
 				});
 
-				DonationPopup.setDonation(donation, leafInfo.tint);
+				DonationPopup.setDonation(donation, leafInfo.tint, leafInfo.brightness);
 			} else {
 				// Snap, wait for it to end, then open the donation popup.
 
 				this.viewport.addEventListener(
 					'snap-end',
-					() => DonationPopup.setDonation(donation, leafInfo.tint),
+					() => DonationPopup.setDonation(donation, leafInfo.tint, leafInfo.brightness),
 					{
 						once: true,
 					},
@@ -105,7 +105,7 @@ export class FindDonationModal extends LitElement {
 		} else {
 			// If the viewport somehow doesn't exist then just fall back to opening
 			// the donation popup without any viewport magic.
-			DonationPopup.setDonation(donation, leafInfo.tint);
+			DonationPopup.setDonation(donation, leafInfo.tint, leafInfo.brightness);
 		}
 	}
 
