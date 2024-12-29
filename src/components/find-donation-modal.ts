@@ -54,26 +54,20 @@ export class FindDonationModal extends LitElement {
 				this.db = await Database();
 			}
 
+			// TODO: How should we handle anonymous donations?
 			const donations = (await this.db.donations
 				.find({
 					selector: {
 						username: { $eq: this.searchText },
 					},
+					sort: [{ updated: 'desc' }],
 				})
 				.exec()) as Donation[];
 
 			if (donations.length > 0) {
-				// Just do last donation (by update time) wins.
-				//
-				// TODO: How should we handle anonymous donations?
-				donations.sort((a, b) => {
-					// Assuming update dates are ISO 8601 dates...
-					if (a.updated < b.updated) return -1;
-					else if (a.updated > b.updated) return 1;
-					else return 0;
-				});
-
-				const lastDonation = donations[donations.length - 1];
+				// Just do last donation (by update time) wins for now.
+				const lastDonation = donations[0];
+				console.log(`${JSON.stringify(lastDonation)}`);
 			} else {
 				// TODO: Return a message saying that there was no result found.
 				this.currentError = ErrorType.NoDonationFound;
@@ -100,7 +94,7 @@ export class FindDonationModal extends LitElement {
 				<div class="separator" slot="separator"></div>
 
 				<div slot="content" class="flex flex-col gap-4">
-					<p class="text-lg">
+					<p>
 						Search for your donation by entering your sapling name!
 					</p>
 					<input
@@ -121,7 +115,7 @@ export class FindDonationModal extends LitElement {
 						}}"
 					/>
 					${errorText !== undefined ?
-						html`<p class="-mt-3 text-lg text-red-500">
+						html`<p class="-mt-3 text-red-500">
 							${errorText}
 						</p>`
 					:	html``}

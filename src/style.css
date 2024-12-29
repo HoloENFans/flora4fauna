@@ -140,6 +140,10 @@ a {
   @apply underline underline-offset-2;
 }
 
+p {
+  @apply text-lg;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
 }
