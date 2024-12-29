@@ -1,6 +1,14 @@
 import { html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import './base-modal.ts';
+import { RxDatabase } from 'rxdb';
+import Database from '../database.ts';
+import { Donation } from '../donationPopup.ts';
+
+enum ErrorType {
+	EmptySearch,
+	NoDonationFound,
+}
 
 @customElement('find-donation-modal')
 export class FindDonationModal extends LitElement {
@@ -11,7 +19,10 @@ export class FindDonationModal extends LitElement {
 	searchText = '';
 
 	@state()
-	flashError = false;
+	currentError: ErrorType | null = null;
+
+	@state()
+	db: RxDatabase | undefined = undefined;
 
 	protected createRenderRoot(): HTMLElement | DocumentFragment {
 		return this;
@@ -22,7 +33,7 @@ export class FindDonationModal extends LitElement {
 	}
 
 	private updateText(event: InputEvent) {
-		this.flashError = false;
+		this.currentError = null;
 
 		const target = event.target;
 
@@ -33,16 +44,53 @@ export class FindDonationModal extends LitElement {
 		this.searchText = (target as HTMLInputElement).value;
 	}
 
-	private searchName() {
+	private async searchName() {
 		if (this.searchText.length == 0) {
-			this.flashError = true;
+			this.currentError = ErrorType.EmptySearch;
 		} else {
-			this.flashError = false;
-			console.log(`Searching ${this.searchText}`);
+			this.currentError = null;
+
+			if (this.db === undefined) {
+				this.db = await Database();
+			}
+
+			const donations = (await this.db.donations
+				.find({
+					selector: {
+						username: { $eq: this.searchText },
+					},
+				})
+				.exec()) as Donation[];
+
+			if (donations.length > 0) {
+				// Just do last donation (by update time) wins.
+				//
+				// TODO: How should we handle anonymous donations?
+				donations.sort((a, b) => {
+					// Assuming update dates are ISO 8601 dates...
+					if (a.updated < b.updated) return -1;
+					else if (a.updated > b.updated) return 1;
+					else return 0;
+				});
+
+				const lastDonation = donations[donations.length - 1];
+			} else {
+				// TODO: Return a message saying that there was no result found.
+				this.currentError = ErrorType.NoDonationFound;
+			}
 		}
 	}
 
 	render() {
+		const isError = this.currentError !== null;
+
+		let errorText = undefined;
+		if (this.currentError === ErrorType.EmptySearch) {
+			errorText = 'Enter a username';
+		} else if (this.currentError === ErrorType.NoDonationFound) {
+			errorText = 'No donations found for that username';
+		}
+
 		return html`
 			<base-modal
 				.isOpen=${this.isOpen}
@@ -52,7 +100,7 @@ export class FindDonationModal extends LitElement {
 				<div class="separator" slot="separator"></div>
 
 				<div slot="content" class="flex flex-col gap-4">
-					<p>
+					<p class="text-lg">
 						Search for your donation by entering your sapling name!
 					</p>
 					<input
@@ -61,20 +109,25 @@ export class FindDonationModal extends LitElement {
 						name="sapling-name"
 						placeholder="Your Sapling Name..."
 						required
-						class="${this.flashError ? 'text-input-error' : (
+						class="${isError ? 'text-input-error' : (
 							'text-input'
-						)}"
+						)} text-lg"
 						@input="${(event: InputEvent) =>
 							this.updateText(event)}"
-						@keydown="${(event: KeyboardEvent) => {
+						@keydown="${async (event: KeyboardEvent) => {
 							if (event.key == 'Enter') {
-								this.searchName();
+								await this.searchName();
 							}
 						}}"
 					/>
+					${errorText !== undefined ?
+						html`<p class="-mt-3 text-lg text-red-500">
+							${errorText}
+						</p>`
+					:	html``}
 					<button
 						id="find-donation"
-						class="btn btn-grass"
+						class="btn btn-grass text-xl"
 						@click="${() => this.searchName()}"
 					>
 						Find Donation
