@@ -116,6 +116,10 @@ dialog::backdrop {
   @apply w-full rounded-md border-2 border-gray-300 p-2;
 }
 
+.text-input-error {
+  @apply w-full rounded-md border-2 border-red-400 p-2;
+}
+
 h1 {
   @apply text-3xl font-bold;
 }
