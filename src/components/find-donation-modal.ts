@@ -57,24 +57,60 @@ export class FindDonationModal extends LitElement {
 	}
 
 	private moveToLeaf(leafInfo: LeafInfo, donation: Donation) {
+		// Close the popup if already open
+		DonationPopup.setDonation(null, 0);
+
 		this.handleModalClosed();
 
 		if (this.viewport !== undefined) {
-			this.viewport.zoomPercent(1, true);
+			const sameCenters =
+				Math.abs(this.viewport.center.x - leafInfo.x) <
+					Number.EPSILON &&
+				Math.abs(this.viewport.center.y - leafInfo.y) < Number.EPSILON;
 
-			this.viewport.snap(leafInfo.x, leafInfo.y, {
-				removeOnComplete: true,
-				removeOnInterrupt: true,
-			});
+			if (sameCenters) {
+				// If they have the same coordinates just zoom in and open the donation popup.
 
-			this.viewport.snapZoom({
-				width: 1, // Don't set this to 0 or things break horribly.
-				removeOnComplete: true,
-				removeOnInterrupt: true,
-			});
+				this.viewport.snapZoom({
+					width: 1, // Don't set this to 0 or things break horribly.
+					removeOnComplete: true,
+					interrupt: false,
+					time: 550,
+					forceStart: true,
+				});
+
+				DonationPopup.setDonation(donation, leafInfo.tint);
+			} else {
+				// Snap, wait for it to end, then open the donation popup.
+
+				this.viewport.addEventListener(
+					'snap-end',
+					() => DonationPopup.setDonation(donation, leafInfo.tint),
+					{
+						once: true,
+					},
+				);
+
+				this.viewport.snap(leafInfo.x, leafInfo.y, {
+					removeOnComplete: true,
+					interrupt: false,
+					time: 600,
+					forceStart: true,
+				});
+
+				this.viewport.snapZoom({
+					width: 1, // Don't set this to 0 or things break horribly.
+					removeOnComplete: true,
+					interrupt: false,
+					time: 550,
+					forceStart: true,
+				});
+			}
+		} else {
+			// If the viewport somehow doesn't exist then just fall back to opening
+			// the donation popup without any viewport magic.
+			DonationPopup.setDonation(donation, leafInfo.tint);
 		}
-
-		DonationPopup.setDonation(donation, leafInfo.tint);
 	}
 
 	private async findDonationsForUser() {
@@ -137,7 +173,7 @@ export class FindDonationModal extends LitElement {
 		if (this.currentError === ErrorType.EmptySearch) {
 			errorText = 'Enter a username';
 		} else if (this.currentError === ErrorType.NoDonationFound) {
-			errorText = 'No donations found for that username';
+			errorText = "Couldn't find any donations, please try again";
 		}
 
 		return html`

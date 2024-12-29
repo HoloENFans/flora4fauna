@@ -264,7 +264,18 @@ async function setupPixi() {
 	return viewport;
 }
 
+function possibleUuuu() {
+	if (Math.floor(Math.random() * 20) >= 18) {
+		const loadingText = document.getElementById('loading-screen-text');
+		if (loadingText) {
+			(loadingText as HTMLSpanElement).textContent = 'uuuuuuuuuuuuuuuuuu';
+		}
+	}
+}
+
 void (async () => {
+	possibleUuuu();
+
 	const viewport = await setupPixi();
 
 	// Replace the #loading-container with a text that says "Click to start"
