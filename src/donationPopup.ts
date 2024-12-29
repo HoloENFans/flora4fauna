@@ -27,6 +27,14 @@ class DonationPopup {
 		return this.#instance;
 	}
 
+	private close() {
+		if (!this.container || !this.viewport) return;
+
+		this.container.visible = false;
+		this.viewport.plugins.resume('wheel');
+		this.viewport.plugins.resume('drag');
+	}
+
 	public init(app: Application, viewport: Viewport) {
 		if (this.container) {
 			return;
@@ -40,11 +48,7 @@ class DonationPopup {
 		this.container.on('wheel', (e) => {
 			e.stopImmediatePropagation();
 		});
-		this.container.on('click', () => {
-			this.container!.visible = false;
-			viewport.plugins.resume('wheel');
-			viewport.plugins.resume('drag');
-		});
+		this.container.on('click', () => this.close());
 
 		const background = new Graphics()
 			.rect(0, 0, app.renderer.width, app.renderer.height)
@@ -110,6 +114,21 @@ class DonationPopup {
 			y: 96,
 		});
 		superchatContainer.addChild(this.messageText);
+
+		const closeText = new Text({
+			text: '× Close',
+			style: {
+				fontFamily: 'UnifontEXMono',
+				fontSize: 24,
+				fill: 'white',
+			},
+			x: 900,
+			y: -30,
+			eventMode: 'static',
+			cursor: 'pointer',
+		});
+		closeText.on('click', () => this.close());
+		superchatContainer.addChild(closeText);
 
 		window.addEventListener('resize', () => {
 			background
