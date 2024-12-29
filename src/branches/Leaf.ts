@@ -57,7 +57,7 @@ export default class Leaf extends Container {
 
 	private getTint(amount: number): [number, number | undefined, number] {
 		// Graduation sakura colors
-		if(Date.now() > new Date(2025, 0, 3).getTime()) {
+		if(Date.now() > new Date(2025, 0, 3).getTime() && Date.now() < new Date(2025, 0, 4).getTime()) {
 			const sakuraColors: [number, number | undefined, number][] = [
 				[0xFF8BD4, 0x000000, 1.75],
 				[0xFEB5E3, 0x000000, 1.75],
@@ -67,8 +67,35 @@ export default class Leaf extends Container {
 			const randNum = getRandomNumber(0, sakuraColors.length);
 			return sakuraColors[randNum];
 		}
+		else {
+			const greenColors: [number, number | undefined, number][] = [
+				[0x8EB332, undefined, 1],
+				[0x60B967, undefined, 1],
+				[0x7FF180, undefined, 1],
+				[0x51FF08, undefined, 1],
+				[0x5EFF01, undefined, 1.25],
+				[0xFDD100, undefined, 1.50],
+			];
 
-		return [0x8eb332, undefined, 1];
+			if(amount >= 5 && amount < 10) {
+				return greenColors[1];
+			}
+			else if(amount >= 10 && amount < 20) {
+				return greenColors[2];
+			}
+			else if(amount >= 20 && amount < 50) {
+				return greenColors[3];
+			}
+			else if(amount >= 50 && amount < 100) {
+				return greenColors[4];
+			}
+			else if(amount >= 100) {
+				return greenColors[5];
+			}
+			else {
+				return greenColors[0];
+			}
+		}
 	}
 
 	setDonation(donation: Donation) {
