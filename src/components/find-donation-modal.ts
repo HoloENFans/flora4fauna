@@ -2,8 +2,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import './base-modal.ts';
 import { RxDatabase } from 'rxdb';
-import LeafDatabase, { LeafInfo } from '../leafDatabase.ts';
-import Database from '../database.ts';
+import Database, { LeafInfo } from '../database.ts';
 import { Viewport } from 'pixi-viewport';
 import DonationPopup, { Donation } from '../donationPopup.ts';
 
@@ -27,10 +26,7 @@ export class FindDonationModal extends LitElement {
 	currentError: ErrorType | null = null;
 
 	@state()
-	donationDb: RxDatabase | undefined = undefined;
-
-	@state()
-	leafDb: RxDatabase | undefined = undefined;
+	db: RxDatabase | undefined = undefined;
 
 	protected createRenderRoot(): HTMLElement | DocumentFragment {
 		return this;
@@ -114,15 +110,18 @@ export class FindDonationModal extends LitElement {
 	}
 
 	private async findDonationsForUser() {
-		if (this.donationDb === undefined) {
-			this.donationDb = await Database();
+		if (this.db === undefined) {
+			this.db = await Database();
 		}
 
-		const docs = await this.donationDb.donations
+		const docs = await this.db.donations
 			.find({
 				selector: {
 					// TODO: How should we handle anonymous donation usernames?
-					username: { $eq: this.searchText },
+					username: {
+						$regex: `^${this.searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+						$options: 'i',
+					},
 				},
 				sort: [{ updated: 'desc' }],
 			})
@@ -132,11 +131,11 @@ export class FindDonationModal extends LitElement {
 	}
 
 	private async findLeafForId(id: string) {
-		if (this.leafDb === undefined) {
-			this.leafDb = await LeafDatabase();
+		if (this.db === undefined) {
+			this.db = await Database();
 		}
 
-		return (await this.leafDb.leaves
+		return (await this.db.leaves
 			.findOne({
 				selector: {
 					id: { $eq: id },
