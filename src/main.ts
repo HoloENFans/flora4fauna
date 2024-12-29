@@ -260,10 +260,23 @@ async function setupPixi() {
 	setupSigns(viewport);
 	DonationPopup.init(app, viewport);
 	await setupTree(viewport);
+
+	return viewport;
+}
+
+function possibleUuuu() {
+	if (Math.floor(Math.random() * 20) >= 18) {
+		const loadingText = document.getElementById('loading-screen-text');
+		if (loadingText) {
+			(loadingText as HTMLSpanElement).textContent = 'uuuuuuuuuuuuuuuuuu';
+		}
+	}
 }
 
 void (async () => {
-	await setupPixi();
+	possibleUuuu();
+
+	const viewport = await setupPixi();
 
 	// Replace the #loading-container with a text that says "Click to start"
 	const loadingContainer = document.getElementById('loading-container');
@@ -282,7 +295,7 @@ void (async () => {
 				void Assets.loadBundle('default').then((resources) => {
 					// Initialize background music
 					const storedVolume = localStorage.getItem('storedVolume');
-					let volume = 0.3;
+					let volume = 1;
 					if (storedVolume != null) {
 						const parsed = parseFloat(storedVolume);
 						if (!isNaN(parsed)) {
@@ -322,6 +335,16 @@ void (async () => {
 						}, 2300);
 					}
 					localStorage.setItem('hasVisited', 'true');
+				}
+
+				// Connect the viewport to the search modal.
+				const searchModal = document.querySelector(
+					'find-donation-modal',
+				) as HTMLElement & {
+					viewport: Viewport | undefined;
+				};
+				if (searchModal) {
+					searchModal.viewport = viewport;
 				}
 			});
 		}

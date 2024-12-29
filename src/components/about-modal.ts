@@ -148,12 +148,17 @@ export class AboutModal extends LitElement {
 									>
 								</li>
 								<li>
-									Tachtician_Walt -
+									Tactician_Walt -
 									<a href="https://x.com/walt280"
 										>X / Twitter</a
 									>
 								</li>
-								<li>goose</li>
+								<li>
+									goose -
+									<a href="https://x.com/SanityUnderflow"
+										>X / Twitter</a
+									>
+								</li>
 								<li>
 									Hiro -
 									<a href="https://x.com/hiroavrs"
