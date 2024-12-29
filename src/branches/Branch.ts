@@ -1,7 +1,7 @@
 import { Container, Sprite } from 'pixi.js';
 import { Donation } from '../donationPopup.ts';
 import type Leaf from './Leaf.ts';
-import { LeafCoords } from './Leaf.ts';
+import { LeafInfo } from './Leaf.ts';
 
 export default abstract class Branch extends Container {
 	public readonly capacity = 15;
@@ -27,7 +27,7 @@ export default abstract class Branch extends Container {
 		return this.count >= this.capacity;
 	}
 
-	addDonation(donation: Donation): LeafCoords {
+	addDonation(donation: Donation): LeafInfo {
 		if (this.full) throw new Error('Branch is full!');
 
 		this.donationCount += 1;

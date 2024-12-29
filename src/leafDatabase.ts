@@ -2,14 +2,13 @@ import { addRxPlugin, createRxDatabase, RxDatabase } from 'rxdb';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
 
-export interface DonationLeafInfo {
-	username: string;
+export interface LeafInfo {
 	x: number;
 	y: number;
-	updated: string;
+	tint: number;
 }
 
-class BranchDatabase {
+class LeafDatabase {
 	static #instance: RxDatabase;
 
 	public static get instance() {
@@ -26,17 +25,16 @@ class BranchDatabase {
 
 				if (!this.#instance.branches) {
 					await this.#instance.addCollections({
-						branches: {
+						leaves: {
 							schema: {
 								version: 0,
 								primaryKey: 'id',
 								type: 'object',
 								properties: {
 									id: { type: 'string', maxLength: 15 },
-									username: { type: 'string' },
 									x: { type: 'number' },
 									y: { type: 'number' },
-									updated: { type: 'string' },
+									tint: { type: 'number' },
 								},
 							},
 						},
@@ -49,4 +47,4 @@ class BranchDatabase {
 	}
 }
 
-export default BranchDatabase.instance;
+export default LeafDatabase.instance;

@@ -3,7 +3,7 @@ import { Donation } from './donationPopup';
 import Branch01 from './branches/Branch01.ts';
 import Branch from './branches/Branch.ts';
 import Database from './database.ts';
-import BranchDatabase from './branchDatabase';
+import LeafDatabase from './leafDatabase.ts';
 import { RxChangeEventInsert } from 'rxdb';
 import { Viewport } from 'pixi-viewport';
 
@@ -98,7 +98,7 @@ export async function buildTreeSpriteGraph(
 	const initialDocs = (await db.donations.find().exec()) as (Donation & {
 		id: string;
 	})[];
-	const branchDB = await BranchDatabase();
+	const leafDb = await LeafDatabase();
 
 	// Build branches
 	let isLeftBranch = true;
@@ -166,14 +166,12 @@ export async function buildTreeSpriteGraph(
 			treeContainer.addChild(currentBranch);
 		}
 
-		const { x, y } = currentBranch.addDonation(donation);
-
-		void branchDB.branches.upsert({
+		const { x, y, tint } = currentBranch.addDonation(donation);
+		void leafDb.leaves.upsert({
 			id: donationId,
-			username: donation.username,
 			x: x,
 			y: y,
-			updated: donation.updated,
+			tint: tint,
 		});
 	}
 
