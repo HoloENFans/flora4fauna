@@ -8,9 +8,12 @@
 }
 
 body {
-  font-family: 'UnifontExMono', sans-serif;
   margin: 0;
   overflow: hidden;
+}
+
+* {
+  font-family: 'UnifontExMono', sans-serif;
 }
 
 /* Modal animation, can make it more fancy if needs to */
@@ -25,26 +28,45 @@ body {
 
 /* General UI */
 .btn {
-    @apply relative border-4 border-border bg-primary py-2 font-bold uppercase tracking-wide text-primary-foreground transition-all md:px-6;
+  @apply relative flex items-center justify-center rounded-lg border-4 px-4 py-2 font-bold uppercase tracking-wide text-primary-foreground transition-all;
+}
+
+.btn-donate {
+  @apply btn;
+}
+
+.btn-grass {
+  @apply border-border bg-primary;
+}
+
+.btn-wood {
+  @apply bordered-text wood border border-[#4F4634];
+}
+
+.mobile-btn:hover {
+  @apply scale-105;
 }
 
 .btn:hover {
-    @apply opacity-90;
+  @apply opacity-90;
+}
+
+.btn-donate:hover {
+  @apply scale-105 opacity-100;
 }
 
 /* click bounce */
 .btn:active {
-    @apply scale-[99%];
+  @apply scale-[99%];
 }
 
 .modal {
-  font-family: 'UnifontExMono', sans-serif;
   animation: modal-in 0.3s ease-out;
-  @apply relative z-50 rounded-lg p-6 shadow-md;
+  @apply z-50 max-h-[80vh] max-w-[90vw] rounded-lg p-6 pt-2 text-white shadow-md lg:max-h-[80vh] lg:max-w-[60vw];
 }
 
 .modal-content {
-  @apply max-h-[80vh] max-w-[90vw] overflow-y-auto lg:max-w-[60vw];
+  @apply overflow-y-auto;
 }
 
 /* Overwriting default dialog backdrop to allow transition  */
@@ -66,7 +88,7 @@ dialog::backdrop {
 }
 
 .bordered-text {
-  @apply text-primary-foreground tracking-wider;
+  @apply tracking-wider text-primary-foreground;
   text-shadow:
     1px 1px 0 #000,
     -1px 1px 0 #000,
@@ -83,7 +105,7 @@ dialog::backdrop {
 }
 
 .donate-label {
-  @apply text-4xl min-[850px]:text-6xl;
+  @apply text-3xl min-[850px]:text-6xl;
 }
 
 .front-button:hover {
@@ -99,24 +121,35 @@ h1 {
 }
 
 h2 {
-  @apply text-2xl font-bold;
+  @apply mb-2 mt-4 text-2xl font-bold underline underline-offset-4;
 }
 
-/* Custom scrollbar styles */
+h3 {
+  @apply text-xl font-bold;
+}
+
+ul {
+  @apply list-inside list-disc;
+}
+
+a {
+  @apply underline underline-offset-2;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-200;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-gray-400;
+  @apply rounded-full bg-[#c7c2b5];
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500;
+  @apply bg-[#a69f92];
 }
 
 /* For the mobile nav open arrow */
@@ -132,4 +165,55 @@ h2 {
 
 .open-arrow {
   animation: float 1.5s ease-in-out infinite;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+  pointer-events: none;
+}
+
+input[type='text'] {
+  @apply text-black;
+}
+
+.grass {
+  background-image: url('/ui/grass.png');
+  background-size: 500px 100%;
+  background-repeat: repeat-x;
+}
+
+.volume-container {
+  @apply relative flex items-center gap-2 transition-all;
+}
+.volume-icon {
+  @apply cursor-pointer select-none text-2xl opacity-70;
+}
+.volume-slider {
+  @apply invisible h-1 w-24 rounded bg-gray-300 accent-seconday opacity-0 transition-all;
+}
+
+.volume-container:hover .volume-slider {
+  @apply visible flex opacity-100;
+}
+
+.volume-container:hover .volume-icon {
+  @apply opacity-90;
+}
+
+.volume-container:active .volume-slider {
+  @apply visible flex opacity-100;
+}
+
+.wood {
+  background-image: url('/ui/wood.png');
+  background-size: 150% 150%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.donate-wood {
+  background-color: #c7c2b5;
+  border: 10px solid transparent;
+  border-image: url('/ui/small-wood.png') 30% round;
 }

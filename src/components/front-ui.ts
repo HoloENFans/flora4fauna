@@ -1,8 +1,9 @@
+import { CountUp } from 'countup.js';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { BaseModal } from './base-modal';
-import { CountUp } from 'countup.js';
 import Stats from '../stats.ts';
+import { BaseModal } from './base-modal';
+import { setupDrawer } from '../utils/drawer-utils';
 
 @customElement('front-ui')
 export class FrontUi extends LitElement {
@@ -13,10 +14,31 @@ export class FrontUi extends LitElement {
 	render() {
 		return html`
 			<div>
+				<div class="absolute left-6 top-4">
+					<volume-control></volume-control>
+				</div>
+				<div
+					class="fixed bottom-0 left-1/2 hidden -translate-x-1/2 transition-opacity hover:opacity-70 md:block"
+				>
+					<button
+						class="bordered-text flex flex-col items-center justify-center text-3xl font-bold drop-shadow-lg"
+						id="nav-open-bar"
+					>
+						<span class="open-arrow">▲</span>
+						<span class="-mt-2 mb-4">Tap for more info</span>
+					</button>
+				</div>
 				<!-- Navbar -->
 				<div
-					class="fixed bottom-0 z-10 hidden w-screen items-center justify-evenly bg-black/65 md:flex"
+					class="grass fixed bottom-0 z-10 hidden w-screen items-center justify-evenly pt-10 md:flex"
+					id="nav-drawer"
 				>
+					<button
+						class="bordered-text absolute right-4 top-10 font-bold hover:opacity-70"
+						id="nav-close-bar"
+					>
+						<p class="text-2xl">×</p>
+					</button>
 					<button id="open-about-modal" class="front-button">
 						About
 					</button>
@@ -24,8 +46,9 @@ export class FrontUi extends LitElement {
 						Accountability
 					</button>
 					<button
-						class="front-button donate-label"
+						class="donate-label btn-donate btn-wood mb-1"
 						id="open-donate-modal"
+						style="padding: 1rem 2rem;"
 					>
 						Donate
 					</button>
@@ -33,7 +56,7 @@ export class FrontUi extends LitElement {
 						id="open-stats-modal"
 						class="front-button flex flex-col items-center"
 					>
-						<span class="text-2xl">Total Raised</span>
+						<span class="text-xl">Raised</span>
 						<span id="navbar-total-raised"></span>
 					</div>
 					<button id="open-find-donation-modal" class="front-button">
@@ -69,16 +92,7 @@ export class FrontUi extends LitElement {
 		addClickListener('find-donation-modal');
 		addClickListener('stats-modal');
 
-		// Check if user has entered page for first time
-		// If so, open the about modal
-		const hasVisited = localStorage.getItem('hasVisited');
-		if (hasVisited !== 'true') {
-			const aboutModal = document.querySelector('about-modal');
-			if (aboutModal) {
-				aboutModal.isOpen = true;
-			}
-			localStorage.setItem('hasVisited', 'true');
-		}
+		setupDrawer('nav-open-bar', 'nav-close-bar', 'nav-drawer');
 
 		const countUp = new CountUp('navbar-total-raised', Stats.totalRaised, {
 			prefix: '$',

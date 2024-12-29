@@ -5,7 +5,7 @@ import Leaf from './Leaf.ts';
 export default class Branch01 extends Branch {
 	constructor() {
 		super();
-		this.label = 'Branch_01';
+		this.label = 'Branch variant 01';
 		this.scale = 0.4;
 	}
 

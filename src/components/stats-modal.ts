@@ -56,25 +56,25 @@ export class StatsModal extends LitElement {
 					class="flex flex-col gap-4 md:min-w-[500px]"
 				>
 					<p
-						class="flex items-center justify-between gap-20 text-xl font-bold md:gap-0"
+						class="flex flex-col items-center gap-4 text-xl font-bold"
 					>
 						<span class="underline underline-offset-4"
 							>Number of donations:</span
 						>
 						<span
-							class="bordered-text"
+							class="bordered-text text-3xl"
 							id="stats-modal-donation-count"
 						></span>
 					</p>
 
 					<p
-						class="flex items-center justify-between text-xl font-bold"
+						class="flex flex-col items-center gap-4 text-xl font-bold"
 					>
 						<span class="underline underline-offset-4"
 							>Total amount raised:</span
 						>
 						<span
-							class="bordered-text"
+							class="bordered-text text-3xl"
 							id="stats-modal-total-raised"
 						>
 						</span>

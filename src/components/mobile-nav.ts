@@ -3,6 +3,7 @@ import { customElement } from 'lit/decorators.js';
 import { BaseModal } from './base-modal';
 import { CountUp } from 'countup.js';
 import Stats from '../stats.ts';
+import { setupDrawer } from '../utils/drawer-utils';
 
 @customElement('mobile-nav')
 export class MobileNav extends LitElement {
@@ -13,25 +14,27 @@ export class MobileNav extends LitElement {
 	render() {
 		return html`
 			<div
-				class="fixed bottom-0 flex w-screen items-center justify-center md:hidden"
+				class="fixed bottom-0 left-1/2 -translate-x-1/2 transition-opacity hover:opacity-70 md:hidden"
 			>
 				<button
 					class="bordered-text flex flex-col items-center justify-center text-3xl font-bold drop-shadow-lg"
 					id="mobile-nav-open-bar"
 				>
 					<span class="open-arrow">▲</span>
-					<span class="-mt-2 mb-4">Tap for more info</span>
+					<span class="-mt-2 mb-4 whitespace-nowrap text-nowrap"
+						>Tap for more info</span
+					>
 				</button>
 			</div>
 			<div
-				class="thingy absolute bottom-0 z-20 w-screen translate-y-full bg-black/60 md:hidden"
+				class="grass fixed bottom-0 z-20 w-screen translate-y-full pt-10 md:hidden"
 				id="mobile-nav-drawer"
 			>
 				<button
-					class="bordered-text absolute right-4 top-2 font-bold"
+					class="bordered-text absolute right-4 top-16 font-bold hover:opacity-70"
 					id="mobile-nav-close-bar"
 				>
-					<p class="text-xl">×</p>
+					<p class="text-2xl">×</p>
 				</button>
 
 				<button
@@ -43,25 +46,31 @@ export class MobileNav extends LitElement {
 				</button>
 
 				<div class="grid grid-cols-2 justify-center gap-2 px-8 py-4">
-					<button class="btn" id="open-mobile-donate-modal">
+					<button class="btn btn-wood" id="open-mobile-donate-modal">
 						Donate
 					</button>
-					<button class="btn" id="open-mobile-about-modal">
+					<button class="btn btn-wood" id="open-mobile-about-modal">
 						About
 					</button>
-					<button class="btn" id="open-mobile-accountability-modal">
+					<button
+						class="btn btn-wood"
+						id="open-mobile-accountability-modal"
+					>
 						Accountability
 					</button>
-					<button class="btn" id="open-mobile-find-donation-modal">
+					<button
+						class="btn btn-wood"
+						id="open-mobile-find-donation-modal"
+					>
 						Find Donation
 					</button>
 				</div>
 			</div>
 		`;
 	}
+
 	firstUpdated() {
-		// Duplicating the same from front-ui since can't have same ids as the buttons defined there
-		// And I don't know how to handle that properly
+		// Set up modals
 		const addClickListener = (query: string) => {
 			const modalButton = document.querySelector('#open-mobile-' + query);
 			const modal: BaseModal | null = document.querySelector(query);
@@ -77,23 +86,14 @@ export class MobileNav extends LitElement {
 		addClickListener('find-donation-modal');
 		addClickListener('stats-modal');
 
-		const mobileNavOpenBtn = document.getElementById(
+		// Set up drawer
+		setupDrawer(
 			'mobile-nav-open-bar',
-		)!;
-		const mobileNavCloseBtn = document.getElementById(
 			'mobile-nav-close-bar',
-		)!;
-		const mobileNavDrawer = document.getElementById('mobile-nav-drawer')!;
-		mobileNavDrawer.classList.add('transition-transform', 'duration-300');
-		mobileNavOpenBtn.addEventListener('click', () => {
-			mobileNavDrawer.classList.remove('translate-y-full');
-			mobileNavOpenBtn.classList.add('hidden');
-		});
-		mobileNavCloseBtn.addEventListener('click', () => {
-			mobileNavDrawer.classList.add('translate-y-full');
-			mobileNavOpenBtn.classList.remove('hidden');
-		});
+			'mobile-nav-drawer',
+		);
 
+		// CountUp for "Total Raised"
 		const countUp = new CountUp('mobile-total-raised', Stats.totalRaised, {
 			prefix: '$',
 		});

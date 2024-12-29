@@ -36,7 +36,7 @@ export class FindDonationModal extends LitElement {
 						required
 						class="text-input"
 					/>
-					<button id="find-donation" class="btn">
+					<button id="find-donation" class="btn btn-grass">
 						Find Donation
 					</button>
 				</div>

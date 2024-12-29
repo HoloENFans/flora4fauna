@@ -6,6 +6,7 @@ import Database from './database.ts';
 import { RxChangeEventInsert } from 'rxdb';
 import { getRandomNumber } from './random.ts';
 import Branch02 from './branches/Branch02.ts';
+import { Viewport } from 'pixi-viewport';
 
 const TRUNK_ACTUAL_CENTERLINE = 1160;
 
@@ -29,6 +30,7 @@ const BRANCH_OPTIONS: (new () => Branch)[] = [Branch01, Branch02];
 export async function buildTreeSpriteGraph(
 	treeBottomX: number,
 	treeBottomY: number,
+	viewport: Viewport,
 ) {
 	const treeContainer = new Container();
 
@@ -91,22 +93,19 @@ export async function buildTreeSpriteGraph(
 
 	const donations = (await db.donations.find().exec()) as Donation[];
 
-	const donoDummyList: Donation[] = [];
-	for (let i = 0; i < 80; i++) {
-		const dummyDono: Donation = {
-			username: 'test' + i,
-			message: 'message' + i,
-			amount: 321.0,
-			created: '2024-12-26T22:46:33Z',
-			updated: '2024-12-26T22:46:33Z',
-		};
-		donoDummyList.push(dummyDono);
-	}
-
 	// Build branches
 	let isLeftBranch = true;
 	let currentBranch: Branch | undefined;
-	let trunkIndex = 1;
+	let leftBranchY =
+		trunkSprites[1].position.y -
+		trunkSprites[1].height / 2 -
+		Math.floor(Math.random() * 200);
+	let rightBranchY =
+		trunkSprites[1].position.y -
+		trunkSprites[1].height / 2 -
+		Math.floor(Math.random() * 200);
+	const trunkIndex = 1;
+	let currentClampTopLimit = 0;
 	// The tree in the texture is not in the actual center of the texture, so we need to calculate the actual center of the tree trunk.
 	const actualTrunkCenter =
 		treeBottomX +
@@ -117,8 +116,9 @@ export async function buildTreeSpriteGraph(
 			currentBranch = new BRANCH_OPTIONS[
 				Math.floor(Math.random() * BRANCH_OPTIONS.length)
 			]();
+			const bounds = currentBranch.getBounds(true);
 
-			if (trunkIndex >= trunkSprites.length) {
+			if (Math.min(leftBranchY - 200, rightBranchY - 200) < trunkTopY) {
 				const trunkSprite = Sprite.from(trunkTextureFunc(trunkIndex));
 				positionAndInsertSprite(
 					treeContainer,
@@ -131,6 +131,24 @@ export async function buildTreeSpriteGraph(
 				trunkTopY -= trunkSprite.height;
 				trunkSprites.push(trunkSprite);
 				treeTop.y = trunkTopY;
+
+				if (trunkTopY < currentClampTopLimit) {
+					currentClampTopLimit = trunkTopY - 2000;
+
+					viewport.plugins.remove('clamp');
+					viewport.clamp({
+						left: 0,
+						right: viewport.worldWidth,
+						top: currentClampTopLimit,
+						// Increase clamp size for mobile
+						// TODO: Still doesn't work perfectly, but "good enough"
+						bottom:
+							screen.orientation?.type.startsWith('portrait') ?
+								viewport.worldHeight * 1.15
+							:	viewport.worldHeight,
+						underflow: 'center',
+					});
+				}
 			}
 
 			currentBranch.position.set(
@@ -142,11 +160,16 @@ export async function buildTreeSpriteGraph(
 
 			if (isLeftBranch) {
 				currentBranch.angle = 280 + getRandomNumber(-5, 5);
+				currentBranch.position.set(actualTrunkCenter, leftBranchY);
 				isLeftBranch = false;
+				leftBranchY -=
+					bounds.width + 600 + Math.floor(Math.random() * 1000);
 			} else {
 				currentBranch.angle = 80 + getRandomNumber(-5, 5);
+				currentBranch.position.set(actualTrunkCenter, rightBranchY);
 				isLeftBranch = true;
-				trunkIndex++;
+				rightBranchY -=
+					bounds.width + 600 + Math.floor(Math.random() * 1000);
 			}
 			treeContainer.addChild(currentBranch);
 		}
@@ -154,7 +177,7 @@ export async function buildTreeSpriteGraph(
 		currentBranch.addDonation(donation);
 	}
 
-	for (const donation of donoDummyList) {
+	for (const donation of donations) {
 		addDonation(donation);
 	}
 
