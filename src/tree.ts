@@ -90,8 +90,9 @@ export async function buildTreeSpriteGraph(
 	);
 
 	const db = await Database();
-
-	const donations = (await db.donations.find().exec()) as Donation[];
+	const initialDocs = (await db.donations.find().exec()) as (Donation & {
+		id: string;
+	})[];
 
 	// Build branches
 	let isLeftBranch = true;
@@ -111,7 +112,7 @@ export async function buildTreeSpriteGraph(
 		treeBottomX +
 		treeBase.width * (TRUNK_ACTUAL_CENTERLINE / treeBase.width - 0.5);
 
-	function addDonation(donation: Donation) {
+	function addDonation(donationId: string, donation: Donation) {
 		if (!currentBranch || currentBranch.full) {
 			currentBranch = new BRANCH_OPTIONS[
 				Math.floor(Math.random() * BRANCH_OPTIONS.length)
@@ -137,15 +138,7 @@ export async function buildTreeSpriteGraph(
 
 					viewport.plugins.remove('clamp');
 					viewport.clamp({
-						left: 0,
-						right: viewport.worldWidth,
-						top: currentClampTopLimit,
-						// Increase clamp size for mobile
-						// TODO: Still doesn't work perfectly, but "good enough"
-						bottom:
-							screen.orientation?.type.startsWith('portrait') ?
-								viewport.worldHeight * 1.15
-							:	viewport.worldHeight,
+						direction: 'all',
 						underflow: 'center',
 					});
 				}
@@ -174,15 +167,21 @@ export async function buildTreeSpriteGraph(
 			treeContainer.addChild(currentBranch);
 		}
 
-		currentBranch.addDonation(donation);
+		const { x, y, tint } = currentBranch.addDonation(donation);
+		void db.leaves.upsert({
+			id: donationId,
+			x: x,
+			y: y,
+			tint: tint,
+		});
 	}
 
-	for (const donation of donations) {
-		addDonation(donation);
+	for (const doc of initialDocs) {
+		addDonation(doc.id, doc as Donation);
 	}
 
 	db.donations.insert$.subscribe((event: RxChangeEventInsert<Donation>) => {
-		addDonation(event.documentData);
+		addDonation(event.documentId, event.documentData);
 	});
 
 	return treeContainer;

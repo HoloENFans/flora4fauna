@@ -2,6 +2,12 @@ import { ColorMatrixFilter, Container, Sprite, Text } from 'pixi.js';
 import DonationPopup, { Donation } from '../donationPopup.ts';
 import { getRandomNumber } from '../random.ts';
 
+export interface LeafInfo {
+	x: number;
+	y: number;
+	tint: number;
+}
+
 export default class Leaf extends Container {
 	private readonly prerequisites?: Container[];
 	private readonly leafSprite;
@@ -98,7 +104,7 @@ export default class Leaf extends Container {
 		}
 	}
 
-	setDonation(donation: Donation) {
+	setDonation(donation: Donation): LeafInfo {
 		if (this.hasDonation) {
 			throw new Error('Cannot reassign leaf!');
 		}
@@ -128,5 +134,12 @@ export default class Leaf extends Container {
 
 		this.visible = true;
 		this.hasDonation = true;
+
+		const bounds = this.leafSprite.getBounds();
+		return {
+			x: bounds.x,
+			y: bounds.y,
+			tint: tint,
+		};
 	}
 }

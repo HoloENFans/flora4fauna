@@ -1,6 +1,7 @@
 import {
 	addRxPlugin,
 	createRxDatabase,
+	RxCollectionCreator,
 	RxDatabase,
 	RxReplicationPullStreamItem,
 } from 'rxdb';
@@ -11,6 +12,12 @@ import { replicateRxCollection } from 'rxdb/plugins/replication';
 import type { RecordListOptions } from 'pocketbase';
 import type { Donation } from './donationPopup.ts';
 import pb from './pocketbase.ts';
+
+export interface LeafInfo {
+	x: number;
+	y: number;
+	tint: number;
+}
 
 class Database {
 	static #instance: RxDatabase;
@@ -27,33 +34,53 @@ class Database {
 					storage: getRxStorageDexie(),
 				});
 
-				if (!this.#instance.donations) {
-					await this.#instance.addCollections({
-						donations: {
-							schema: {
-								version: 0,
-								primaryKey: 'id',
-								type: 'object',
-								properties: {
-									id: { type: 'string', maxLength: 15 },
-									username: { type: 'string' },
-									message: { type: 'string' },
-									amount: { type: 'number' },
-									created: { type: 'string' },
-									updated: { type: 'string' },
-								},
-								required: [
-									'id',
-									'username',
-									'message',
-									'amount',
-									'created',
-									'updated',
-								],
+				if (this.#instance.leaves) {
+					await this.#instance.leaves.remove();
+				}
+
+				const collections: Record<string, RxCollectionCreator> = {
+					leaves: {
+						schema: {
+							version: 0,
+							primaryKey: 'id',
+							type: 'object',
+							properties: {
+								id: { type: 'string', maxLength: 15 },
+								x: { type: 'number' },
+								y: { type: 'number' },
+								tint: { type: 'number' },
 							},
 						},
-					});
+					},
+				};
+
+				if (!this.#instance.donations) {
+					collections.donations = {
+						schema: {
+							version: 0,
+							primaryKey: 'id',
+							type: 'object',
+							properties: {
+								id: { type: 'string', maxLength: 15 },
+								username: { type: 'string' },
+								message: { type: 'string' },
+								amount: { type: 'number' },
+								created: { type: 'string' },
+								updated: { type: 'string' },
+							},
+							required: [
+								'id',
+								'username',
+								'message',
+								'amount',
+								'created',
+								'updated',
+							],
+						},
+					};
 				}
+
+				await this.#instance.addCollections(collections);
 
 				const pullStream$ = new Subject<
 					RxReplicationPullStreamItem<Donation, { updated: string }>
@@ -70,6 +97,7 @@ class Database {
 
 				addEventListener('beforeunload', () => {
 					void unsubscribe();
+					void this.#instance.leaves.remove();
 				});
 
 				replicateRxCollection<
