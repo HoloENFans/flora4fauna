@@ -50,6 +50,7 @@ class Database {
 								x: { type: 'number' },
 								y: { type: 'number' },
 								tint: { type: 'number' },
+								brightness: {type: 'number' }
 							},
 						},
 					},
