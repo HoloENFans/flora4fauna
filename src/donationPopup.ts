@@ -145,6 +145,11 @@ class DonationPopup {
 			this.messageText!.style.fill = textColor;
 			this.amountText!.style.fill = textColor;
 		}
+		else {
+			this.usernameText!.style.fill = 'white';
+			this.messageText!.style.fill = 'white';
+			this.amountText!.style.fill = 'white';
+		}
 		this.container.visible = true;
 
 		this.viewport!.plugins.pause('wheel');
