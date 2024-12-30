@@ -1,18 +1,16 @@
-import { Container, Sprite } from 'pixi.js';
+import { Container, Sprite, Text } from 'pixi.js';
 import { Donation } from './donationPopup';
 import Branch01 from './branches/Branch01.ts';
 import Branch from './branches/Branch.ts';
 import Database from './database.ts';
 import { RxChangeEventInsert } from 'rxdb';
+import { getRandomNumber } from './random.ts';
+import Branch02 from './branches/Branch02.ts';
 import { Viewport } from 'pixi-viewport';
+//import Leaf from './branches/Leaf.ts';
 
 const TRUNK_ACTUAL_CENTERLINE = 1160;
-
-// https://stackoverflow.com/a/7228322
-function randomNumberFromInterval(min: number, max: number): number {
-	// min and max included
-	return Math.random() * (max - min + 1) + min;
-}
+//const DEBUG_DRAW_TREE_TOP_POLYGON = false;
 
 function positionAndInsertSprite(
 	container: Container,
@@ -29,7 +27,7 @@ function positionAndInsertSprite(
 	return sprite;
 }
 
-const BRANCH_OPTIONS: (new () => Branch)[] = [Branch01];
+const BRANCH_OPTIONS: (new () => Branch)[] = [Branch01, Branch02];
 
 export async function buildTreeSpriteGraph(
 	treeBottomX: number,
@@ -93,6 +91,53 @@ export async function buildTreeSpriteGraph(
 		trunkTopY,
 	);
 
+	// Build the "Growing in Progress" sign
+	const progressSign = new Container();
+	progressSign.label = '"Growing In Progress" Sign';
+	progressSign.angle = 15;
+	progressSign.position.set(treeBottomX, trunkTopY - (treeTop.height / 2));
+
+	const sign = Sprite.from("Wooden_Sign_Postless");
+	sign.anchor.set(0.5, 0.5);
+	sign.zIndex = -1;
+	progressSign.addChild(sign);
+
+	const signText1 = new Text({
+		text: 'GROWING\nIN PROGRESS',
+		style: {
+			fontFamily: 'UnifontEXMono',
+			fontSize: 90,
+			fontWeight: 'bold',
+			fill: 'white',
+			align: 'center',
+		},
+		x: 0,
+		y: -100,
+	});
+	signText1.anchor.set(0.5);
+	signText1.zIndex = 1;
+	signText1.angle = 1;
+	progressSign.addChild(signText1);
+
+	const signText2 = new Text({
+		text: 'MIND THE\nBALDNESS',
+		style: {
+			fontFamily: 'UnifontEXMono',
+			fontSize: 70,
+			fontWeight: 'bold',
+			fill: 'white',
+			align: 'center',
+		},
+		x: 0,
+		y: 80,
+	});
+	signText2.anchor.set(0.5);
+	signText2.zIndex = 1;
+	signText2.angle = 1;
+	progressSign.addChild(signText2);
+
+	treeContainer.addChild(progressSign);
+
 	const db = await Database();
 	const initialDocs = (await db.donations.find().exec()) as (Donation & {
 		id: string;
@@ -137,6 +182,8 @@ export async function buildTreeSpriteGraph(
 				trunkSprites.push(trunkSprite);
 				treeTop.y = trunkTopY;
 
+				progressSign.position.set(treeBottomX, trunkTopY - (treeTop.height / 2));
+
 				if (trunkTopY < currentClampTopLimit) {
 					currentClampTopLimit = trunkTopY - 2000;
 
@@ -148,15 +195,22 @@ export async function buildTreeSpriteGraph(
 				}
 			}
 
+			currentBranch.position.set(
+				actualTrunkCenter,
+				trunkSprites[trunkIndex].position.y -
+					trunkSprites[trunkIndex].height / 2 +
+					getRandomNumber(-100, 100),
+			);
+
 			if (isLeftBranch) {
+				currentBranch.angle = 280 + getRandomNumber(-5, 5);
 				currentBranch.position.set(actualTrunkCenter, leftBranchY);
-				currentBranch.angle = 280 + randomNumberFromInterval(-5, 5);
 				isLeftBranch = false;
 				leftBranchY -=
 					bounds.width + 600 + Math.floor(Math.random() * 1000);
 			} else {
+				currentBranch.angle = 80 + getRandomNumber(-5, 5);
 				currentBranch.position.set(actualTrunkCenter, rightBranchY);
-				currentBranch.angle = 80 + randomNumberFromInterval(-5, 5);
 				isLeftBranch = true;
 				rightBranchY -=
 					bounds.width + 600 + Math.floor(Math.random() * 1000);
@@ -164,12 +218,13 @@ export async function buildTreeSpriteGraph(
 			treeContainer.addChild(currentBranch);
 		}
 
-		const { x, y, tint } = currentBranch.addDonation(donation);
+		const { x, y, tint, brightness } = currentBranch.addDonation(donation);
 		void db.leaves.upsert({
 			id: donationId,
 			x: x,
 			y: y,
 			tint: tint,
+			brightness: brightness,
 		});
 	}
 

@@ -17,6 +17,7 @@ export interface LeafInfo {
 	x: number;
 	y: number;
 	tint: number;
+	brightness: number;
 }
 
 class Database {
@@ -49,6 +50,7 @@ class Database {
 								x: { type: 'number' },
 								y: { type: 'number' },
 								tint: { type: 'number' },
+								brightness: {type: 'number' }
 							},
 						},
 					},
