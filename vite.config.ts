@@ -12,7 +12,24 @@ function assetpackPlugin(): Plugin {
 			...pixiPipes({
 				cacheBust: true,
 				resolutions: { default: 1, low: 0.5 },
-				compression: { jpg: true, png: true, webp: true },
+				compression: {
+					jpg: false,
+					png: {
+						quality: 90,
+						effort: 10,
+					},
+					webp: {
+						quality: 90,
+						alphaQuality: 100,
+						lossless: true,
+						effort: 6,
+					},
+					avif: {
+						quality: 75,
+						lossless: true,
+						effort: 9,
+					},
+				},
 				texturePacker: {
 					texturePacker: {
 						removeFileExtension: true,

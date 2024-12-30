@@ -22,16 +22,22 @@ export class DonateModal extends LitElement {
 				@modal-closed=${() => this.handleModalClosed()}
 				.isDonateModal=${true}
 			>
-				<div
-					slot="content"
-					id="mmd_widget_iframe_div"
-					data-dedication-label="Your username"
-					data-dedication-value="Anonymous Sapling"
-					data-topic="tree_planting"
-					data-dedication-max-length="24"
-					data-message-max-length="321"
-					data-disable-configuration="true"
-				></div>
+				<div slot="content">
+					<div
+						id="mmd_widget_iframe_div"
+						data-dedication-label="Your username"
+						data-dedication-value="Anonymous Sapling"
+						data-topic="tree_planting"
+						data-dedication-max-length="24"
+						data-message-max-length="321"
+						data-disable-configuration="true"
+					></div>
+					<p class="mt-4 w-72 text-center text-xs text-black">
+						If you get any errors, try disabling any ad or tracking
+						blockers you might have. Those can interfere with the
+						payment portal correctly working.
+					</p>
+				</div>
 			</base-modal>
 		`;
 	}
