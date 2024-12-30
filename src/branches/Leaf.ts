@@ -40,11 +40,11 @@ export default class Leaf extends Container {
 				fontSize: 24,
 				fontWeight: 'bold',
 				fill: 'white',
-				align: 'left',
 			},
-			x: 85,
-			y: -58,
+			x: this.leafSprite.x * 2 + this.leafSprite.width,
+			y: -40,
 		});
+		this.usernameText.anchor.set(0.5, 0.5);
 		this.addChild(this.usernameText);
 
 		this.amountText = new Text({
@@ -54,11 +54,11 @@ export default class Leaf extends Container {
 				fontSize: 48,
 				fontWeight: 'bold',
 				fill: 'white',
-				align: 'center',
 			},
-			x: 170,
-			y: 10,
+			x: this.leafSprite.x * 2 + this.leafSprite.width,
+			y: 40,
 		});
+		this.amountText.anchor.set(0.5, 0.5);
 		this.addChild(this.amountText);
 	}
 
