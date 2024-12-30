@@ -129,6 +129,9 @@ export default class Leaf extends Container {
 		this.on('click', () => {
 			DonationPopup.setDonation(donation, tint, brightness);
 		});
+		this.on('tap', () => {
+			DonationPopup.setDonation(donation, tint);
+		});
 
 		this.visible = true;
 		this.hasDonation = true;

@@ -49,6 +49,7 @@ class DonationPopup {
 			e.stopImmediatePropagation();
 		});
 		this.container.on('click', () => this.close());
+		this.container.on('tap', () => this.close());
 
 		const background = new Graphics()
 			.rect(0, 0, app.renderer.width, app.renderer.height)
@@ -64,6 +65,9 @@ class DonationPopup {
 		});
 		superchatContainer.eventMode = 'static';
 		superchatContainer.on('click', (e) => {
+			e.stopPropagation();
+		});
+		superchatContainer.on('tap', (e) => {
 			e.stopPropagation();
 		});
 		this.container.addChild(superchatContainer);
@@ -144,6 +148,7 @@ class DonationPopup {
 			cursor: 'pointer',
 		});
 		closeText.on('click', () => this.close());
+		closeText.on('tap', () => this.close());
 		superchatContainer.addChild(closeText);
 
 		window.addEventListener('resize', () => {
