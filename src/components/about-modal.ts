@@ -127,7 +127,15 @@ export class AboutModal extends LitElement {
 						<div>
 							<h3>⭐ Organizer</h3>
 							<ul>
-								<li>ArtOfBart - <a href="">X / Twitter</a></li>
+								<li>
+									ArtOfBart -
+									<a
+										href="https://x.com/artofblart"
+										rel="noreferrer"
+										target="_blank"
+										>X / Twitter</a
+									>
+								</li>
 								<li>
 									GoldElysium -
 									<a
@@ -137,7 +145,15 @@ export class AboutModal extends LitElement {
 										>GitHub</a
 									>
 								</li>
-								<li>NinjaStahr - <a href="">X / Twitter</a></li>
+								<li>
+									NinjaStahr -
+									<a
+										href="https://x.com/ninjastahr"
+										rel="noreferrer"
+										target="_blank"
+										>X / Twitter</a
+									>
+								</li>
 							</ul>
 						</div>
 
@@ -183,7 +199,7 @@ export class AboutModal extends LitElement {
 										href="https://github.com/GoldElysium"
 										rel="noreferrer"
 										target="_blank"
-										>Github</a
+										>GitHub</a
 									>
 								</li>
 								<li>
