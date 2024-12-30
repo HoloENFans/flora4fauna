@@ -26,7 +26,7 @@ function getClampZoom(viewport: Viewport): IClampZoomOptions {
 	const isVertical = window.innerHeight > window.innerWidth;
 
 	return {
-		minWidth: 1500,
+		minWidth: Math.min(window.innerWidth, 1500),
 		maxWidth: viewport.worldWidth,
 		// Basically if it's > 6700, we get fauna floating in a white void when
 		// we hide the background; this happens if we zoom too far out on a vertical
