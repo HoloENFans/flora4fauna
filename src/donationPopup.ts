@@ -51,7 +51,6 @@ class DonationPopup {
 			!this.messageText
 		)
 			return;
-		console.log('hi');
 
 		const isSmallScreen = window.innerWidth < 768;
 
@@ -104,7 +103,7 @@ class DonationPopup {
 		this.container.on('wheel', (e) => {
 			e.stopImmediatePropagation();
 		});
-		this.container.on('click', () => this.close());
+		this.container.on('pointerdown', () => this.close());
 
 		const background = new Graphics()
 			.rect(0, 0, app.renderer.width, app.renderer.height)
@@ -119,7 +118,7 @@ class DonationPopup {
 			height: 300,
 		});
 		superchatContainer.eventMode = 'static';
-		superchatContainer.on('click', (e) => {
+		superchatContainer.on('pointerdown', (e) => {
 			e.stopPropagation();
 		});
 		this.container.addChild(superchatContainer);
@@ -199,7 +198,7 @@ class DonationPopup {
 			eventMode: 'static',
 			cursor: 'pointer',
 		});
-		closeText.on('click', () => this.close());
+		closeText.on('pointerdown', () => this.close());
 		superchatContainer.addChild(closeText);
 
 		this.checkLeafOrientation();
