@@ -56,11 +56,11 @@ export default class Leaf extends Container {
 				fontSize: 24,
 				fontWeight: 'bold',
 				fill: 'white',
-				align: 'left',
 			},
-			x: 85,
-			y: -58,
+			x: this.leafSprite.x * 2 + this.leafSprite.width,
+			y: -40,
 		});
+		this.usernameText.anchor.set(0.5, 0.5);
 		this.addChild(this.usernameText);
 
 		this.amountText = new Text({
@@ -70,11 +70,11 @@ export default class Leaf extends Container {
 				fontSize: 48,
 				fontWeight: 'bold',
 				fill: 'white',
-				align: 'center',
 			},
-			x: 170,
-			y: 10,
+			x: this.leafSprite.x * 2 + this.leafSprite.width,
+			y: 40,
 		});
+		this.amountText.anchor.set(0.5, 0.5);
 		this.addChild(this.amountText);
 	}
 
@@ -119,14 +119,14 @@ export default class Leaf extends Container {
 		this.amountText.text = `$${donation.amount}`;
 
 		const [tint, brightness] = this.getTint(donation.amount);
-		this.leafSprite.tint = tint
+		this.leafSprite.tint = tint;
 		const brightnessFilter = new ColorMatrixFilter();
 		brightnessFilter.brightness(brightness, true);
 		this.leafSprite.filters = brightnessFilter;
 
 		this.eventMode = 'static';
 		this.cursor = 'pointer';
-		this.on('click', () => {
+		this.on('pointerdown', () => {
 			DonationPopup.setDonation(donation, tint, brightness);
 		});
 
@@ -138,7 +138,7 @@ export default class Leaf extends Container {
 			x: bounds.x,
 			y: bounds.y,
 			tint: tint,
-			brightness: brightness
+			brightness: brightness,
 		};
 	}
 }
