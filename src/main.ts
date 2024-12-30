@@ -1,26 +1,26 @@
 import './style.css';
 
+import { initDevtools } from '@pixi/devtools';
+import { sound, SoundLibrary } from '@pixi/sound';
+import { IClampZoomOptions, Viewport } from 'pixi-viewport';
 import {
 	Application,
 	Assets,
 	BlurFilter,
+	Bounds,
+	ColorMatrixFilter,
 	Container,
+	getGlobalBounds,
 	Graphics,
 	Rectangle,
 	Sprite,
-	TexturePool,
 	Text,
-	ColorMatrixFilter,
 	Texture,
-	getGlobalBounds,
-	Bounds,
+	TexturePool,
 } from 'pixi.js';
-import { IClampZoomOptions, Viewport } from 'pixi-viewport';
-import { initDevtools } from '@pixi/devtools';
-import { WORLD_HEIGHT, WORLD_WIDTH, CULL_MARGIN } from './PixiConfig.ts';
-import { buildTreeSpriteGraph } from './tree.ts';
 import DonationPopup from './donationPopup.ts';
-import { Sound } from '@pixi/sound';
+import { CULL_MARGIN, WORLD_HEIGHT, WORLD_WIDTH } from './PixiConfig.ts';
+import { buildTreeSpriteGraph } from './tree.ts';
 
 function getClampZoom(viewport: Viewport): IClampZoomOptions {
 	const isVertical = window.innerHeight > window.innerWidth;
@@ -304,23 +304,21 @@ void (async () => {
 					}
 
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
-					const backgroundMusic = Sound.from(resources.bgm);
-					void backgroundMusic.play({
-						loop: true,
-						singleInstance: true,
-						volume: 0.3,
-					});
-					backgroundMusic.volume = volume;
+					sound.add('bgm', resources.bgm);
+					sound.disableAutoPause = true;
+					sound.volumeAll = volume;
+					// eslint-disable-next-line @typescript-eslint/no-floating-promises
+					sound.play('bgm', { loop: true });
 
 					// Connect the background music to the volume-control component
 					const volumeControl = document.querySelector(
 						'volume-control',
 					) as HTMLElement & {
-						backgroundMusic: Sound | null;
+						backgroundMusic: SoundLibrary | null;
 					};
 
 					if (volumeControl) {
-						volumeControl.backgroundMusic = backgroundMusic;
+						volumeControl.backgroundMusic = sound;
 					}
 				});
 
