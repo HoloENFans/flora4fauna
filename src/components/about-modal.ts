@@ -175,7 +175,7 @@ export class AboutModal extends LitElement {
 							<h3>🎨 Art & Assets</h3>
 							<ul>
 								<li>
-									Bayuu -
+									Baiyuu -
 									<a
 										href="https://x.com/Baiyuu_"
 										rel="noreferrer"

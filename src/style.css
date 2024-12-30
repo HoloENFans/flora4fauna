@@ -186,7 +186,7 @@ input[type='text'] {
 }
 
 .grass {
-  background-image: url('/ui/grass.png');
+  background-image: url('/ui/grass_berries.png');
   background-size: 500px 100%;
   background-repeat: repeat-x;
 }
