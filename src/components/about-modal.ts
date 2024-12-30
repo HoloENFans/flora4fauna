@@ -28,9 +28,6 @@ export class AboutModal extends LitElement {
 				<div class="separator" slot="separator"></div>
 
 				<div slot="content">
-					<h2>To Fauna</h2>
-					<p>Message for funny haha green woman here</p>
-
 					<h2>Overview</h2>
 					<p>
 						By donating, you can get a leaf on the tree on this site
