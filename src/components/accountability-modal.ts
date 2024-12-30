@@ -23,7 +23,7 @@ export class AccountabilityModal extends LitElement {
 				<h1 slot="header">Donation Accountability</h1>
 				<div class="separator" slot="separator"></div>
 				<div slot="content">
-					<h2>Statement:</h2>
+					<h2>Statement</h2>
 					<p>
 						All donations are direct to the Arbor Day Foundation
 						with a payment portal from Make My Donation (<a
@@ -67,7 +67,7 @@ export class AccountabilityModal extends LitElement {
 						>). This website was made by fans for fans. All
 						donations are non-profit.
 					</p>
-					<h2>Charity Reports:</h2>
+					<h2>Charity Reports</h2>
 					<p>
 						Information listed below is not for promotion or
 						fundraising purposes. Links are provided for providing

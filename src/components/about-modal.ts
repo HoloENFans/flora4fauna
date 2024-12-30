@@ -28,6 +28,20 @@ export class AboutModal extends LitElement {
 				<div class="separator" slot="separator"></div>
 
 				<div slot="content">
+					<h2>To Fauna</h2>
+					<p>
+						To the Green Lady known as Ceres “Gaming” Fauna, Best
+						Kirin now with 1M Youtube Subscribers. Over three years,
+						you and the saplings have nurtured an online community
+						that is both silly and supportive. We want to give back
+						with a graduation gift for you that will continue to
+						grow into the future. You will not need to water, prune,
+						or transport by truck any of these new saplings, so
+						don't worry. We hope this fan-made World Tree canopy
+						visualizes everyone's appreciation for the time together
+						and for letting us stay here.
+					</p>
+
 					<h2>Overview</h2>
 					<p>
 						By donating, you can get a leaf on the tree on this site
