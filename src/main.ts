@@ -148,8 +148,13 @@ async function setup(): Promise<[Application, Viewport]> {
 	});
 
 	window.addEventListener('resize', () => {
-		viewport.clampZoom(getClampZoom(viewport));
 		viewport.resize();
+		viewport
+			.clamp({
+				direction: 'all',
+				underflow: 'center',
+			})
+			.clampZoom(getClampZoom(viewport));
 		if (window.innerHeight > 3000) sky.height = window.innerHeight + 3000;
 	});
 
