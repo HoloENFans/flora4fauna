@@ -17,6 +17,15 @@ export interface Donation {
 	updated: string;
 }
 
+const SUPERCHAT_CONTAINER_WIDTH = 800;
+const SUPERCHAT_CONTAINER_HEIGHT = 300;
+
+const WIDTH_OFFSET = SUPERCHAT_CONTAINER_WIDTH / 2;
+const HEIGHT_OFFSET = SUPERCHAT_CONTAINER_HEIGHT / 2;
+
+const LEAF_WIDTH = 1148;
+const LEAF_HEIGHT = 472;
+
 class DonationPopup {
 	static #instance: DonationPopup;
 
@@ -26,6 +35,7 @@ class DonationPopup {
 	private usernameText?: Text;
 	private amountText?: Text;
 	private messageText?: Text;
+	private closeText?: Text;
 
 	public static get instance(): DonationPopup {
 		if (!this.#instance) {
@@ -48,45 +58,181 @@ class DonationPopup {
 			!this.leaf ||
 			!this.usernameText ||
 			!this.amountText ||
-			!this.messageText
+			!this.messageText ||
+			!this.closeText
 		)
 			return;
 
-		const isSmallScreen = window.innerWidth < 768;
+		const isSmallScreen = window.innerWidth < LEAF_WIDTH + 25;
+		const isVertical =
+			window.innerWidth < window.innerHeight && window.innerWidth < 810;
 
-		if (isSmallScreen) {
-			// Vertical orientation for small screens
+		// Basically a few cases:
+		// - Small + vertical
+		// - Small + horizontal
+		// - Normal
+		//
+		// This is ugly af I'm so sorry but it's 4am and I'm going insane
+
+		if (isSmallScreen && isVertical) {
+			const PADDING_OFFSET = 80;
+
 			this.leaf.rotation = Math.PI / 2;
 
 			this.leaf.setSize(
-				window.innerHeight - 100,
-				window.innerWidth - 100,
+				Math.min(window.innerHeight - PADDING_OFFSET, LEAF_WIDTH),
+				Math.min(window.innerWidth - PADDING_OFFSET, LEAF_HEIGHT),
 			);
-			this.leaf.position.set(window.innerWidth - 25, 100);
-			this.usernameText.scale.set(0.6);
-			this.amountText.scale.set(0.6);
-			this.messageText.scale.set(0.6);
 
-			// Center username text above the leaf
-			this.usernameText.anchor.set(0.5, 1);
-			this.usernameText.position.set(
-				this.leaf.x,
-				this.leaf.y - this.leaf.height / 2 - 20,
-			);
+			this.leaf.y = HEIGHT_OFFSET - PADDING_OFFSET / 2 + 5;
+
+			let usernameOffset = -70;
+			let amountTextOffset = -50;
+			let messageTextOffset = -15;
+			if (window.innerWidth < 500) {
+				this.usernameText.scale.set(0.6);
+				this.amountText.scale.set(0.6);
+				this.messageText.scale.set(0.65);
+			} else if (window.innerWidth < 650) {
+				this.usernameText.scale.set(0.7);
+				this.amountText.scale.set(0.7);
+				this.messageText.scale.set(0.75);
+
+				usernameOffset = -100;
+				amountTextOffset = usernameOffset + 40;
+				messageTextOffset = amountTextOffset + 50;
+			} else {
+				this.usernameText.scale.set(0.8);
+				this.amountText.scale.set(0.8);
+				this.messageText.scale.set(0.8);
+
+				usernameOffset = -200;
+				amountTextOffset = usernameOffset + 40;
+				messageTextOffset = amountTextOffset + 50;
+			}
+
+			// Center username text
+			this.usernameText.anchor.set(0.5, 0);
+			this.usernameText.position.set(this.leaf.x, usernameOffset);
 
 			// Center amount text below the username
-			this.amountText.anchor.set(0.5, 1);
-			this.amountText.position.set(
-				this.leaf.x,
-				this.leaf.y - this.leaf.height / 2 + 10,
-			);
+			this.amountText.anchor.set(0.5, 0);
+			this.amountText.position.set(this.leaf.x, amountTextOffset);
 
 			// Center the message text inside the leaf
-			this.messageText.anchor.set(0.5, 1);
-			this.messageText.position.set(this.leaf.x, this.leaf.y);
-			this.messageText.style.wordWrapWidth = this.leaf.width - 10;
+			this.messageText.anchor.set(0.5, 0);
+			this.messageText.position.set(this.leaf.x, messageTextOffset);
+			if (isVertical) {
+				this.messageText.style.align = 'center';
+				this.messageText.style.wordWrapWidth = this.leaf.height;
+			} else {
+				this.messageText.style.wordWrapWidth = this.leaf.width;
+			}
+
+			// Move the x button
+			this.closeText.text = '×';
+			this.closeText.anchor.set(0, 0);
+
+			this.closeText.position.set(
+				this.leaf.x + this.leaf.height / 2,
+				this.leaf.y - this.leaf.width / 2,
+			);
+
+			return;
+		} else if (isSmallScreen && !isVertical) {
+			const PADDING_OFFSET = 80;
+
+			this.leaf.rotation = 0;
+			this.leaf.setSize(
+				Math.min(window.innerWidth - PADDING_OFFSET, LEAF_WIDTH),
+				Math.min(window.innerHeight - PADDING_OFFSET, LEAF_HEIGHT),
+			);
+			this.leaf.position.set(WIDTH_OFFSET, HEIGHT_OFFSET);
+
+			// This is gross.
+			this.messageText.style.align = 'left';
+
+			if (window.innerWidth < 500) {
+				this.usernameText.scale.set(0.5);
+				this.amountText.scale.set(0.5);
+				this.messageText.scale.set(0.5);
+
+				const usernameOffset = 70;
+
+				this.usernameText.anchor.set(0.5, 0);
+				this.usernameText.position.set(this.leaf.x, usernameOffset);
+
+				this.amountText.anchor.set(0.5, 0);
+				this.amountText.position.set(this.leaf.x, usernameOffset + 20);
+
+				this.messageText.anchor.set(0.5, 0);
+				this.messageText.position.set(
+					this.leaf.x,
+					usernameOffset + 20 + 20,
+				);
+
+				this.messageText.style.wordWrapWidth = this.leaf.width;
+			} else {
+				this.usernameText.scale.set(0.8);
+				this.amountText.scale.set(0.8);
+				this.messageText.scale.set(0.8);
+
+				// Fix username
+				this.usernameText.anchor.set(0);
+				this.usernameText.position.set(120, 42);
+
+				// Fix amount text
+				this.amountText.anchor.set(1, 0);
+				this.amountText.position.set(600, 42);
+
+				// Fix message text
+				this.messageText.anchor.set(0);
+				this.messageText.position.set(120, 96);
+				this.messageText.style.wordWrapWidth = 600;
+			}
+
+			this.closeText.text = '×';
+			this.closeText.position.set(
+				this.leaf.x + this.leaf.width / 2,
+				this.leaf.y - this.leaf.height / 2,
+			);
 		} else {
-			// Reset to normal, apply old style
+			// Reset to normal, apply old style.
+
+			// Fix leaf
+			this.leaf.rotation = 0;
+			this.leaf.setSize(LEAF_WIDTH, LEAF_HEIGHT);
+			this.leaf.position.set(WIDTH_OFFSET, HEIGHT_OFFSET);
+
+			// Fix scaling
+			this.usernameText.scale.set(1);
+			this.amountText.scale.set(1);
+			this.messageText.scale.set(1);
+
+			// Fix username
+			this.usernameText.anchor.set(0);
+			this.usernameText.position.set(10, 42);
+
+			// Fix amount text
+			this.amountText.anchor.set(1, 0);
+			this.amountText.position.set(726, 42);
+
+			// Fix message text
+			this.messageText.anchor.set(0);
+			this.messageText.position.set(10, 96);
+			this.messageText.style.align = 'left';
+			this.messageText.style.wordWrapWidth = 736;
+
+			// Fix close button
+			const shouldHideCloseText = window.innerWidth < LEAF_WIDTH;
+
+			if (shouldHideCloseText) {
+				this.closeText.text = '×';
+			} else {
+				this.closeText.text = '× Close';
+			}
+
+			this.closeText.position.set(900, -30);
 		}
 	}
 
@@ -112,10 +258,10 @@ class DonationPopup {
 		background.eventMode = 'static';
 		this.container.addChild(background);
 		const superchatContainer = new Container({
-			x: app.renderer.width / 2 - 400,
-			y: app.renderer.height / 2 - 150,
-			width: 800,
-			height: 300,
+			x: (app.renderer.width - SUPERCHAT_CONTAINER_WIDTH) / 2,
+			y: (app.renderer.height - SUPERCHAT_CONTAINER_HEIGHT) / 2,
+			width: SUPERCHAT_CONTAINER_WIDTH,
+			height: SUPERCHAT_CONTAINER_HEIGHT,
 		});
 		superchatContainer.eventMode = 'static';
 		superchatContainer.on('pointerdown', (e) => {
@@ -125,7 +271,7 @@ class DonationPopup {
 
 		this.leaf = Sprite.from('Big_Leaf_Greyscale');
 		this.leaf.anchor.set(0.5);
-		this.leaf.position.set(440, 150);
+		this.leaf.position.set(WIDTH_OFFSET, HEIGHT_OFFSET);
 		superchatContainer.addChild(this.leaf);
 
 		this.usernameText = new Text({
@@ -140,7 +286,7 @@ class DonationPopup {
 					width: 6,
 				},
 			},
-			x: 32,
+			x: 10,
 			y: 42,
 		});
 		superchatContainer.addChild(this.usernameText);
@@ -158,7 +304,7 @@ class DonationPopup {
 					width: 6,
 				},
 			},
-			x: 768,
+			x: 726,
 			y: 42,
 			anchor: new Point(1, 0),
 		});
@@ -172,17 +318,19 @@ class DonationPopup {
 				fill: 'white',
 				wordWrap: true,
 				wordWrapWidth: 736,
+				breakWords: true,
+				align: 'left',
 				stroke: {
 					color: 'black',
 					width: 4,
 				},
 			},
-			x: 32,
+			x: 10,
 			y: 96,
 		});
 		superchatContainer.addChild(this.messageText);
 
-		const closeText = new Text({
+		this.closeText = new Text({
 			text: '× Close',
 			style: {
 				fontFamily: 'UnifontEXMono',
@@ -198,8 +346,8 @@ class DonationPopup {
 			eventMode: 'static',
 			cursor: 'pointer',
 		});
-		closeText.on('pointerdown', () => this.close());
-		superchatContainer.addChild(closeText);
+		this.closeText.on('pointerdown', () => this.close());
+		superchatContainer.addChild(this.closeText);
 
 		this.checkLeafOrientation();
 
@@ -208,9 +356,10 @@ class DonationPopup {
 				.clear()
 				.rect(0, 0, window.innerWidth, window.innerHeight)
 				.fill({ color: '#00000095' });
+
 			superchatContainer.position.set(
-				window.innerWidth / 2 - 400,
-				window.innerHeight / 2 - 150,
+				window.innerWidth / 2 - WIDTH_OFFSET,
+				window.innerHeight / 2 - HEIGHT_OFFSET,
 			);
 
 			this.checkLeafOrientation();

@@ -53,10 +53,10 @@ export class FindDonationModal extends LitElement {
 	}
 
 	private moveToLeaf(leafInfo: LeafInfo, donation: Donation) {
+		this.handleModalClosed();
+
 		// Close the popup if already open
 		DonationPopup.setDonation(null, 0, 0);
-
-		this.handleModalClosed();
 
 		if (this.viewport !== undefined) {
 			const sameCenters =
