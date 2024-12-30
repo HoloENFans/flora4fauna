@@ -1,4 +1,12 @@
-import { Application, ColorMatrixFilter, Container, Graphics, Point, Sprite, Text } from 'pixi.js';
+import {
+	Application,
+	ColorMatrixFilter,
+	Container,
+	Graphics,
+	Point,
+	Sprite,
+	Text,
+} from 'pixi.js';
 import type { Viewport } from 'pixi-viewport';
 
 export interface Donation {
@@ -33,6 +41,54 @@ class DonationPopup {
 		this.container.visible = false;
 		this.viewport.plugins.resume('wheel');
 		this.viewport.plugins.resume('drag');
+	}
+
+	private checkLeafOrientation() {
+		if (
+			!this.leaf ||
+			!this.usernameText ||
+			!this.amountText ||
+			!this.messageText
+		)
+			return;
+		console.log('hi');
+
+		const isSmallScreen = window.innerWidth < 768;
+
+		if (isSmallScreen) {
+			// Vertical orientation for small screens
+			this.leaf.rotation = Math.PI / 2;
+
+			this.leaf.setSize(
+				window.innerHeight - 100,
+				window.innerWidth - 100,
+			);
+			this.leaf.position.set(window.innerWidth - 25, 100);
+			this.usernameText.scale.set(0.6);
+			this.amountText.scale.set(0.6);
+			this.messageText.scale.set(0.6);
+
+			// Center username text above the leaf
+			this.usernameText.anchor.set(0.5, 1);
+			this.usernameText.position.set(
+				this.leaf.x,
+				this.leaf.y - this.leaf.height / 2 - 20,
+			);
+
+			// Center amount text below the username
+			this.amountText.anchor.set(0.5, 1);
+			this.amountText.position.set(
+				this.leaf.x,
+				this.leaf.y - this.leaf.height / 2 + 10,
+			);
+
+			// Center the message text inside the leaf
+			this.messageText.anchor.set(0.5, 1);
+			this.messageText.position.set(this.leaf.x, this.leaf.y);
+			this.messageText.style.wordWrapWidth = this.leaf.width - 10;
+		} else {
+			// Reset to normal, apply old style
+		}
 	}
 
 	public init(app: Application, viewport: Viewport) {
@@ -146,6 +202,8 @@ class DonationPopup {
 		closeText.on('click', () => this.close());
 		superchatContainer.addChild(closeText);
 
+		this.checkLeafOrientation();
+
 		window.addEventListener('resize', () => {
 			background
 				.clear()
@@ -155,12 +213,18 @@ class DonationPopup {
 				window.innerWidth / 2 - 400,
 				window.innerHeight / 2 - 150,
 			);
+
+			this.checkLeafOrientation();
 		});
 
 		app.stage.addChild(this.container);
 	}
 
-	public setDonation(donation: Donation | null, tint: number, brightness: number) {
+	public setDonation(
+		donation: Donation | null,
+		tint: number,
+		brightness: number,
+	) {
 		if (!this.container) return;
 
 		if (!donation) {
