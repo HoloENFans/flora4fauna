@@ -1,11 +1,11 @@
-import { Sound } from '@pixi/sound';
+import { SoundLibrary } from '@pixi/sound';
 import { html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('volume-control')
 export class VolumeControl extends LitElement {
 	@property({ type: Object })
-	backgroundMusic: Sound | null = null;
+	backgroundMusic: SoundLibrary | null = null;
 
 	@state()
 	private isMuted = false;
@@ -20,7 +20,7 @@ export class VolumeControl extends LitElement {
 		this.previousVolume = volume;
 
 		if (this.backgroundMusic) {
-			this.backgroundMusic.volume = volume;
+			this.backgroundMusic.volumeAll = volume;
 		}
 
 		localStorage.setItem('storedVolume', volume.toString());
@@ -38,7 +38,7 @@ export class VolumeControl extends LitElement {
 		if (this.isMuted) {
 			// Unmute: Restore the previous volume
 			if (this.backgroundMusic) {
-				this.backgroundMusic.volume = this.previousVolume;
+				this.backgroundMusic.volumeAll = this.previousVolume;
 			}
 			this.isMuted = false;
 			localStorage.setItem(
@@ -48,8 +48,8 @@ export class VolumeControl extends LitElement {
 		} else {
 			// Mute: Set volume to 0 and remember the previous volume
 			if (this.backgroundMusic) {
-				this.previousVolume = this.backgroundMusic.volume;
-				this.backgroundMusic.volume = 0;
+				this.previousVolume = this.backgroundMusic.volumeAll;
+				this.backgroundMusic.volumeAll = 0;
 			}
 			this.isMuted = true;
 			localStorage.setItem('storedVolume', '0');
@@ -63,12 +63,12 @@ export class VolumeControl extends LitElement {
 	render() {
 		const value =
 			this.isMuted ? 0
-			: this.backgroundMusic ? this.backgroundMusic.volume * 100
+			: this.backgroundMusic ? this.backgroundMusic.volumeAll * 100
 			: 50;
 
 		const showMuteIcon =
 			this.isMuted ||
-			(this.backgroundMusic && this.backgroundMusic.volume == 0);
+			(this.backgroundMusic && this.backgroundMusic.volumeAll == 0);
 
 		return html`
 			<div class="volume-container">
@@ -80,7 +80,7 @@ export class VolumeControl extends LitElement {
 					type="range"
 					min="0"
 					max="100"
-					.value="${value}"
+					.value="${value.toString()}"
 					@input="${(event: Event) => this.handleVolumeChange(event)}"
 				/>
 			</div>
