@@ -1,4 +1,4 @@
-import { Container, Sprite } from 'pixi.js';
+import { Container, Sprite, Text } from 'pixi.js';
 import { Donation } from './donationPopup';
 import Branch01 from './branches/Branch01.ts';
 import Branch from './branches/Branch.ts';
@@ -7,8 +7,10 @@ import { RxChangeEventInsert } from 'rxdb';
 import { getRandomNumber } from './random.ts';
 import Branch02 from './branches/Branch02.ts';
 import { Viewport } from 'pixi-viewport';
+//import Leaf from './branches/Leaf.ts';
 
 const TRUNK_ACTUAL_CENTERLINE = 1160;
+//const DEBUG_DRAW_TREE_TOP_POLYGON = false;
 
 function positionAndInsertSprite(
 	container: Container,
@@ -89,6 +91,53 @@ export async function buildTreeSpriteGraph(
 		trunkTopY,
 	);
 
+	// Build the "Growing in Progress" sign
+	const progressSign = new Container();
+	progressSign.label = '"Growing In Progress" Sign';
+	progressSign.angle = 15;
+	progressSign.position.set(treeBottomX, trunkTopY - (treeTop.height / 2));
+
+	const sign = Sprite.from("Wooden_Sign_Postless");
+	sign.anchor.set(0.5, 0.5);
+	sign.zIndex = -1;
+	progressSign.addChild(sign);
+
+	const signText1 = new Text({
+		text: 'GROWING\nIN PROGRESS',
+		style: {
+			fontFamily: 'UnifontEXMono',
+			fontSize: 90,
+			fontWeight: 'bold',
+			fill: 'white',
+			align: 'center',
+		},
+		x: 0,
+		y: -100,
+	});
+	signText1.anchor.set(0.5);
+	signText1.zIndex = 1;
+	signText1.angle = 1;
+	progressSign.addChild(signText1);
+
+	const signText2 = new Text({
+		text: 'MIND THE\nBALDNESS',
+		style: {
+			fontFamily: 'UnifontEXMono',
+			fontSize: 70,
+			fontWeight: 'bold',
+			fill: 'white',
+			align: 'center',
+		},
+		x: 0,
+		y: 80,
+	});
+	signText2.anchor.set(0.5);
+	signText2.zIndex = 1;
+	signText2.angle = 1;
+	progressSign.addChild(signText2);
+
+	treeContainer.addChild(progressSign);
+
 	const db = await Database();
 	const initialDocs = (await db.donations.find().exec()) as (Donation & {
 		id: string;
@@ -132,6 +181,8 @@ export async function buildTreeSpriteGraph(
 				trunkTopY -= trunkSprite.height;
 				trunkSprites.push(trunkSprite);
 				treeTop.y = trunkTopY;
+
+				progressSign.position.set(treeBottomX, trunkTopY - (treeTop.height / 2));
 
 				if (trunkTopY < currentClampTopLimit) {
 					currentClampTopLimit = trunkTopY - 2000;
