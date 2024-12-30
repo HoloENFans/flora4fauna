@@ -258,16 +258,6 @@ export class AboutModal extends LitElement {
 						especially if it’s silly! o7
 					</p>
 
-					<h2>Contact</h2>
-					<p>
-						For any inquiries, please contact
-						<a
-							href="mailto:flora4fauna@project.holoen.fans"
-							target="_blank"
-							>flora4fauna&#64;projects.holoen.fans</a
-						>.
-					</p>
-
 					<p class="mt-4 text-center">
 						Hosted by
 						<a href="https://holoen.fans" target="_blank"
