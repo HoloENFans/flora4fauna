@@ -184,7 +184,7 @@ async function setupTextures() {
 
 function setupSigns(viewport: Viewport) {
 	const bottomMiddleX = WORLD_WIDTH / 2;
-	const bottomMiddleY = WORLD_HEIGHT * 0.95;
+	const bottomMiddleY = WORLD_HEIGHT - 500;
 
 	const fanProjectSignContainer = new Container();
 	const fanProjectSign = Sprite.from('Wooden_Sign_Plain');
@@ -240,7 +240,7 @@ function setupSigns(viewport: Viewport) {
 
 async function setupTree(viewport: Viewport) {
 	const bottomMiddleX = viewport.worldWidth / 2;
-	const bottomMiddleY = viewport.worldHeight * 0.95;
+	const bottomMiddleY = viewport.worldHeight - 500;
 
 	const treeContainer = await buildTreeSpriteGraph(
 		bottomMiddleX,
