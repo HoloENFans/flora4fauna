@@ -31,6 +31,7 @@ export class DonateModal extends LitElement {
 						data-dedication-max-length="24"
 						data-message-max-length="321"
 						data-disable-configuration="true"
+						class="min-w-72"
 					></div>
 					<p class="mt-4 w-72 text-center text-xs text-black">
 						If you get any errors, try disabling any ad or tracking
