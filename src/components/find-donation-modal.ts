@@ -53,10 +53,10 @@ export class FindDonationModal extends LitElement {
 	}
 
 	private moveToLeaf(leafInfo: LeafInfo, donation: Donation) {
+		this.handleModalClosed();
+
 		// Close the popup if already open
 		DonationPopup.setDonation(null, 0, 0);
-
-		this.handleModalClosed();
 
 		if (this.viewport !== undefined) {
 			const sameCenters =
@@ -75,13 +75,22 @@ export class FindDonationModal extends LitElement {
 					forceStart: true,
 				});
 
-				DonationPopup.setDonation(donation, leafInfo.tint, leafInfo.brightness);
+				DonationPopup.setDonation(
+					donation,
+					leafInfo.tint,
+					leafInfo.brightness,
+				);
 			} else {
 				// Snap, wait for it to end, then open the donation popup.
 
 				this.viewport.addEventListener(
 					'snap-end',
-					() => DonationPopup.setDonation(donation, leafInfo.tint, leafInfo.brightness),
+					() =>
+						DonationPopup.setDonation(
+							donation,
+							leafInfo.tint,
+							leafInfo.brightness,
+						),
 					{
 						once: true,
 					},
@@ -105,7 +114,11 @@ export class FindDonationModal extends LitElement {
 		} else {
 			// If the viewport somehow doesn't exist then just fall back to opening
 			// the donation popup without any viewport magic.
-			DonationPopup.setDonation(donation, leafInfo.tint, leafInfo.brightness);
+			DonationPopup.setDonation(
+				donation,
+				leafInfo.tint,
+				leafInfo.brightness,
+			);
 		}
 	}
 
@@ -165,6 +178,19 @@ export class FindDonationModal extends LitElement {
 		}
 	}
 
+	updated() {
+		if (this.isOpen) {
+			const inputElement = document.getElementById('sapling-name');
+			if (inputElement) {
+				// Hack to trigger focus, see https://stackoverflow.com/q/1096436
+				window.setTimeout(
+					() => (inputElement as HTMLInputElement).focus(),
+					0,
+				);
+			}
+		}
+	}
+
 	render() {
 		const isError = this.currentError !== null;
 
@@ -193,7 +219,6 @@ export class FindDonationModal extends LitElement {
 						name="sapling-name"
 						placeholder="Your Sapling Name..."
 						required
-						autofocus
 						class="${isError ? 'text-input-error' : (
 							'text-input'
 						)} text-lg"
