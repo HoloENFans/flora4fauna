@@ -107,16 +107,16 @@ class Database {
 					{ updated: string } | undefined
 				>({
 					collection: this.#instance.donations,
-					replicationIdentifier: 'cms-donations-replication',
+					replicationIdentifier: 'cms-donations-replication-v2',
 					pull: {
 						async handler(checkpoint, batchSize) {
 							const options: RecordListOptions = {
-								sort: '-updated',
+								sort: 'updated',
 							};
 
-							/*if (checkpoint) {
+							if (checkpoint) {
 								options.filter = `(updated>'${checkpoint.updated}')`;
-							}*/
+							}
 
 							const result = await pb
 								.collection('donations')
@@ -129,8 +129,9 @@ class Database {
 								})),
 								checkpoint:
 									result.items.length > 0 ?
-										{ updated: result.items[0].updated }
+										{ updated: result.items[result.items.length - 1].updated }
 									:	checkpoint,
+									page: 
 							};
 						},
 						stream$: pullStream$,
