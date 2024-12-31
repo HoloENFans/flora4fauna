@@ -114,9 +114,9 @@ class Database {
 								sort: '-updated',
 							};
 
-							if (checkpoint) {
+							/*if (checkpoint) {
 								options.filter = `(updated>'${checkpoint.updated}')`;
-							}
+							}*/
 
 							const result = await pb
 								.collection('donations')
