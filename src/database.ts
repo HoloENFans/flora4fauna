@@ -116,7 +116,7 @@ class Database {
 
 							if (checkpoint) {
 								options.filter = `(updated>'${checkpoint.updated}')`;
-							}
+							};
 
 							const result = await pb
 								.collection('donations')
@@ -131,7 +131,6 @@ class Database {
 									result.items.length > 0 ?
 										{ updated: result.items[result.items.length - 1].updated }
 									:	checkpoint,
-									page: 
 							};
 						},
 						stream$: pullStream$,
