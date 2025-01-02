@@ -31,7 +31,7 @@ export default class Leaf extends Container {
 		[0x51ff08, 1],
 		[0x5eff01, 1.25],
 		[0xfdd100, 1.5],
-		[0xf26649, 1.125],
+		[0xf26649, 1],
 	];
 
 	/**
