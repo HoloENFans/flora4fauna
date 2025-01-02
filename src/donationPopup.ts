@@ -409,9 +409,11 @@ class DonationPopup {
 		this.leaf.tint = tint;
 
 		// Update text values
-		this.usernameText!.text = donation.username.substring(0, 24);
+		// Note: I removed the substring() calls since the message is already trimmed when donated
+		// It was also cutting off messages that didn't go over the character limit
+		this.usernameText!.text = donation.username;
 		this.amountText!.text = `$${donation.amount}`;
-		this.messageText!.text = donation.message.substring(0, 321);
+		this.messageText!.text = donation.message;
 
 		this.container.visible = true;
 
