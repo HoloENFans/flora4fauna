@@ -31,6 +31,7 @@ class DonationPopup {
 
 	private viewport?: Viewport;
 	private container?: Container;
+	private superchatContainer?: Container;
 	private leaf?: Sprite;
 	private usernameText?: Text;
 	private amountText?: Text;
@@ -258,25 +259,20 @@ class DonationPopup {
 		background.cursor = 'pointer';
 		background.eventMode = 'static';
 		this.container.addChild(background);
-		const superchatContainer = new Container({
+		this.superchatContainer = new Container({
 			x: (app.renderer.width - SUPERCHAT_CONTAINER_WIDTH) / 2,
 			y: (app.renderer.height - SUPERCHAT_CONTAINER_HEIGHT) / 2,
 			width: SUPERCHAT_CONTAINER_WIDTH,
 			height: SUPERCHAT_CONTAINER_HEIGHT,
 		});
-		superchatContainer.eventMode = 'static';
-		superchatContainer.on('pointerdown', (e) => {
+		this.superchatContainer.eventMode = 'static';
+		this.superchatContainer.on('pointerdown', (e) => {
 			e.stopPropagation();
 		});
-		superchatContainer.on('tap', (e) => {
+		this.superchatContainer.on('tap', (e) => {
 			e.stopPropagation();
 		});
-		this.container.addChild(superchatContainer);
-
-		this.leaf = Sprite.from('Big_Leaf_Greyscale');
-		this.leaf.anchor.set(0.5);
-		this.leaf.position.set(WIDTH_OFFSET, HEIGHT_OFFSET);
-		superchatContainer.addChild(this.leaf);
+		this.container.addChild(this.superchatContainer);
 
 		this.usernameText = new Text({
 			text: '',
@@ -293,7 +289,7 @@ class DonationPopup {
 			x: 10,
 			y: 42,
 		});
-		superchatContainer.addChild(this.usernameText);
+		this.superchatContainer.addChild(this.usernameText);
 
 		this.amountText = new Text({
 			text: '',
@@ -312,7 +308,7 @@ class DonationPopup {
 			y: 42,
 			anchor: new Point(1, 0),
 		});
-		superchatContainer.addChild(this.amountText);
+		this.superchatContainer.addChild(this.amountText);
 
 		this.messageText = new Text({
 			text: '',
@@ -332,7 +328,7 @@ class DonationPopup {
 			x: 10,
 			y: 96,
 		});
-		superchatContainer.addChild(this.messageText);
+		this.superchatContainer.addChild(this.messageText);
 
 		this.closeText = new Text({
 			text: '× Close',
@@ -352,9 +348,7 @@ class DonationPopup {
 		});
 		this.closeText.on('pointerdown', () => this.close());
 		this.closeText.on('tap', () => this.close());
-		superchatContainer.addChild(this.closeText);
-
-		this.checkLeafOrientation();
+		this.superchatContainer.addChild(this.closeText);
 
 		window.addEventListener('resize', () => {
 			background
@@ -362,7 +356,7 @@ class DonationPopup {
 				.rect(0, 0, window.innerWidth, window.innerHeight)
 				.fill({ color: '#00000095' });
 
-			superchatContainer.position.set(
+			this.superchatContainer!.position.set(
 				window.innerWidth / 2 - WIDTH_OFFSET,
 				window.innerHeight / 2 - HEIGHT_OFFSET,
 			);
@@ -385,15 +379,43 @@ class DonationPopup {
 			return;
 		}
 
+		// Check if donation amount is > 1000 => platinum sprite
+		let newLeaf: Sprite;
+		if (donation.amount >= 1000) {
+			newLeaf = Sprite.from('Big_Leaf_Platinum');
+		} else {
+			newLeaf = Sprite.from('Big_Leaf_Greyscale');
+		}
+
+		// Don't know if there's a better way than this, since this is basically replacing a new sprite every time
+		// But cound't find a way to only change the sprite so this is will do for now
+		if (this.leaf) {
+			this.leaf.destroy();
+			this.superchatContainer!.removeChild(this.leaf);
+		}
+
+		this.leaf = newLeaf;
+		this.leaf.anchor.set(0.5);
+		this.leaf.position.set(WIDTH_OFFSET, HEIGHT_OFFSET);
+
+		// Add leaf to the back and check orientation
+		this.superchatContainer!.addChildAt(this.leaf, 0);
+		this.checkLeafOrientation();
+
+		// Apply color filters
+		const colorMatrix = new ColorMatrixFilter();
+		colorMatrix.brightness(brightness, true);
+		this.leaf.filters = [colorMatrix];
+		this.leaf.tint = tint;
+
+		// Update text values
 		this.usernameText!.text = donation.username.substring(0, 24);
 		this.amountText!.text = `$${donation.amount}`;
 		this.messageText!.text = donation.message.substring(0, 321);
-		this.leaf!.tint = tint;
-		const colorMatrix = new ColorMatrixFilter();
-		colorMatrix.brightness(brightness, true);
-		this.leaf!.filters = colorMatrix;
+
 		this.container.visible = true;
 
+		// Pause viewport interactions
 		this.viewport!.plugins.pause('wheel');
 		this.viewport!.plugins.pause('drag');
 	}
