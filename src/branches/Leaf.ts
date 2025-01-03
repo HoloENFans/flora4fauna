@@ -31,6 +31,7 @@ export default class Leaf extends Container {
 		[0x51ff08, 1],
 		[0x5eff01, 1.25],
 		[0xfdd100, 1.5],
+		[0xf26649, 1],
 	];
 
 	/**
@@ -100,8 +101,10 @@ export default class Leaf extends Container {
 				return Leaf.greenThemeLeafColors[3];
 			} else if (amount >= 50 && amount < 100) {
 				return Leaf.greenThemeLeafColors[4];
-			} else if (amount >= 100) {
+			} else if (amount >= 100 && amount < 1000) {
 				return Leaf.greenThemeLeafColors[5];
+			} else if (amount >= 1000) {
+				return Leaf.greenThemeLeafColors[6];
 			} else {
 				return Leaf.greenThemeLeafColors[0];
 			}
