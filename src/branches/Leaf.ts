@@ -111,7 +111,7 @@ export default class Leaf extends Container {
 		}
 	}
 
-	setDonation(donation: Donation): LeafInfo {
+	setDonation(donation: Donation, leafAngle: number, isLeftBranch: boolean): LeafInfo {
 		if (this.hasDonation) {
 			throw new Error('Cannot reassign leaf!');
 		}
@@ -121,6 +121,26 @@ export default class Leaf extends Container {
 		});
 		this.usernameText.text = donation.username;
 		this.amountText.text = `$${donation.amount}`;
+
+		console.log(`name: ${this.usernameText.text} | angle: ${leafAngle} | isLeftBranch: ${isLeftBranch}`);
+
+		// Rotate text 180 degrees if it makes sense
+		const shouldRotateText = (isLeftBranch && (leafAngle < 0 || leafAngle > 170)) ||
+								(!isLeftBranch && ((leafAngle > 0 && leafAngle < 190) || leafAngle === -175));
+
+		if (shouldRotateText) {
+			this.usernameText.angle += 180;
+			this.amountText.angle += 180;
+		}
+
+		// Swap text of leaves where donation text is now above username text
+		const shouldSwapTextPosition = (!isLeftBranch && (leafAngle === 115 || leafAngle === -175 || leafAngle === 175)) ||
+										(isLeftBranch && leafAngle !== 0 && leafAngle !== 115);
+
+		if (shouldSwapTextPosition) {
+			this.usernameText.y = 40;
+			this.amountText.y = -40;
+		}
 
 		const [tint, brightness] = this.getTint(donation.amount);
 		this.leafSprite.tint = tint;
