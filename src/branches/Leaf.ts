@@ -122,8 +122,6 @@ export default class Leaf extends Container {
 		this.usernameText.text = donation.username;
 		this.amountText.text = `$${donation.amount}`;
 
-		console.log(`name: ${this.usernameText.text} | angle: ${leafAngle} | isLeftBranch: ${isLeftBranch}`);
-
 		// Rotate text 180 degrees if it makes sense
 		const shouldRotateText = (isLeftBranch && (leafAngle < 0 || leafAngle > 170)) ||
 								(!isLeftBranch && ((leafAngle > 0 && leafAngle < 190) || leafAngle === -175));
