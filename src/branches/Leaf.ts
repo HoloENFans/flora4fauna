@@ -11,6 +11,11 @@ export interface LeafInfo {
 
 type BranchSide = 'leftSide' | 'rightSide';
 type BranchLabel = 'Branch_01' | 'Branch_02';
+type LeafLabel = 'Leaf 01' | 'Leaf 02' | 'Leaf 03' | 'Leaf 04' | 'Leaf 05' | 'Leaf 06' | 'Leaf 07' | 'Leaf 08' | 'Leaf 09' | 'Leaf 10' | 'Leaf 11' | 'Leaf 12' | 'Leaf 13' | 'Leaf 14' | 'Leaf 15';
+
+function isLeafLabel(label: string): label is LeafLabel {
+    return ['Leaf 01', 'Leaf 02', 'Leaf 03', 'Leaf 04', 'Leaf 05', 'Leaf 06', 'Leaf 07', 'Leaf 08', 'Leaf 09', 'Leaf 10', 'Leaf 11', 'Leaf 12', 'Leaf 13', 'Leaf 14', 'Leaf 15'].includes(label);
+}
 
 export default class Leaf extends Container {
 	private readonly prerequisites?: Container[];
@@ -20,7 +25,7 @@ export default class Leaf extends Container {
 
 	private hasDonation = false;
 
-	private static readonly leavesToRotate: Record<BranchSide, Record<BranchLabel, string[]>> = {
+	private static readonly leavesToRotate: Record<BranchSide, Record<BranchLabel, LeafLabel[]>> = {
 		'leftSide': {
 			'Branch_01': ['Leaf 01', 'Leaf 02', 'Leaf 03', 'Leaf 04', 'Leaf 05', 'Leaf 06', 'Leaf 07', 'Leaf 08', 'Leaf 09', 'Leaf 10', 'Leaf 11', 'Leaf 12', 'Leaf 14', 'Leaf 15'],
 			'Branch_02': ['Leaf 01', 'Leaf 02', 'Leaf 03', 'Leaf 04', 'Leaf 05', 'Leaf 06', 'Leaf 07', 'Leaf 08', 'Leaf 09', 'Leaf 11', 'Leaf 12', 'Leaf 13', 'Leaf 15']
@@ -139,13 +144,17 @@ export default class Leaf extends Container {
 		const currentBranch: BranchSide = isLeftBranch ? 'leftSide' : 'rightSide';
 		const currentBranchLabel: BranchLabel = branchLabel === 'Branch_01' ? 'Branch_01' : 'Branch_02'; // Oof...
 
-		const shouldRotateText = Leaf.leavesToRotate[currentBranch][currentBranchLabel].includes(leafLabel);
+		if (isLeafLabel(leafLabel)) {
+			const shouldRotateText = Leaf.leavesToRotate[currentBranch][currentBranchLabel].includes(leafLabel);
 
-		if (shouldRotateText) {
-			this.usernameText.angle += 180;
-			this.usernameText.y = 40;
-			this.amountText.angle += 180;
-			this.amountText.y = -40;
+			if (shouldRotateText) {
+				this.usernameText.angle += 180;
+				this.usernameText.y = 40;
+				this.amountText.angle += 180;
+				this.amountText.y = -40;
+			}
+		} else {
+			console.error(`Error! Invalid leaf label: ${leafLabel}\nSkipping rotation check for this leaf!`);
 		}
 
 		const [tint, brightness] = this.getTint(donation.amount);
