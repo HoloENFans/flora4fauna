@@ -218,7 +218,7 @@ export async function buildTreeSpriteGraph(
 			treeContainer.addChild(currentBranch);
 		}
 
-		const { x, y, tint, brightness } = currentBranch.addDonation(donation, !isLeftBranch);
+		const { x, y, tint, brightness } = currentBranch.addDonation(donation, currentBranch.label, !isLeftBranch);
 		void db.leaves.upsert({
 			id: donationId,
 			x: x,

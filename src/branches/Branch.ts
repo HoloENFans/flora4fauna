@@ -27,11 +27,11 @@ export default abstract class Branch extends Container {
 		return this.count >= this.capacity;
 	}
 
-	addDonation(donation: Donation, isLeftBranch: boolean): LeafInfo {
+	addDonation(donation: Donation, branchLabel: string, isLeftBranch: boolean): LeafInfo {
 		if (this.full) throw new Error('Branch is full!');
 
 		this.donationCount += 1;
-		return this.leafs[this.count - 1].setDonation(donation, this.leafs[this.count - 1].angle, isLeftBranch);
+		return this.leafs[this.count - 1].setDonation(donation, branchLabel, this.leafs[this.count - 1].label, isLeftBranch);
 	}
 
 	protected renderBranchSection(sprite: Sprite, label?: string) {

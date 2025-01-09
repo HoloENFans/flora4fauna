@@ -9,6 +9,9 @@ export interface LeafInfo {
 	brightness: number;
 }
 
+type BranchSide = 'leftSide' | 'rightSide';
+type BranchLabel = 'Branch_01' | 'Branch_02';
+
 export default class Leaf extends Container {
 	private readonly prerequisites?: Container[];
 	private readonly leafSprite;
@@ -16,6 +19,17 @@ export default class Leaf extends Container {
 	private readonly amountText;
 
 	private hasDonation = false;
+
+	private static readonly leavesToRotate: Record<BranchSide, Record<BranchLabel, string[]>> = {
+		'leftSide': {
+			'Branch_01': ['Leaf 01', 'Leaf 02', 'Leaf 03', 'Leaf 04', 'Leaf 05', 'Leaf 06', 'Leaf 07', 'Leaf 08', 'Leaf 09', 'Leaf 10', 'Leaf 11', 'Leaf 12', 'Leaf 14', 'Leaf 15'],
+			'Branch_02': ['Leaf 01', 'Leaf 02', 'Leaf 03', 'Leaf 04', 'Leaf 05', 'Leaf 06', 'Leaf 07', 'Leaf 08', 'Leaf 09', 'Leaf 11', 'Leaf 12', 'Leaf 13', 'Leaf 15']
+		},
+		'rightSide': {
+			'Branch_01': ['Leaf 12', 'Leaf 13'],
+			'Branch_02': ['Leaf 13', 'Leaf 14']
+		}
+	};
 
 	// tint, brightness
 	public static readonly sakuraThemeLeafColors: [number, number][] = [
@@ -111,7 +125,7 @@ export default class Leaf extends Container {
 		}
 	}
 
-	setDonation(donation: Donation, leafAngle: number, isLeftBranch: boolean): LeafInfo {
+	setDonation(donation: Donation, branchLabel: string, leafLabel: string, isLeftBranch: boolean): LeafInfo {
 		if (this.hasDonation) {
 			throw new Error('Cannot reassign leaf!');
 		}
@@ -122,21 +136,15 @@ export default class Leaf extends Container {
 		this.usernameText.text = donation.username;
 		this.amountText.text = `$${donation.amount}`;
 
-		// Rotate text 180 degrees if it makes sense
-		const shouldRotateText = (isLeftBranch && (leafAngle < 0 || leafAngle > 170)) ||
-								(!isLeftBranch && ((leafAngle > 0 && leafAngle < 190) || leafAngle === -175));
+		const currentBranch: BranchSide = isLeftBranch ? 'leftSide' : 'rightSide';
+		const currentBranchLabel: BranchLabel = branchLabel === 'Branch_01' ? 'Branch_01' : 'Branch_02'; // Oof...
+
+		const shouldRotateText = Leaf.leavesToRotate[currentBranch][currentBranchLabel].includes(leafLabel);
 
 		if (shouldRotateText) {
 			this.usernameText.angle += 180;
-			this.amountText.angle += 180;
-		}
-
-		// Swap text of leaves where donation text is now above username text
-		const shouldSwapTextPosition = (!isLeftBranch && (leafAngle === 115 || leafAngle === -175 || leafAngle === 175)) ||
-										(isLeftBranch && leafAngle !== 0 && leafAngle !== 115);
-
-		if (shouldSwapTextPosition) {
 			this.usernameText.y = 40;
+			this.amountText.angle += 180;
 			this.amountText.y = -40;
 		}
 
@@ -145,7 +153,6 @@ export default class Leaf extends Container {
 		const brightnessFilter = new ColorMatrixFilter();
 		brightnessFilter.brightness(brightness, true);
 		this.leafSprite.filters = brightnessFilter;
-
 		this.eventMode = 'static';
 		this.cursor = 'pointer';
 		this.on('pointerdown', () => {
