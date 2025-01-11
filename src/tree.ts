@@ -1,32 +1,18 @@
 import { Container, Sprite, Text } from 'pixi.js';
+import { Viewport } from 'pixi-viewport';
 import { Donation } from './donationPopup';
 import Branch01 from './branches/Branch01.ts';
+import Branch02 from './branches/Branch02.ts';
 import Branch from './branches/Branch.ts';
 import Database from './database.ts';
 import { RxChangeEventInsert } from 'rxdb';
 import { getRandomNumber } from './random.ts';
-import Branch02 from './branches/Branch02.ts';
-import { Viewport } from 'pixi-viewport';
-//import Leaf from './branches/Leaf.ts';
 
 const TRUNK_ACTUAL_CENTERLINE = 1160;
-//const DEBUG_DRAW_TREE_TOP_POLYGON = false;
-
-function positionAndInsertSprite(
-	container: Container,
-	sprite: Sprite,
-	anchorX: number,
-	anchorY: number,
-	x: number,
-	y: number,
-): Sprite {
-	sprite.anchor.set(anchorX, anchorY);
-	sprite.position.set(x, y);
-	sprite.cullable = true;
-	container.addChild(sprite);
-	return sprite;
-}
-
+const TRUNK_INDEX = 1;
+const BRANCH_VERTICAL_OFFSET = 600;
+const BRANCH_ANGLE_OFFSET = 5;
+const BRANCH_RANDOM_RANGE = 1000;
 const BRANCH_OPTIONS: (new () => Branch)[] = [Branch01, Branch02];
 
 export async function buildTreeSpriteGraph(
@@ -92,49 +78,7 @@ export async function buildTreeSpriteGraph(
 	);
 
 	// Build the "Growing in Progress" sign
-	const progressSign = new Container();
-	progressSign.label = '"Growing In Progress" Sign';
-	progressSign.angle = 15;
-	progressSign.position.set(treeBottomX, trunkTopY - (treeTop.height / 2));
-
-	const sign = Sprite.from("Wooden_Sign_Postless");
-	sign.anchor.set(0.5, 0.5);
-	sign.zIndex = -1;
-	progressSign.addChild(sign);
-
-	const signText1 = new Text({
-		text: 'GROWING\nIN PROGRESS',
-		style: {
-			fontFamily: 'UnifontEXMono',
-			fontSize: 90,
-			fontWeight: 'bold',
-			fill: 'white',
-			align: 'center',
-		},
-		x: 0,
-		y: -100,
-	});
-	signText1.anchor.set(0.5);
-	signText1.zIndex = 1;
-	signText1.angle = 1;
-	progressSign.addChild(signText1);
-
-	const signText2 = new Text({
-		text: 'MIND THE\nBALDNESS',
-		style: {
-			fontFamily: 'UnifontEXMono',
-			fontSize: 70,
-			fontWeight: 'bold',
-			fill: 'white',
-			align: 'center',
-		},
-		x: 0,
-		y: 80,
-	});
-	signText2.anchor.set(0.5);
-	signText2.zIndex = 1;
-	signText2.angle = 1;
-	progressSign.addChild(signText2);
+	const progressSign = createProgressSign(treeBottomX, trunkTopY, treeTop.height);
 
 	treeContainer.addChild(progressSign);
 
@@ -147,14 +91,13 @@ export async function buildTreeSpriteGraph(
 	let isLeftBranch = true;
 	let currentBranch: Branch | undefined;
 	let leftBranchY =
-		trunkSprites[1].position.y -
-		trunkSprites[1].height / 2 -
+		trunkSprites[TRUNK_INDEX].position.y -
+		trunkSprites[TRUNK_INDEX].height / 2 -
 		Math.floor(Math.random() * 200);
 	let rightBranchY =
-		trunkSprites[1].position.y -
-		trunkSprites[1].height / 2 -
+		trunkSprites[TRUNK_INDEX].position.y -
+		trunkSprites[TRUNK_INDEX].height / 2 -
 		Math.floor(Math.random() * 200);
-	const trunkIndex = 1;
 	let currentClampTopLimit = 0;
 	// The tree in the texture is not in the actual center of the texture, so we need to calculate the actual center of the tree trunk.
 	const actualTrunkCenter =
@@ -169,7 +112,7 @@ export async function buildTreeSpriteGraph(
 			const bounds = currentBranch.getBounds(true);
 
 			if (Math.min(leftBranchY - 200, rightBranchY - 200) < trunkTopY) {
-				const trunkSprite = Sprite.from(trunkTextureFunc(trunkIndex));
+				const trunkSprite = Sprite.from(trunkTextureFunc(TRUNK_INDEX));
 				positionAndInsertSprite(
 					treeContainer,
 					trunkSprite,
@@ -197,28 +140,29 @@ export async function buildTreeSpriteGraph(
 
 			currentBranch.position.set(
 				actualTrunkCenter,
-				trunkSprites[trunkIndex].position.y -
-					trunkSprites[trunkIndex].height / 2 +
+				trunkSprites[TRUNK_INDEX].position.y -
+					trunkSprites[TRUNK_INDEX].height / 2 +
 					getRandomNumber(-100, 100),
 			);
 
+			const verticalOffset = bounds.width + BRANCH_VERTICAL_OFFSET + Math.floor(Math.random() * BRANCH_RANDOM_RANGE);
+
 			if (isLeftBranch) {
-				currentBranch.angle = 280 + getRandomNumber(-5, 5);
+				currentBranch.angle = 280 + getRandomNumber(-BRANCH_ANGLE_OFFSET, BRANCH_ANGLE_OFFSET);
 				currentBranch.position.set(actualTrunkCenter, leftBranchY);
-				isLeftBranch = false;
-				leftBranchY -=
-					bounds.width + 600 + Math.floor(Math.random() * 1000);
+				leftBranchY -= verticalOffset;
 			} else {
-				currentBranch.angle = 80 + getRandomNumber(-5, 5);
+				currentBranch.angle = 80 + getRandomNumber(-BRANCH_ANGLE_OFFSET, BRANCH_ANGLE_OFFSET);
 				currentBranch.position.set(actualTrunkCenter, rightBranchY);
-				isLeftBranch = true;
-				rightBranchY -=
-					bounds.width + 600 + Math.floor(Math.random() * 1000);
+				rightBranchY -= verticalOffset;
 			}
+
+			isLeftBranch = !isLeftBranch;
+
 			treeContainer.addChild(currentBranch);
 		}
 
-		const { x, y, tint, brightness } = currentBranch.addDonation(donation, currentBranch.label, !isLeftBranch);
+		const { x, y, tint, brightness } = currentBranch.addDonationToBranch(donation, currentBranch.label, !isLeftBranch);
 		void db.leaves.upsert({
 			id: donationId,
 			x: x,
@@ -237,4 +181,60 @@ export async function buildTreeSpriteGraph(
 	});
 
 	return treeContainer;
+}
+
+function positionAndInsertSprite(
+	container: Container,
+	sprite: Sprite,
+	anchorX: number,
+	anchorY: number,
+	x: number,
+	y: number,
+): Sprite {
+	sprite.anchor.set(anchorX, anchorY);
+	sprite.position.set(x, y);
+	sprite.cullable = true;
+	container.addChild(sprite);
+	return sprite;
+}
+
+function createProgressSign(
+	treeBottomX: number,
+	trunkTopY: number,
+	treeTopHeight: number
+): Container {
+	const progressSign = new Container();
+	progressSign.label = '"Growing In Progress" Sign';
+	progressSign.angle = 15;
+	progressSign.position.set(treeBottomX, trunkTopY - (treeTopHeight / 2));
+
+	const sign = Sprite.from('Wooden_Sign_Postless');
+	sign.anchor.set(0.5, 0.5);
+	sign.zIndex = -1;
+	progressSign.addChild(sign);
+
+	const signText = [
+		{ text: 'GROWING\nIN PROGRESS', fontSize: 90, y: -100 },
+		{ text: 'MIND THE\nBALDNESS', fontSize: 70, y: 80 },
+	];
+
+	signText.forEach(({ text, fontSize, y }) => {
+		const signTextSprite = new Text({
+			text,
+			style: {
+				fontFamily: 'UnifontEXMono',
+				fontSize,
+				fontWeight: 'bold',
+				fill: 'white',
+				align: 'center',
+			},
+			x: 0,
+			y,
+		});
+		signTextSprite.anchor.set(0.5);
+		signTextSprite.zIndex = 1;
+		progressSign.addChild(signTextSprite);
+	});
+
+	return progressSign;
 }

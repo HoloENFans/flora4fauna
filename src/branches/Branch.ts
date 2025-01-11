@@ -27,7 +27,7 @@ export default abstract class Branch extends Container {
 		return this.count >= this.capacity;
 	}
 
-	addDonation(donation: Donation, branchLabel: string, isLeftBranch: boolean): LeafInfo {
+	addDonationToBranch(donation: Donation, branchLabel: string, isLeftBranch: boolean): LeafInfo {
 		if (this.full) throw new Error('Branch is full!');
 
 		this.donationCount += 1;

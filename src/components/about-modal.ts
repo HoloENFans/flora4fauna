@@ -243,6 +243,15 @@ export class AboutModal extends LitElement {
 										>X / Twitter</a
 									>
 								</li>
+								<li>
+									Infiniti -
+									<a
+										href="https://github.com/mashirochan"
+										rel="noreferrer"
+										target="_blank"
+										>GitHub</a
+									>
+								</li>
 							</ul>
 						</div>
 						<div>
