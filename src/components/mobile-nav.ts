@@ -46,9 +46,6 @@ export class MobileNav extends LitElement {
 				</button>
 
 				<div class="grid grid-cols-2 justify-center gap-2 px-8 py-4">
-					<button class="btn btn-wood" id="open-mobile-donate-modal">
-						Donate
-					</button>
 					<button class="btn btn-wood" id="open-mobile-about-modal">
 						About
 					</button>
@@ -82,7 +79,6 @@ export class MobileNav extends LitElement {
 		};
 		addClickListener('accountability-modal');
 		addClickListener('about-modal');
-		addClickListener('donate-modal');
 		addClickListener('find-donation-modal');
 		addClickListener('stats-modal');
 

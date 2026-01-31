@@ -45,13 +45,6 @@ export class FrontUi extends LitElement {
 					<button id="open-accountability-modal" class="front-button">
 						Accountability
 					</button>
-					<button
-						class="donate-label btn-donate btn-wood mb-1"
-						id="open-donate-modal"
-						style="padding: 1rem 2rem;"
-					>
-						Donate
-					</button>
 					<div
 						id="open-stats-modal"
 						class="front-button flex flex-col items-center"
@@ -88,7 +81,6 @@ export class FrontUi extends LitElement {
 		};
 		addClickListener('accountability-modal');
 		addClickListener('about-modal');
-		addClickListener('donate-modal');
 		addClickListener('find-donation-modal');
 		addClickListener('stats-modal');
 
