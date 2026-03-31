@@ -184,14 +184,9 @@ export async function buildTreeSpriteGraph(
 
 				progressSign.position.set(treeBottomX, trunkTopY - (treeTop.height / 2));
 
-				if (trunkTopY < currentClampTopLimit) {
-					currentClampTopLimit = trunkTopY - 2000;
-
-					viewport.plugins.remove('clamp');
-					viewport.clamp({
-						direction: 'all',
-						underflow: 'center',
-					});
+				if (trunkTopY < 0 && currentClampTopLimit - trunkTopY > viewport.height) {
+					currentClampTopLimit += 2000 - trunkTopY;
+					viewport.resize(window.innerWidth, window.innerHeight, undefined, currentClampTopLimit);
 				}
 			}
 
